@@ -1,0 +1,24 @@
+# R
+.Rhistory
+.Rdata
+.RData
+.Ruserdata
+.Rproj.user/
+
+# macOS
+.DS_Store
+CLAUDE.md
+
+# Large data files
+*.rds
+*.qs2
+*.h5
+*.h5ad
+*.h5seurat
+
+# Seurat objects directory
+seurat_objects/*
+!seurat_objects/.gitkeep
+
+# qmd-generated html files
+*.html

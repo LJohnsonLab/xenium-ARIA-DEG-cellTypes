@@ -1,0 +1,47 @@
+---
+title: "Cell types in full object"
+date: last-modified
+code-fold: true
+embed-resources: true
+execute:
+  message: false
+  warning: false
+format: html
+---
+
+```{r setup}
+#| message: false
+library(qs2)
+library(Seurat)
+library(tidyverse)
+library(kableExtra)
+
+
+source("20260217-helper_functions.R")
+
+
+full <- qs_read("seurat_objects/20260217_Part2_fullobj.qs2")
+md <- 
+
+md <- full@meta.data 
+```
+
+# Number of cells
+
+```{r}
+#| column: page
+#| fig-width: 10
+#| fig-height: 8
+
+
+n_cells <- md |> 
+  group_by(annotatedclusters,Region, Treatment.Group) |> 
+  summarise(n_cells = n())
+
+ggplot(n_cells, aes(x = Region , y = n_cells, fill = Treatment.Group))+
+  geom_col()+
+  facet_wrap(~annotatedclusters)+
+  theme_bw()+
+  theme(legend.position = "bottom",
+  axis.text.x = element_text(angle = 40, hjust = 1))
+```
