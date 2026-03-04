@@ -1,5 +1,5 @@
 ---
-title: "Cell types in full object"
+title: "Cell types composition in the full object"
 date: last-modified
 ---
 
@@ -20,22 +20,28 @@ md <-
 md <- full@meta.data 
 ```
 
-# Number of cells
+# Cell type composition across brain regions and treatment groups
+
+To characterise the cellular landscape captured by the Xenium 480-gene spatial transcriptomics
+panel, the total number of cells assigned to each major cell type (`annotatedclusters`) was
+quantified per brain region and stratified by treatment group (aducanumab, Adu; isotype control,
+IgG). Cell type annotations were derived from the seurat full object curated by Chloe
+
 
 ```{r}
 #| column: page
 #| fig-width: 10
-#| fig-height: 8
+#| fig-height: 12
 
-
-n_cells <- md |> 
-  group_by(annotatedclusters,Region, Treatment.Group) |> 
+n_cells <- md |>
+  group_by(annotatedclusters,Region, Treatment.Group) |>
   summarise(n_cells = n())
 
 ggplot(n_cells, aes(x = Region , y = n_cells, fill = Treatment.Group))+
   geom_col()+
-  facet_wrap(~annotatedclusters)+
+  scale_y_continuous(labels = label_number(scale_cut = cut_short_scale()))+
+  facet_wrap(~annotatedclusters, scales = "free_y", ncol = 4)+
   theme_bw()+
-  theme(legend.position = "bottom",
+  theme(legend.position = "top",
   axis.text.x = element_text(angle = 40, hjust = 1))
 ```

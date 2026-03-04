@@ -177,9 +177,9 @@
   {
     "objectID": "20260302-cell_types.html",
     "href": "20260302-cell_types.html",
-    "title": "Cell types in full object",
+    "title": "Cell types composition in the full object",
     "section": "",
-    "text": "Code\nlibrary(qs2)\nlibrary(Seurat)\nlibrary(tidyverse)\nlibrary(kableExtra)\n\n\nsource(\"20260217-helper_functions.R\")\n\n\nfull &lt;- qs_read(\"seurat_objects/20260217_Part2_fullobj.qs2\")\nmd &lt;- \n\nmd &lt;- full@meta.data \n\n\n\nNumber of cells\n\n\nCode\nn_cells &lt;- md |&gt; \n  group_by(annotatedclusters,Region, Treatment.Group) |&gt; \n  summarise(n_cells = n())\n\nggplot(n_cells, aes(x = Region , y = n_cells, fill = Treatment.Group))+\n  geom_col()+\n  facet_wrap(~annotatedclusters)+\n  theme_bw()+\n  theme(legend.position = \"bottom\",\n  axis.text.x = element_text(angle = 40, hjust = 1))"
+    "text": "Code\nlibrary(qs2)\nlibrary(Seurat)\nlibrary(tidyverse)\nlibrary(kableExtra)\n\n\nsource(\"20260217-helper_functions.R\")\n\n\nfull &lt;- qs_read(\"seurat_objects/20260217_Part2_fullobj.qs2\")\nmd &lt;- \n\nmd &lt;- full@meta.data \n\n\n\nCell type composition across brain regions and treatment groups\nTo characterise the cellular landscape captured by the Xenium 480-gene spatial transcriptomics panel, the total number of cells assigned to each major cell type (annotatedclusters) was quantified per brain region and stratified by treatment group (aducanumab, Adu; isotype control, IgG). Cell type annotations were derived from the seurat full object curated by Chloe\n\n\nCode\nn_cells &lt;- md |&gt;\n  group_by(annotatedclusters,Region, Treatment.Group) |&gt;\n  summarise(n_cells = n())\n\nggplot(n_cells, aes(x = Region , y = n_cells, fill = Treatment.Group))+\n  geom_col()+\n  scale_y_continuous(labels = label_number(scale_cut = cut_short_scale()))+\n  facet_wrap(~annotatedclusters, scales = \"free_y\", ncol = 4)+\n  theme_bw()+\n  theme(legend.position = \"top\",\n  axis.text.x = element_text(angle = 40, hjust = 1))"
   },
   {
     "objectID": "CLAUDE.html",
