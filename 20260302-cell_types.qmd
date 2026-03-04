@@ -1,12 +1,6 @@
 ---
 title: "Cell types in full object"
 date: last-modified
-code-fold: true
-embed-resources: true
-execute:
-  message: false
-  warning: false
-format: html
 ---
 
 ```{r setup}

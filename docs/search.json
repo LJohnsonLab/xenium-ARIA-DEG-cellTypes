@@ -1,0 +1,436 @@
+[
+  {
+    "objectID": "20260303-DEG_oligo_brainRegions.html",
+    "href": "20260303-DEG_oligo_brainRegions.html",
+    "title": "Differentially expressed genes in oligodendrocytes across brain regions",
+    "section": "",
+    "text": "Code\nlibrary(qs2)\nlibrary(Seurat)\nlibrary(purrr)\nlibrary(DESeq2)\nlibrary(patchwork)\nlibrary(gridExtra)\nlibrary(pheatmap)\nlibrary(tidyverse)\nlibrary(kableExtra)\n\n\n# fgsea: Fast Gene Set Enrichment Analysis\n# https://bioconductor.org/packages/release/bioc/vignettes/fgsea/inst/doc/fgsea-tutorial.html\nlibrary(fgsea)\n# msigdbr: Access to MSigDB gene sets for multiple species\nlibrary(msigdbr)\n\nsource(\"20260217-helper_functions.R\")\n\n\nfull &lt;- qs_read(\"seurat_objects/20260217_Part2_fullobj.qs2\")\nmg   &lt;- subset(full, annotatedclusters == \"Oligodendrocyte\")"
+  },
+  {
+    "objectID": "20260303-DEG_oligo_brainRegions.html#cell-counts-per-region",
+    "href": "20260303-DEG_oligo_brainRegions.html#cell-counts-per-region",
+    "title": "Differentially expressed genes in oligodendrocytes across brain regions",
+    "section": "Cell counts per region",
+    "text": "Cell counts per region\nThe table below enumerates the total number of microglial cells captured per brain region and their distribution across treatment groups (aducanumab, Adu; isotype control IgG).\n\n\nCode\nmg@meta.data |&gt;\n  group_by(Region) |&gt;\n  summarise(\n    n_cells = n(),\n    n_Adu   = sum(Treatment.Group == \"Adu\"),\n    n_IgG   = sum(Treatment.Group == \"IgG\")\n  ) |&gt;\n  arrange(desc(n_cells)) |&gt;\n  kbl(caption = \"Oligodendrocytes per brain region\") |&gt;\n  kable_styling(\"striped\")\n\n\n\nOligodendrocytes per brain region\n\n\nRegion\nn_cells\nn_Adu\nn_IgG\n\n\n\n\nThalamus\n20046\n10051\n9995\n\n\nHypothalamus\n12319\n6760\n5559\n\n\nCortex\n10875\n5588\n5287\n\n\nWM\n10872\n6074\n4798\n\n\nNA\n9817\n5674\n4143\n\n\nHippocampus\n6395\n3042\n3353\n\n\n\n\n\n\n\nCode\nDefaultAssay(mg) &lt;- \"Xenium\"\nmg   &lt;- subset(mg, !is.na(Region))"
+  },
+  {
+    "objectID": "20260303-DEG_oligo_brainRegions.html#pseudobulk-de-adu-vs-igg-per-region",
+    "href": "20260303-DEG_oligo_brainRegions.html#pseudobulk-de-adu-vs-igg-per-region",
+    "title": "Differentially expressed genes in oligodendrocytes across brain regions",
+    "section": "Pseudobulk DE (Adu vs IgG) per region",
+    "text": "Pseudobulk DE (Adu vs IgG) per region\nTo identify transcriptional changes induced by aducanumab in a spatially resolved manner, pseudobulk differential expression analysis was performed independently for each brain region.\nWithin each region, raw Xenium counts were summed per biological sample using AggregateExpression, yielding one pseudobulk profile per animal (n = 3 Adu, n = 3 IgG). Differential expression between treatment groups was then assessed using DESeq2, as implemented via Seurat’s FindMarkers interface with test.use = \"DESeq2\" and no minimum expression filter (min.pct = 0), ensuring all detected genes were considered.\nFor each eligible region, results are displayed as a volcano plot, highlighting genes reaching statistical significance (Benjamini-Hochberg-adjusted p &lt; 0.05), alongside a table of significant differentially expressed genes (DEGs), ranked by adjusted p-value.\n\nCode\nregions &lt;- sort(unique(mg$Region))\n\nde_by_region &lt;- map(regions, \\(reg) {\n  sub_obj &lt;- subset(mg, Region == reg)\n\n  # Replication guard: DESeq2 needs &gt;=2 samples per treatment group\n  n_per_group &lt;- table(\n    distinct(sub_obj@meta.data, sample_ID, Treatment.Group)$Treatment.Group\n  )\n  if (any(n_per_group &lt; 2)) {\n    cat(\"\\n\\n###\", reg, \"\\n\\n_Skipped: fewer than 2 samples per treatment group._\\n\\n\")\n    return(NULL)\n  }\n\n  bulk &lt;- AggregateExpression(sub_obj, group.by = \"sample_ID\", return.seurat = TRUE)\n\n  # AggregateExpression converts _ to - (e.g. KK4_465 -&gt; KK4-465)\n  sample_meta &lt;- distinct(sub_obj@meta.data, sample_ID, Treatment.Group) |&gt;\n    mutate(bulk_id = gsub(\"_\", \"-\", sample_ID))\n  bulk$Treatment.Group &lt;- sample_meta$Treatment.Group[\n    match(colnames(bulk), sample_meta$bulk_id)\n  ]\n  Idents(bulk) &lt;- \"Treatment.Group\"\n\n  res &lt;- anayet(bulk,\n                ident1      = \"Adu\",\n                ident2      = \"IgG\",\n                test_method = \"DESeq2\",\n                min_pct     = 0,\n                plot_title  = paste(\"Oligodendrocytes —\", reg),\n                print_plot  = FALSE)\n\n  cat(\"\\n\\n###\", reg, \"\\n\\n\")\n\n  sig_tbl &lt;- if (nrow(res$significant_results) &gt; 0) {\n    res$significant_results |&gt;\n      select(p_val, avg_log2FC, p_val_adj) |&gt;\n      mutate(across(where(is.numeric), \\(x) signif(x, 3))) |&gt;\n      arrange(p_val_adj) |&gt;\n      tableGrob(theme = ttheme_minimal(base_size = 18))\n  } else {\n    tableGrob(\n      data.frame(Result = \"No significant DEGs\"),\n      theme = ttheme_minimal(base_size = 20)\n    )\n  }\n\n  print(res$volcano_plot + wrap_elements(sig_tbl) + plot_layout(widths = c(2, 1)))\n  res\n\n}) |&gt; set_names(regions) |&gt; compact()\n\n\nCortex\n\n\n\nHippocampus\n\n\n\nHypothalamus\n\n\n\nThalamus\n\n\n\nWM\n\n\n\nCode\nsaveRDS(\n  map(de_by_region, \\(res) res$all_results),\n  \"results/20260223-DEG_oligodendrocytes_byRegion.rds\"\n)"
+  },
+  {
+    "objectID": "20260303-DEG_oligo_brainRegions.html#summary-visualisations",
+    "href": "20260303-DEG_oligo_brainRegions.html#summary-visualisations",
+    "title": "Differentially expressed genes in oligodendrocytes across brain regions",
+    "section": "Summary visualisations",
+    "text": "Summary visualisations\nThe following figures integrate findings across all brain regions to facilitate cross-regional comparison of oligodendrocytes transcriptional responses to aducanumab treatment.\n\nDEG counts per region\nTo provide an overview of the magnitude and directionality of transcriptional responses across brain regions, the total number of significant DEGs (Benjamini-Hochberg-adjusted p &lt; 0.05) was tallied per region and stratified by direction of effect: genes upregulated in aducanumab- treated animals relative to IgG controls (Up in Adu) and genes downregulated (Down in Adu). Regions with no significant DEGs are absent from the plot.\n\n\nCode\ndeg_counts &lt;- imap(de_by_region, \\(res, reg) {\n  if (nrow(res$significant_results) == 0) return(NULL)\n  res$significant_results |&gt;\n    rownames_to_column(\"gene\") |&gt;\n    mutate(Region    = reg,\n           Direction = ifelse(avg_log2FC &gt; 0, \"Up in Adu\", \"Down in Adu\"))\n}) |&gt;\n  compact() |&gt;\n  list_rbind() |&gt;\n  dplyr::count(Region, Direction)\n\nggplot(deg_counts, aes(x = Region, y = n, fill = Direction)) +\n  geom_col(position = \"dodge\", width = 0.7, alpha = 0.9) +\n  scale_fill_manual(values = c(\"Up in Adu\" = \"#d73027\", \"Down in Adu\" = \"#4575b4\")) +\n  labs(\n    title    = \"Significant DEGs per brain region\",\n    subtitle = \"padj &lt; 0.05\",\n    x        = NULL,\n    y        = \"Number of DEGs\",\n    fill     = NULL\n  ) +\n  theme_minimal(base_size = 14) +\n  theme(panel.grid.major.x = element_blank(),\n  axis.text.x = element_text(size = 16,angle = 45, hjust = 1))\n\n\n\n\n\n\n\n\n\n\n\nCross-region log2FC heatmap\nTo identify genes with consistent or divergent regulation across brain regions, a hierarchically clustered heatmap was constructed for all genes reaching statistical significance (adjusted p &lt; 0.05) in at least one region.\nEach cell displays the log2 fold change (Adu vs IgG) for that gene–region combination. The colour scale is symmetric and centred at zero, with red denoting upregulation in aducanumab-treated animals and blue denoting downregulation. Asterisks mark gene–region combinations that individually meet the adjusted p &lt; 0.05 threshold. Genes and regions were clustered hierarchically by their fold-change profiles to reveal co-regulated gene modules and similarities between brain regions.\n\n\nCode\nall_de_long &lt;- imap(de_by_region, \\(res, reg) {\n  res$all_results |&gt; rownames_to_column(\"gene\") |&gt; mutate(Region = reg)\n}) |&gt; list_rbind()\n\nsig_genes &lt;- all_de_long |&gt;\n  filter(p_val_adj &lt; 0.05) |&gt;\n  pull(gene) |&gt;\n  unique()\n\nif (length(sig_genes) &gt; 0) {\n  fc_matrix &lt;- all_de_long |&gt;\n    filter(gene %in% sig_genes) |&gt;\n    pivot_wider(id_cols = gene, names_from = Region, values_from = avg_log2FC) |&gt;\n    column_to_rownames(\"gene\") |&gt;\n    as.matrix()\n\n  sig_matrix &lt;- all_de_long |&gt;\n    filter(gene %in% sig_genes) |&gt;\n    pivot_wider(id_cols = gene, names_from = Region, values_from = p_val_adj) |&gt;\n    column_to_rownames(\"gene\") |&gt;\n    as.matrix()\n\n  display_matrix &lt;- ifelse(!is.na(sig_matrix) & sig_matrix &lt; 0.05, \"*\", \"\")\n\n  clim &lt;- ceiling(max(abs(fc_matrix), na.rm = TRUE))\n\n  pheatmap(fc_matrix,\n    color         = colorRampPalette(c(\"#4575b4\", \"white\", \"#d73027\"))(100),\n    breaks        = seq(-clim, clim, length.out = 101),\n    na_col        = \"grey88\",\n    display_numbers = display_matrix,\n    fontsize_number = 24,\n    number_color  = \"black\",\n    cluster_rows  = TRUE,\n    cluster_cols  = TRUE,\n    main          = \"Oligodendrocytes log2FC (Adu vs IgG) by region\\n\",\n    fontsize      = 18,\n    fontsize_row  = 15,\n    angle_col     = 45,\n    cellwidth = 30,\n    cellheight = 30\n  )\n} else {\n  message(\"No significant DEGs found across any region — heatmap skipped.\")\n}\n\n\n\n\n\n\n\n\n\n\n\nEffect size dot plot\nTo simultaneously visualise the effect size, statistical significance, and regional distribution of all significant DEGs, a dot plot was generated in which each point represents a single gene–region observation.\nThe horizontal position encodes the log2 fold change (Adu vs IgG), dot size reflects the strength of statistical evidence (−log10 adjusted p-value), and colour denotes the brain region. Genes are ordered along the vertical axis by their mean log2 fold change across all regions in which they were significant, placing consistently downregulated genes at the top and upregulated genes at the bottom.\n\n\nCode\nsig_all &lt;- imap(de_by_region, \\(res, reg) {\n  res$significant_results |&gt; rownames_to_column(\"gene\") |&gt; mutate(Region = reg)\n}) |&gt; list_rbind()\n\nif (nrow(sig_all) &gt; 0) {\n  gene_order &lt;- sig_all |&gt;\n    group_by(gene) |&gt;\n    summarise(mfc = mean(avg_log2FC)) |&gt;\n    arrange(mfc) |&gt;\n    pull(gene)\n\n  sig_all |&gt;\n    mutate(gene = factor(gene, levels = gene_order)) |&gt;\n    ggplot(aes(x = avg_log2FC, y = gene,\n               colour = Region,\n               size   = -log10(p_val_adj + 1e-300))) +\n    geom_vline(xintercept = 0, linetype = \"dashed\", colour = \"grey60\") +\n    geom_point(alpha = 0.85) +\n    scale_size_continuous(\n      name  = expression(-log[10](p[adj])),\n      range = c(2, 8)\n    ) +\n    scale_colour_brewer(palette = \"Set2\") +\n    labs(\n      title = \"Oligodendrocytes DEGs — all brain regions\\n\",\n      x     = expression(log[2] * \"FC  (Adu / IgG)\"),\n      y     = NULL\n    ) +\n    theme_minimal(base_size = 13) +\n    theme(\n      axis.text         = element_text(size= 16,face = \"italic\"),\n      axis.title = element_text(size = 18),\n      plot.title = element_text(size = 20),\n      axis.ticks = element_blank(),\n      panel.grid.major.x  = element_blank()\n    )\n} else {\n  message(\"No significant DEGs found — dot plot skipped.\")\n}"
+  },
+  {
+    "objectID": "20260303-DEG_ENDOTHELIAL_brainRegions.html",
+    "href": "20260303-DEG_ENDOTHELIAL_brainRegions.html",
+    "title": "Differentially expressed genes in endothelial cells across brain regions",
+    "section": "",
+    "text": "Code\nlibrary(qs2)\nlibrary(Seurat)\nlibrary(purrr)\nlibrary(DESeq2)\nlibrary(patchwork)\nlibrary(gridExtra)\nlibrary(pheatmap)\nlibrary(tidyverse)\nlibrary(kableExtra)\n\n\n# fgsea: Fast Gene Set Enrichment Analysis\n# https://bioconductor.org/packages/release/bioc/vignettes/fgsea/inst/doc/fgsea-tutorial.html\nlibrary(fgsea)\n# msigdbr: Access to MSigDB gene sets for multiple species\nlibrary(msigdbr)\n\nsource(\"20260217-helper_functions.R\")\n\n\nfull &lt;- qs_read(\"seurat_objects/20260217_Part2_fullobj.qs2\")\nmg   &lt;- subset(full, annotatedclusters == \"Endothelial\")"
+  },
+  {
+    "objectID": "20260303-DEG_ENDOTHELIAL_brainRegions.html#cell-counts-per-region",
+    "href": "20260303-DEG_ENDOTHELIAL_brainRegions.html#cell-counts-per-region",
+    "title": "Differentially expressed genes in endothelial cells across brain regions",
+    "section": "Cell counts per region",
+    "text": "Cell counts per region\nThe table below enumerates the total number of microglial cells captured per brain region and their distribution across treatment groups (aducanumab, Adu; isotype control IgG).\n\n\nCode\nmg@meta.data |&gt;\n  group_by(Region) |&gt;\n  summarise(\n    n_cells = n(),\n    n_Adu   = sum(Treatment.Group == \"Adu\"),\n    n_IgG   = sum(Treatment.Group == \"IgG\")\n  ) |&gt;\n  arrange(desc(n_cells)) |&gt;\n  kbl(caption = \"Endothelial cells per brain region\") |&gt;\n  kable_styling(\"striped\")\n\n\n\nEndothelial cells per brain region\n\n\nRegion\nn_cells\nn_Adu\nn_IgG\n\n\n\n\nCortex\n8571\n4341\n4230\n\n\nThalamus\n5367\n2708\n2659\n\n\nNA\n5199\n2649\n2550\n\n\nHypothalamus\n3139\n1292\n1847\n\n\nHippocampus\n2334\n1168\n1166\n\n\nWM\n973\n500\n473\n\n\n\n\n\n\n\nCode\nDefaultAssay(mg) &lt;- \"Xenium\"\nmg   &lt;- subset(mg, !is.na(Region))"
+  },
+  {
+    "objectID": "20260303-DEG_ENDOTHELIAL_brainRegions.html#pseudobulk-de-adu-vs-igg-per-region",
+    "href": "20260303-DEG_ENDOTHELIAL_brainRegions.html#pseudobulk-de-adu-vs-igg-per-region",
+    "title": "Differentially expressed genes in endothelial cells across brain regions",
+    "section": "Pseudobulk DE (Adu vs IgG) per region",
+    "text": "Pseudobulk DE (Adu vs IgG) per region\nTo identify transcriptional changes induced by aducanumab in a spatially resolved manner, pseudobulk differential expression analysis was performed independently for each brain region.\nWithin each region, raw Xenium counts were summed per biological sample using AggregateExpression, yielding one pseudobulk profile per animal (n = 3 Adu, n = 3 IgG). Differential expression between treatment groups was then assessed using DESeq2, as implemented via Seurat’s FindMarkers interface with test.use = \"DESeq2\" and no minimum expression filter (min.pct = 0), ensuring all detected genes were considered.\nFor each eligible region, results are displayed as a volcano plot, highlighting genes reaching statistical significance (Benjamini-Hochberg-adjusted p &lt; 0.05), alongside a table of significant differentially expressed genes (DEGs), ranked by adjusted p-value.\n\nCode\nregions &lt;- sort(unique(mg$Region))\n\nde_by_region &lt;- map(regions, \\(reg) {\n  sub_obj &lt;- subset(mg, Region == reg)\n\n  # Replication guard: DESeq2 needs &gt;=2 samples per treatment group\n  n_per_group &lt;- table(\n    distinct(sub_obj@meta.data, sample_ID, Treatment.Group)$Treatment.Group\n  )\n  if (any(n_per_group &lt; 2)) {\n    cat(\"\\n\\n###\", reg, \"\\n\\n_Skipped: fewer than 2 samples per treatment group._\\n\\n\")\n    return(NULL)\n  }\n\n  bulk &lt;- AggregateExpression(sub_obj, group.by = \"sample_ID\", return.seurat = TRUE)\n\n  # AggregateExpression converts _ to - (e.g. KK4_465 -&gt; KK4-465)\n  sample_meta &lt;- distinct(sub_obj@meta.data, sample_ID, Treatment.Group) |&gt;\n    mutate(bulk_id = gsub(\"_\", \"-\", sample_ID))\n  bulk$Treatment.Group &lt;- sample_meta$Treatment.Group[\n    match(colnames(bulk), sample_meta$bulk_id)\n  ]\n  Idents(bulk) &lt;- \"Treatment.Group\"\n\n  res &lt;- anayet(bulk,\n                ident1      = \"Adu\",\n                ident2      = \"IgG\",\n                test_method = \"DESeq2\",\n                min_pct     = 0,\n                plot_title  = paste(\"Endotheliala —\", reg),\n                print_plot  = FALSE)\n\n  cat(\"\\n\\n###\", reg, \"\\n\\n\")\n\n  sig_tbl &lt;- if (nrow(res$significant_results) &gt; 0) {\n    res$significant_results |&gt;\n      select(p_val, avg_log2FC, p_val_adj) |&gt;\n      mutate(across(where(is.numeric), \\(x) signif(x, 3))) |&gt;\n      arrange(p_val_adj) |&gt;\n      tableGrob(theme = ttheme_minimal(base_size = 18))\n  } else {\n    tableGrob(\n      data.frame(Result = \"No significant DEGs\"),\n      theme = ttheme_minimal(base_size = 20)\n    )\n  }\n\n  print(res$volcano_plot + wrap_elements(sig_tbl) + plot_layout(widths = c(2, 1)))\n  res\n\n}) |&gt; set_names(regions) |&gt; compact()\n\n\nCortex\n\n\n\nHippocampus\n\n\n\nHypothalamus\n\n\n\nThalamus\n\n\n\nWM\n\n\n\nCode\nsaveRDS(\n  map(de_by_region, \\(res) res$all_results),\n  \"results/20260223-DEG_endothelial_byRegion.rds\"\n)"
+  },
+  {
+    "objectID": "20260303-DEG_ENDOTHELIAL_brainRegions.html#summary-visualisations",
+    "href": "20260303-DEG_ENDOTHELIAL_brainRegions.html#summary-visualisations",
+    "title": "Differentially expressed genes in endothelial cells across brain regions",
+    "section": "Summary visualisations",
+    "text": "Summary visualisations\nThe following figures integrate findings across all brain regions to facilitate cross-regional comparison of microglial transcriptional responses to aducanumab treatment.\n\nDEG counts per region\nTo provide an overview of the magnitude and directionality of transcriptional responses across brain regions, the total number of significant DEGs (Benjamini-Hochberg-adjusted p &lt; 0.05) was tallied per region and stratified by direction of effect: genes upregulated in aducanumab- treated animals relative to IgG controls (Up in Adu) and genes downregulated (Down in Adu). Regions with no significant DEGs are absent from the plot.\n\n\nCode\ndeg_counts &lt;- imap(de_by_region, \\(res, reg) {\n  if (nrow(res$significant_results) == 0) return(NULL)\n  res$significant_results |&gt;\n    rownames_to_column(\"gene\") |&gt;\n    mutate(Region    = reg,\n           Direction = ifelse(avg_log2FC &gt; 0, \"Up in Adu\", \"Down in Adu\"))\n}) |&gt;\n  compact() |&gt;\n  list_rbind() |&gt;\n  dplyr::count(Region, Direction)\n\nggplot(deg_counts, aes(x = Region, y = n, fill = Direction)) +\n  geom_col(position = \"dodge\", width = 0.7, alpha = 0.9) +\n  scale_fill_manual(values = c(\"Up in Adu\" = \"#d73027\", \"Down in Adu\" = \"#4575b4\")) +\n  labs(\n    title    = \"Significant DEGs per brain region\",\n    subtitle = \"padj &lt; 0.05\",\n    x        = NULL,\n    y        = \"Number of DEGs\",\n    fill     = NULL\n  ) +\n  theme_minimal(base_size = 14) +\n  theme(panel.grid.major.x = element_blank(),\n  axis.text.x = element_text(size = 16,angle = 45, hjust = 1))\n\n\n\n\n\n\n\n\n\n\n\nCross-region log2FC heatmap\nTo identify genes with consistent or divergent regulation across brain regions, a hierarchically clustered heatmap was constructed for all genes reaching statistical significance (adjusted p &lt; 0.05) in at least one region.\nEach cell displays the log2 fold change (Adu vs IgG) for that gene–region combination. The colour scale is symmetric and centred at zero, with red denoting upregulation in aducanumab-treated animals and blue denoting downregulation. Asterisks mark gene–region combinations that individually meet the adjusted p &lt; 0.05 threshold. Genes and regions were clustered hierarchically by their fold-change profiles to reveal co-regulated gene modules and similarities between brain regions.\n\n\nCode\nall_de_long &lt;- imap(de_by_region, \\(res, reg) {\n  res$all_results |&gt; rownames_to_column(\"gene\") |&gt; mutate(Region = reg)\n}) |&gt; list_rbind()\n\nsig_genes &lt;- all_de_long |&gt;\n  filter(p_val_adj &lt; 0.05) |&gt;\n  pull(gene) |&gt;\n  unique()\n\nif (length(sig_genes) &gt; 0) {\n  fc_matrix &lt;- all_de_long |&gt;\n    filter(gene %in% sig_genes) |&gt;\n    pivot_wider(id_cols = gene, names_from = Region, values_from = avg_log2FC) |&gt;\n    column_to_rownames(\"gene\") |&gt;\n    as.matrix()\n\n  sig_matrix &lt;- all_de_long |&gt;\n    filter(gene %in% sig_genes) |&gt;\n    pivot_wider(id_cols = gene, names_from = Region, values_from = p_val_adj) |&gt;\n    column_to_rownames(\"gene\") |&gt;\n    as.matrix()\n\n  display_matrix &lt;- ifelse(!is.na(sig_matrix) & sig_matrix &lt; 0.05, \"*\", \"\")\n\n  clim &lt;- ceiling(max(abs(fc_matrix), na.rm = TRUE))\n\n  pheatmap(fc_matrix,\n    color         = colorRampPalette(c(\"#4575b4\", \"white\", \"#d73027\"))(100),\n    breaks        = seq(-clim, clim, length.out = 101),\n    na_col        = \"grey88\",\n    display_numbers = display_matrix,\n    fontsize_number = 24,\n    number_color  = \"black\",\n    cluster_rows  = TRUE,\n    cluster_cols  = TRUE,\n    main          = \"Endothelial cells\\n log2FC (Adu vs IgG) by region\\n\",\n    fontsize      = 18,\n    fontsize_row  = 15,\n    angle_col     = 45,\n    cellwidth = 30,\n    cellheight = 30\n  )\n} else {\n  message(\"No significant DEGs found across any region — heatmap skipped.\")\n}\n\n\n\n\n\n\n\n\n\n\n\nEffect size dot plot\nTo simultaneously visualise the effect size, statistical significance, and regional distribution of all significant DEGs, a dot plot was generated in which each point represents a single gene–region observation.\nThe horizontal position encodes the log2 fold change (Adu vs IgG), dot size reflects the strength of statistical evidence (−log10 adjusted p-value), and colour denotes the brain region. Genes are ordered along the vertical axis by their mean log2 fold change across all regions in which they were significant, placing consistently downregulated genes at the top and upregulated genes at the bottom.\n\n\nCode\nsig_all &lt;- imap(de_by_region, \\(res, reg) {\n  res$significant_results |&gt; rownames_to_column(\"gene\") |&gt; mutate(Region = reg)\n}) |&gt; list_rbind()\n\nif (nrow(sig_all) &gt; 0) {\n  gene_order &lt;- sig_all |&gt;\n    group_by(gene) |&gt;\n    summarise(mfc = mean(avg_log2FC)) |&gt;\n    arrange(mfc) |&gt;\n    pull(gene)\n\n  sig_all |&gt;\n    mutate(gene = factor(gene, levels = gene_order)) |&gt;\n    ggplot(aes(x = avg_log2FC, y = gene,\n               colour = Region,\n               size   = -log10(p_val_adj + 1e-300))) +\n    geom_vline(xintercept = 0, linetype = \"dashed\", colour = \"grey60\") +\n    geom_point(alpha = 0.85) +\n    scale_size_continuous(\n      name  = expression(-log[10](p[adj])),\n      range = c(2, 8)\n    ) +\n    scale_colour_brewer(palette = \"Set2\") +\n    labs(\n      title = \"Edothelial cells DEGs — all brain regions\\n\",\n      x     = expression(log[2] * \"FC  (Adu / IgG)\"),\n      y     = NULL\n    ) +\n    theme_minimal(base_size = 13) +\n    theme(\n      axis.text         = element_text(size= 16,face = \"italic\"),\n      axis.title = element_text(size = 18),\n      plot.title = element_text(size = 20),\n      axis.ticks = element_blank(),\n      panel.grid.major.x  = element_blank()\n    )\n} else {\n  message(\"No significant DEGs found — dot plot skipped.\")\n}"
+  },
+  {
+    "objectID": "20260223-MG_GSEA_brainRegions.html",
+    "href": "20260223-MG_GSEA_brainRegions.html",
+    "title": "Microglia GSEA across brain",
+    "section": "",
+    "text": "Code\nlibrary(msigdbr)\nlibrary(fgsea)\nlibrary(tidyverse)\nlibrary(kableExtra)\nlibrary(ggrepel)\nlibrary(pheatmap)"
+  },
+  {
+    "objectID": "20260223-MG_GSEA_brainRegions.html#load-m7-gene-sets",
+    "href": "20260223-MG_GSEA_brainRegions.html#load-m7-gene-sets",
+    "title": "Microglia GSEA across brain",
+    "section": "Load M7 gene sets",
+    "text": "Load M7 gene sets\n\n\nCode\ngene_sets &lt;- msigdbr(species = \"Mus musculus\", db_species = \"MM\", collection = \"M7\")\ngene_sets_list &lt;- split(gene_sets$gene_symbol, gene_sets$gs_name)\n\ncat(\"M7 gene sets loaded:\", length(gene_sets_list), \"\\n\")\n\n\nM7 gene sets loaded: 787"
+  },
+  {
+    "objectID": "20260223-MG_GSEA_brainRegions.html#load-de-results",
+    "href": "20260223-MG_GSEA_brainRegions.html#load-de-results",
+    "title": "Microglia GSEA across brain",
+    "section": "Load DE results",
+    "text": "Load DE results\n\n\nCode\nde_by_region &lt;- readRDS(\"results/20260303-DEG_MG_byRegion.rds\")\n\n# Panel genes = union of all genes tested across regions\npanel_genes &lt;- de_by_region |&gt; map(\\(df) rownames(df)) |&gt; purrr::reduce(union)\n\ncat(\"Regions available:\", paste(names(de_by_region), collapse = \", \"), \"\\n\")\n\n\nRegions available: Cortex, Hippocampus, Hypothalamus, Thalamus, WM \n\n\nCode\ncat(\"Panel genes:\", length(panel_genes), \"\\n\")\n\n\nPanel genes: 370"
+  },
+  {
+    "objectID": "20260223-MG_GSEA_brainRegions.html#panel-coverage-in-m7",
+    "href": "20260223-MG_GSEA_brainRegions.html#panel-coverage-in-m7",
+    "title": "Microglia GSEA across brain",
+    "section": "Panel coverage in M7",
+    "text": "Panel coverage in M7\nThe table below quantifies how many panel genes are represented in the M7 collection, and how many M7 gene sets have at least one panel member.\n\n\nCode\nm7_genes &lt;- unique(gene_sets$gene_symbol)\n\ntibble(\n  panel_size            = length(panel_genes),\n  m7_unique_genes       = length(m7_genes),\n  panel_in_m7           = sum(panel_genes %in% m7_genes),\n  pct_covered           = round(100 * sum(panel_genes %in% m7_genes) / length(panel_genes), 1),\n  genesets_with_overlap = sum(map_int(gene_sets_list, \\(g) sum(g %in% panel_genes)) &gt; 0)\n) |&gt;\n  kbl(caption = \"Panel coverage in M7 gene sets\") |&gt;\n  kable_styling(\"striped\")\n\n\n\nPanel coverage in M7 gene sets\n\n\npanel_size\nm7_unique_genes\npanel_in_m7\npct_covered\ngenesets_with_overlap\n\n\n\n\n370\n5981\n274\n74.1\n690"
+  },
+  {
+    "objectID": "20260223-MG_GSEA_brainRegions.html#cortex",
+    "href": "20260223-MG_GSEA_brainRegions.html#cortex",
+    "title": "Microglia GSEA across brain",
+    "section": "Cortex",
+    "text": "Cortex"
+  },
+  {
+    "objectID": "20260223-MG_GSEA_brainRegions.html#hippocampus",
+    "href": "20260223-MG_GSEA_brainRegions.html#hippocampus",
+    "title": "Microglia GSEA across brain",
+    "section": "Hippocampus",
+    "text": "Hippocampus"
+  },
+  {
+    "objectID": "20260223-MG_GSEA_brainRegions.html#hypothalamus",
+    "href": "20260223-MG_GSEA_brainRegions.html#hypothalamus",
+    "title": "Microglia GSEA across brain",
+    "section": "Hypothalamus",
+    "text": "Hypothalamus"
+  },
+  {
+    "objectID": "20260223-MG_GSEA_brainRegions.html#thalamus",
+    "href": "20260223-MG_GSEA_brainRegions.html#thalamus",
+    "title": "Microglia GSEA across brain",
+    "section": "Thalamus",
+    "text": "Thalamus\nNo significant pathways (padj &lt; 0.05)."
+  },
+  {
+    "objectID": "20260223-MG_GSEA_brainRegions.html#wm",
+    "href": "20260223-MG_GSEA_brainRegions.html#wm",
+    "title": "Microglia GSEA across brain",
+    "section": "WM",
+    "text": "WM"
+  },
+  {
+    "objectID": "20260303-DEG_MG_brainRegions.html",
+    "href": "20260303-DEG_MG_brainRegions.html",
+    "title": "Differentially expressed genes in microglia across brain regions",
+    "section": "",
+    "text": "Code\nlibrary(qs2)\nlibrary(Seurat)\nlibrary(purrr)\nlibrary(DESeq2)\nlibrary(patchwork)\nlibrary(gridExtra)\nlibrary(pheatmap)\nlibrary(tidyverse)\nlibrary(kableExtra)\n\nsource(\"20260217-helper_functions.R\")\n\n\nmg &lt;- UpdateSeuratObject(qs_read(\"seurat_objects/20260225-mg_kai.qs2\"))"
+  },
+  {
+    "objectID": "20260303-DEG_MG_brainRegions.html#cell-counts-per-region",
+    "href": "20260303-DEG_MG_brainRegions.html#cell-counts-per-region",
+    "title": "Differentially expressed genes in microglia across brain regions",
+    "section": "Cell counts per region",
+    "text": "Cell counts per region\nThe table below enumerates the total number of microglial cells captured per brain region and their distribution across treatment groups (aducanumab, Adu; isotype control IgG).\n\n\nCode\nmg@meta.data |&gt;\n  group_by(Region) |&gt;\n  summarise(\n    n_cells = n(),\n    n_Adu   = sum(Treatment.Group == \"Adu\"),\n    n_IgG   = sum(Treatment.Group == \"IgG\")\n  ) |&gt;\n  arrange(desc(n_cells)) |&gt;\n  kbl(caption = \"Microglia per brain region\") |&gt;\n  kable_styling(\"striped\")\n\n\n\nMicroglia per brain region\n\n\nRegion\nn_cells\nn_Adu\nn_IgG\n\n\n\n\nCortex\n6745\n3536\n3209\n\n\nNA\n5441\n2861\n2580\n\n\nThalamus\n4582\n2353\n2229\n\n\nHippocampus\n2711\n1531\n1180\n\n\nHypothalamus\n1979\n1003\n976\n\n\nWM\n1545\n844\n701\n\n\n\n\n\n\n\nCode\nDefaultAssay(mg) &lt;- \"Xenium\"\nmg   &lt;- subset(mg, !is.na(Region))"
+  },
+  {
+    "objectID": "20260303-DEG_MG_brainRegions.html#pseudobulk-de-adu-vs-igg-per-region",
+    "href": "20260303-DEG_MG_brainRegions.html#pseudobulk-de-adu-vs-igg-per-region",
+    "title": "Differentially expressed genes in microglia across brain regions",
+    "section": "Pseudobulk DE (Adu vs IgG) per region",
+    "text": "Pseudobulk DE (Adu vs IgG) per region\nTo identify transcriptional changes induced by aducanumab in a spatially resolved manner, pseudobulk differential expression analysis was performed independently for each brain region.\nWithin each region, raw Xenium counts were summed per biological sample using AggregateExpression, yielding one pseudobulk profile per animal (n = 3 Adu, n = 3 IgG). Differential expression between treatment groups was then assessed using DESeq2, as implemented via Seurat’s FindMarkers interface with test.use = \"DESeq2\" and no minimum expression filter (min.pct = 0), ensuring all detected genes were considered.\nFor each eligible region, results are displayed as a volcano plot, highlighting genes reaching statistical significance (Benjamini-Hochberg-adjusted p &lt; 0.05), alongside a table of significant differentially expressed genes (DEGs), ranked by adjusted p-value.\n\nCode\nregions &lt;- sort(unique(mg$Region))\n\nde_by_region &lt;- map(regions, \\(reg) {\n  sub_obj &lt;- subset(mg, Region == reg)\n\n  # Replication guard: DESeq2 needs &gt;=2 samples per treatment group\n  n_per_group &lt;- table(\n    distinct(sub_obj@meta.data, sample_ID, Treatment.Group)$Treatment.Group\n  )\n  if (any(n_per_group &lt; 2)) {\n    cat(\"\\n\\n###\", reg, \"\\n\\n_Skipped: fewer than 2 samples per treatment group._\\n\\n\")\n    return(NULL)\n  }\n\n  bulk &lt;- AggregateExpression(sub_obj, group.by = \"sample_ID\", return.seurat = TRUE)\n\n  # AggregateExpression converts _ to - (e.g. KK4_465 -&gt; KK4-465)\n  sample_meta &lt;- distinct(sub_obj@meta.data, sample_ID, Treatment.Group) |&gt;\n    mutate(bulk_id = gsub(\"_\", \"-\", sample_ID))\n  bulk$Treatment.Group &lt;- sample_meta$Treatment.Group[\n    match(colnames(bulk), sample_meta$bulk_id)\n  ]\n  Idents(bulk) &lt;- \"Treatment.Group\"\n\n  res &lt;- anayet(bulk,\n                ident1      = \"Adu\",\n                ident2      = \"IgG\",\n                test_method = \"DESeq2\",\n                min_pct     = 0,\n                plot_title  = paste(\"Microglia —\", reg),\n                print_plot  = FALSE)\n\n  cat(\"\\n\\n###\", reg, \"\\n\\n\")\n\n  sig_tbl &lt;- if (nrow(res$significant_results) &gt; 0) {\n    res$significant_results |&gt;\n      select(p_val, avg_log2FC, p_val_adj) |&gt;\n      mutate(across(where(is.numeric), \\(x) signif(x, 3))) |&gt;\n      arrange(p_val_adj) |&gt;\n      tableGrob(theme = ttheme_minimal(base_size = 18))\n  } else {\n    tableGrob(\n      data.frame(Result = \"No significant DEGs\"),\n      theme = ttheme_minimal(base_size = 20)\n    )\n  }\n\n  print(res$volcano_plot + wrap_elements(sig_tbl) + plot_layout(widths = c(2, 1)))\n  res\n\n}) |&gt; set_names(regions) |&gt; compact()\n\n\nCortex\n\n\n\nHippocampus\n\n\n\nHypothalamus\n\n\n\nThalamus\n\n\n\nWM\n\n\n\nCode\nsaveRDS(\n  map(de_by_region, \\(res) res$all_results),\n  \"results/20260303-DEG_MG_byRegion.rds\"\n)"
+  },
+  {
+    "objectID": "20260303-DEG_MG_brainRegions.html#summary-visualisations",
+    "href": "20260303-DEG_MG_brainRegions.html#summary-visualisations",
+    "title": "Differentially expressed genes in microglia across brain regions",
+    "section": "Summary visualisations",
+    "text": "Summary visualisations\nThe following figures integrate findings across all brain regions to facilitate cross-regional comparison of microglial transcriptional responses to aducanumab treatment.\n\nDEG counts per region\nTo provide an overview of the magnitude and directionality of transcriptional responses across brain regions, the total number of significant DEGs (Benjamini-Hochberg-adjusted p &lt; 0.05) was tallied per region and stratified by direction of effect: genes upregulated in aducanumab- treated animals relative to IgG controls (Up in Adu) and genes downregulated (Down in Adu). Regions with no significant DEGs are absent from the plot.\n\n\nCode\ndeg_counts &lt;- imap(de_by_region, \\(res, reg) {\n  if (nrow(res$significant_results) == 0) return(NULL)\n  res$significant_results |&gt;\n    rownames_to_column(\"gene\") |&gt;\n    mutate(Region    = reg,\n           Direction = ifelse(avg_log2FC &gt; 0, \"Up in Adu\", \"Down in Adu\"))\n}) |&gt;\n  compact() |&gt;\n  list_rbind() |&gt;\n  dplyr::count(Region, Direction)\n\nggplot(deg_counts, aes(x = Region, y = n, fill = Direction)) +\n  geom_col(position = \"dodge\", width = 0.7, alpha = 0.9) +\n  scale_fill_manual(values = c(\"Up in Adu\" = \"#d73027\", \"Down in Adu\" = \"#4575b4\")) +\n  labs(\n    title    = \"Significant DEGs per brain region\",\n    subtitle = \"padj &lt; 0.05\",\n    x        = NULL,\n    y        = \"Number of DEGs\",\n    fill     = NULL\n  ) +\n  theme_minimal(base_size = 14) +\n  theme(panel.grid.major.x = element_blank(),\n  axis.text.x = element_text(size = 16,angle = 45, hjust = 1))\n\n\n\n\n\n\n\n\n\n\n\nCross-region log2FC heatmap\nTo identify genes with consistent or divergent regulation across brain regions, a hierarchically clustered heatmap was constructed for all genes reaching statistical significance (adjusted p &lt; 0.05) in at least one region.\nEach cell displays the log2 fold change (Adu vs IgG) for that gene–region combination. The colour scale is symmetric and centred at zero, with red denoting upregulation in aducanumab-treated animals and blue denoting downregulation. Asterisks mark gene–region combinations that individually meet the adjusted p &lt; 0.05 threshold. Genes and regions were clustered hierarchically by their fold-change profiles to reveal co-regulated gene modules and similarities between brain regions.\n\n\nCode\nall_de_long &lt;- imap(de_by_region, \\(res, reg) {\n  res$all_results |&gt; rownames_to_column(\"gene\") |&gt; mutate(Region = reg)\n}) |&gt; list_rbind()\n\nsig_genes &lt;- all_de_long |&gt;\n  filter(p_val_adj &lt; 0.05) |&gt;\n  pull(gene) |&gt;\n  unique()\n\nif (length(sig_genes) &gt; 0) {\n  fc_matrix &lt;- all_de_long |&gt;\n    filter(gene %in% sig_genes) |&gt;\n    pivot_wider(id_cols = gene, names_from = Region, values_from = avg_log2FC) |&gt;\n    column_to_rownames(\"gene\") |&gt;\n    as.matrix()\n\n  sig_matrix &lt;- all_de_long |&gt;\n    filter(gene %in% sig_genes) |&gt;\n    pivot_wider(id_cols = gene, names_from = Region, values_from = p_val_adj) |&gt;\n    column_to_rownames(\"gene\") |&gt;\n    as.matrix()\n\n  display_matrix &lt;- ifelse(!is.na(sig_matrix) & sig_matrix &lt; 0.05, \"*\", \"\")\n\n  clim &lt;- ceiling(max(abs(fc_matrix), na.rm = TRUE))\n\n  pheatmap(fc_matrix,\n    color         = colorRampPalette(c(\"#4575b4\", \"white\", \"#d73027\"))(100),\n    breaks        = seq(-clim, clim, length.out = 101),\n    na_col        = \"grey88\",\n    display_numbers = display_matrix,\n    fontsize_number = 24,\n    number_color  = \"black\",\n    cluster_rows  = TRUE,\n    cluster_cols  = TRUE,\n    main          = \"Microglia log2FC (Adu vs IgG) by region\\n\",\n    fontsize      = 18,\n    fontsize_row  = 15,\n    angle_col     = 45,\n    cellwidth = 30,\n    cellheight = 30\n  )\n} else {\n  message(\"No significant DEGs found across any region — heatmap skipped.\")\n}\n\n\n\n\n\n\n\n\n\n\n\nEffect size dot plot\nTo simultaneously visualise the effect size, statistical significance, and regional distribution of all significant DEGs, a dot plot was generated in which each point represents a single gene–region observation.\nThe horizontal position encodes the log2 fold change (Adu vs IgG), dot size reflects the strength of statistical evidence (−log10 adjusted p-value), and colour denotes the brain region. Genes are ordered along the vertical axis by their mean log2 fold change across all regions in which they were significant, placing consistently downregulated genes at the top and upregulated genes at the bottom.\n\n\nCode\nsig_all &lt;- imap(de_by_region, \\(res, reg) {\n  res$significant_results |&gt; rownames_to_column(\"gene\") |&gt; mutate(Region = reg)\n}) |&gt; list_rbind()\n\nif (nrow(sig_all) &gt; 0) {\n  gene_order &lt;- sig_all |&gt;\n    group_by(gene) |&gt;\n    summarise(mfc = mean(avg_log2FC)) |&gt;\n    arrange(mfc) |&gt;\n    pull(gene)\n\n  sig_all |&gt;\n    mutate(gene = factor(gene, levels = gene_order)) |&gt;\n    ggplot(aes(x = avg_log2FC, y = gene,\n               colour = Region,\n               size   = -log10(p_val_adj + 1e-300))) +\n    geom_vline(xintercept = 0, linetype = \"dashed\", colour = \"grey60\") +\n    geom_point(alpha = 0.85) +\n    scale_size_continuous(\n      name  = expression(-log[10](p[adj])),\n      range = c(2, 8)\n    ) +\n    scale_colour_brewer(palette = \"Set2\") +\n    labs(\n      title = \"Microglia DEGs — all brain regions\\n\",\n      x     = expression(log[2] * \"FC  (Adu / IgG)\"),\n      y     = NULL\n    ) +\n    theme_minimal(base_size = 13) +\n    theme(\n      axis.text         = element_text(size= 16,face = \"italic\"),\n      axis.title = element_text(size = 18),\n      plot.title = element_text(size = 20),\n      axis.ticks = element_blank(),\n      panel.grid.major.x  = element_blank()\n    )\n} else {\n  message(\"No significant DEGs found — dot plot skipped.\")\n}"
+  },
+  {
+    "objectID": "20260303-DEG_astrocytes_brainRegions.html",
+    "href": "20260303-DEG_astrocytes_brainRegions.html",
+    "title": "Differentially expressed genes in astrocytes across brain regions",
+    "section": "",
+    "text": "Code\nlibrary(qs2)\nlibrary(Seurat)\nlibrary(purrr)\nlibrary(DESeq2)\nlibrary(patchwork)\nlibrary(gridExtra)\nlibrary(pheatmap)\nlibrary(tidyverse)\nlibrary(kableExtra)\n\n\n# fgsea: Fast Gene Set Enrichment Analysis\n# https://bioconductor.org/packages/release/bioc/vignettes/fgsea/inst/doc/fgsea-tutorial.html\nlibrary(fgsea)\n# msigdbr: Access to MSigDB gene sets for multiple species\nlibrary(msigdbr)\n\nsource(\"20260217-helper_functions.R\")\n\n\nfull &lt;- qs_read(\"seurat_objects/20260217_Part2_fullobj.qs2\")\nmg   &lt;- subset(full, annotatedclusters == \"Astrocyte\")"
+  },
+  {
+    "objectID": "20260303-DEG_astrocytes_brainRegions.html#cell-counts-per-region",
+    "href": "20260303-DEG_astrocytes_brainRegions.html#cell-counts-per-region",
+    "title": "Differentially expressed genes in astrocytes across brain regions",
+    "section": "Cell counts per region",
+    "text": "Cell counts per region\nThe table below enumerates the total number of microglial cells captured per brain region and their distribution across treatment groups (aducanumab, Adu; isotype control IgG).\n\n\nCode\nmg@meta.data |&gt;\n  group_by(Region) |&gt;\n  summarise(\n    n_cells = n(),\n    n_Adu   = sum(Treatment.Group == \"Adu\"),\n    n_IgG   = sum(Treatment.Group == \"IgG\")\n  ) |&gt;\n  arrange(desc(n_cells)) |&gt;\n  kbl(caption = \"Astrocytes per brain region\") |&gt;\n  kable_styling(\"striped\")\n\n\n\nAstrocytes per brain region\n\n\nRegion\nn_cells\nn_Adu\nn_IgG\n\n\n\n\nCortex\n11230\n5485\n5745\n\n\nNA\n11220\n5921\n5299\n\n\nThalamus\n10843\n5273\n5570\n\n\nHypothalamus\n6834\n2974\n3860\n\n\nHippocampus\n5675\n2936\n2739\n\n\nWM\n2687\n1526\n1161\n\n\n\n\n\n\n\nCode\nDefaultAssay(mg) &lt;- \"Xenium\"\nmg   &lt;- subset(mg, !is.na(Region))"
+  },
+  {
+    "objectID": "20260303-DEG_astrocytes_brainRegions.html#pseudobulk-de-adu-vs-igg-per-region",
+    "href": "20260303-DEG_astrocytes_brainRegions.html#pseudobulk-de-adu-vs-igg-per-region",
+    "title": "Differentially expressed genes in astrocytes across brain regions",
+    "section": "Pseudobulk DE (Adu vs IgG) per region",
+    "text": "Pseudobulk DE (Adu vs IgG) per region\nTo identify transcriptional changes induced by aducanumab in a spatially resolved manner, pseudobulk differential expression analysis was performed independently for each brain region.\nWithin each region, raw Xenium counts were summed per biological sample using AggregateExpression, yielding one pseudobulk profile per animal (n = 3 Adu, n = 3 IgG). Differential expression between treatment groups was then assessed using DESeq2, as implemented via Seurat’s FindMarkers interface with test.use = \"DESeq2\" and no minimum expression filter (min.pct = 0), ensuring all detected genes were considered.\nFor each eligible region, results are displayed as a volcano plot, highlighting genes reaching statistical significance (Benjamini-Hochberg-adjusted p &lt; 0.05), alongside a table of significant differentially expressed genes (DEGs), ranked by adjusted p-value.\n\nCode\nregions &lt;- sort(unique(mg$Region))\n\nde_by_region &lt;- map(regions, \\(reg) {\n  sub_obj &lt;- subset(mg, Region == reg)\n\n  # Replication guard: DESeq2 needs &gt;=2 samples per treatment group\n  n_per_group &lt;- table(\n    distinct(sub_obj@meta.data, sample_ID, Treatment.Group)$Treatment.Group\n  )\n  if (any(n_per_group &lt; 2)) {\n    cat(\"\\n\\n###\", reg, \"\\n\\n_Skipped: fewer than 2 samples per treatment group._\\n\\n\")\n    return(NULL)\n  }\n\n  bulk &lt;- AggregateExpression(sub_obj, group.by = \"sample_ID\", return.seurat = TRUE)\n\n  # AggregateExpression converts _ to - (e.g. KK4_465 -&gt; KK4-465)\n  sample_meta &lt;- distinct(sub_obj@meta.data, sample_ID, Treatment.Group) |&gt;\n    mutate(bulk_id = gsub(\"_\", \"-\", sample_ID))\n  bulk$Treatment.Group &lt;- sample_meta$Treatment.Group[\n    match(colnames(bulk), sample_meta$bulk_id)\n  ]\n  Idents(bulk) &lt;- \"Treatment.Group\"\n\n  res &lt;- anayet(bulk,\n                ident1      = \"Adu\",\n                ident2      = \"IgG\",\n                test_method = \"DESeq2\",\n                min_pct     = 0,\n                plot_title  = paste(\"Astrocytes —\", reg),\n                print_plot  = FALSE)\n\n  cat(\"\\n\\n###\", reg, \"\\n\\n\")\n\n  sig_tbl &lt;- if (nrow(res$significant_results) &gt; 0) {\n    res$significant_results |&gt;\n      select(p_val, avg_log2FC, p_val_adj) |&gt;\n      mutate(across(where(is.numeric), \\(x) signif(x, 3))) |&gt;\n      arrange(p_val_adj) |&gt;\n      tableGrob(theme = ttheme_minimal(base_size = 18))\n  } else {\n    tableGrob(\n      data.frame(Result = \"No significant DEGs\"),\n      theme = ttheme_minimal(base_size = 20)\n    )\n  }\n\n  print(res$volcano_plot + wrap_elements(sig_tbl) + plot_layout(widths = c(2, 1)))\n  res\n\n}) |&gt; set_names(regions) |&gt; compact()\n\n\nCortex\n\n\n\nHippocampus\n\n\n\nHypothalamus\n\n\n\nThalamus\n\n\n\nWM\n\n\n\nCode\nsaveRDS(\n  map(de_by_region, \\(res) res$all_results),\n  \"results/20260223-DEG_astrocytes_byRegion.rds\"\n)"
+  },
+  {
+    "objectID": "20260303-DEG_astrocytes_brainRegions.html#summary-visualisations",
+    "href": "20260303-DEG_astrocytes_brainRegions.html#summary-visualisations",
+    "title": "Differentially expressed genes in astrocytes across brain regions",
+    "section": "Summary visualisations",
+    "text": "Summary visualisations\nThe following figures integrate findings across all brain regions to facilitate cross-regional comparison of microglial transcriptional responses to aducanumab treatment.\n\nDEG counts per region\nTo provide an overview of the magnitude and directionality of transcriptional responses across brain regions, the total number of significant DEGs (Benjamini-Hochberg-adjusted p &lt; 0.05) was tallied per region and stratified by direction of effect: genes upregulated in aducanumab- treated animals relative to IgG controls (Up in Adu) and genes downregulated (Down in Adu). Regions with no significant DEGs are absent from the plot.\n\n\nCode\ndeg_counts &lt;- imap(de_by_region, \\(res, reg) {\n  if (nrow(res$significant_results) == 0) return(NULL)\n  res$significant_results |&gt;\n    rownames_to_column(\"gene\") |&gt;\n    mutate(Region    = reg,\n           Direction = ifelse(avg_log2FC &gt; 0, \"Up in Adu\", \"Down in Adu\"))\n}) |&gt;\n  compact() |&gt;\n  list_rbind() |&gt;\n  dplyr::count(Region, Direction)\n\nggplot(deg_counts, aes(x = Region, y = n, fill = Direction)) +\n  geom_col(position = \"dodge\", width = 0.7, alpha = 0.9) +\n  scale_fill_manual(values = c(\"Up in Adu\" = \"#d73027\", \"Down in Adu\" = \"#4575b4\")) +\n  labs(\n    title    = \"Significant DEGs per brain region\",\n    subtitle = \"padj &lt; 0.05\",\n    x        = NULL,\n    y        = \"Number of DEGs\",\n    fill     = NULL\n  ) +\n  theme_minimal(base_size = 14) +\n  theme(panel.grid.major.x = element_blank(),\n  axis.text.x = element_text(size = 16,angle = 45, hjust = 1))\n\n\n\n\n\n\n\n\n\n\n\nCross-region log2FC heatmap\nTo identify genes with consistent or divergent regulation across brain regions, a hierarchically clustered heatmap was constructed for all genes reaching statistical significance (adjusted p &lt; 0.05) in at least one region.\nEach cell displays the log2 fold change (Adu vs IgG) for that gene–region combination. The colour scale is symmetric and centred at zero, with red denoting upregulation in aducanumab-treated animals and blue denoting downregulation. Asterisks mark gene–region combinations that individually meet the adjusted p &lt; 0.05 threshold. Genes and regions were clustered hierarchically by their fold-change profiles to reveal co-regulated gene modules and similarities between brain regions.\n\n\nCode\nall_de_long &lt;- imap(de_by_region, \\(res, reg) {\n  res$all_results |&gt; rownames_to_column(\"gene\") |&gt; mutate(Region = reg)\n}) |&gt; list_rbind()\n\nsig_genes &lt;- all_de_long |&gt;\n  filter(p_val_adj &lt; 0.05) |&gt;\n  pull(gene) |&gt;\n  unique()\n\nif (length(sig_genes) &gt; 0) {\n  fc_matrix &lt;- all_de_long |&gt;\n    filter(gene %in% sig_genes) |&gt;\n    pivot_wider(id_cols = gene, names_from = Region, values_from = avg_log2FC) |&gt;\n    column_to_rownames(\"gene\") |&gt;\n    as.matrix()\n\n  sig_matrix &lt;- all_de_long |&gt;\n    filter(gene %in% sig_genes) |&gt;\n    pivot_wider(id_cols = gene, names_from = Region, values_from = p_val_adj) |&gt;\n    column_to_rownames(\"gene\") |&gt;\n    as.matrix()\n\n  display_matrix &lt;- ifelse(!is.na(sig_matrix) & sig_matrix &lt; 0.05, \"*\", \"\")\n\n  clim &lt;- ceiling(max(abs(fc_matrix), na.rm = TRUE))\n\n  pheatmap(fc_matrix,\n    color         = colorRampPalette(c(\"#4575b4\", \"white\", \"#d73027\"))(100),\n    breaks        = seq(-clim, clim, length.out = 101),\n    na_col        = \"grey88\",\n    display_numbers = display_matrix,\n    fontsize_number = 24,\n    number_color  = \"black\",\n    cluster_rows  = TRUE,\n    cluster_cols  = TRUE,\n    main          = \"Astrocyte log2FC (Adu vs IgG) by region\\n\",\n    fontsize      = 18,\n    fontsize_row  = 15,\n    angle_col     = 45,\n    cellwidth = 30,\n    cellheight = 30\n  )\n} else {\n  message(\"No significant DEGs found across any region — heatmap skipped.\")\n}\n\n\n\n\n\n\n\n\n\n\n\nEffect size dot plot\nTo simultaneously visualise the effect size, statistical significance, and regional distribution of all significant DEGs, a dot plot was generated in which each point represents a single gene–region observation.\nThe horizontal position encodes the log2 fold change (Adu vs IgG), dot size reflects the strength of statistical evidence (−log10 adjusted p-value), and colour denotes the brain region. Genes are ordered along the vertical axis by their mean log2 fold change across all regions in which they were significant, placing consistently downregulated genes at the top and upregulated genes at the bottom.\n\n\nCode\nsig_all &lt;- imap(de_by_region, \\(res, reg) {\n  res$significant_results |&gt; rownames_to_column(\"gene\") |&gt; mutate(Region = reg)\n}) |&gt; list_rbind()\n\nif (nrow(sig_all) &gt; 0) {\n  gene_order &lt;- sig_all |&gt;\n    group_by(gene) |&gt;\n    summarise(mfc = mean(avg_log2FC)) |&gt;\n    arrange(mfc) |&gt;\n    pull(gene)\n\n  sig_all |&gt;\n    mutate(gene = factor(gene, levels = gene_order)) |&gt;\n    ggplot(aes(x = avg_log2FC, y = gene,\n               colour = Region,\n               size   = -log10(p_val_adj + 1e-300))) +\n    geom_vline(xintercept = 0, linetype = \"dashed\", colour = \"grey60\") +\n    geom_point(alpha = 0.85) +\n    scale_size_continuous(\n      name  = expression(-log[10](p[adj])),\n      range = c(2, 8)\n    ) +\n    scale_colour_brewer(palette = \"Set2\") +\n    labs(\n      title = \"Astrocytes DEGs — all brain regions\\n\",\n      x     = expression(log[2] * \"FC  (Adu / IgG)\"),\n      y     = NULL\n    ) +\n    theme_minimal(base_size = 13) +\n    theme(\n      axis.text         = element_text(size= 16,face = \"italic\"),\n      axis.title = element_text(size = 18),\n      plot.title = element_text(size = 20),\n      axis.ticks = element_blank(),\n      panel.grid.major.x  = element_blank()\n    )\n} else {\n  message(\"No significant DEGs found — dot plot skipped.\")\n}"
+  },
+  {
+    "objectID": "20260302-cell_types.html",
+    "href": "20260302-cell_types.html",
+    "title": "Cell types in full object",
+    "section": "",
+    "text": "Code\nlibrary(qs2)\nlibrary(Seurat)\nlibrary(tidyverse)\nlibrary(kableExtra)\n\n\nsource(\"20260217-helper_functions.R\")\n\n\nfull &lt;- qs_read(\"seurat_objects/20260217_Part2_fullobj.qs2\")\nmd &lt;- \n\nmd &lt;- full@meta.data \n\n\n\nNumber of cells\n\n\nCode\nn_cells &lt;- md |&gt; \n  group_by(annotatedclusters,Region, Treatment.Group) |&gt; \n  summarise(n_cells = n())\n\nggplot(n_cells, aes(x = Region , y = n_cells, fill = Treatment.Group))+\n  geom_col()+\n  facet_wrap(~annotatedclusters)+\n  theme_bw()+\n  theme(legend.position = \"bottom\",\n  axis.text.x = element_text(angle = 40, hjust = 1))"
+  },
+  {
+    "objectID": "CLAUDE.html",
+    "href": "CLAUDE.html",
+    "title": "CLAUDE.md",
+    "section": "",
+    "text": "This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.\n\n\nDifferential brain effects of anti-Aβ antibody treatment on Amyloid-Related Imaging Abnormalities (ARIA) in a mouse model expressing human APOE4.\n\nPlatform: 10x Genomics Xenium In Situ spatial transcriptomics (480-gene targeted panel)\nSamples: 6 mouse brains (C57BL/6J with human APOE4 targeted replacement) across 2 slides\nConditions: Aducanumab (anti-Aβ antibody) vs IgG control Slide 1 (0021991): KK4_465 (IgG), KK4_492 (Adu), KK4_504 (IgG) Slide 2 (0021998): KK4_496 (IgG), KK4_502 (Adu), KK4_464 (Adu)\n\n\n\n\nIndividual reports: quarto render &lt;file&gt;.qmd\n\n\n\n\n20260217-helper_functions.R — Reusable R functions (fiddle, anayet, scProp)\nseurat_objects/ — Post-RCTD/SPLIT Seurat objects (qs2 format, not tracked in git)\nresults/ — Saved RDS outputs from DE analyses\ndocs/ — Supporting images (e.g., brain region reference)\n\n\n\nScripts: YYYYMMDD-description.{R|qmd}\n\n\n\nOriginal objects (20260213) had metadata errors and were replaced with corrected 20260217 versions.\n\n\n\n\n\n\n\nFile\nContents\n\n\n\n\n20260217_Part2_fullobj.qs2\nFull object, all cell types\n\n\n20260217_Part2_immune.qs2\nImmune cell subset\n\n\n20260225-mg_kai.qs2\nMicroglia subset (Kai’s annotation, canonical)\n\n\n20260225-mg_kai_slide{1,2}.qs2\nPer-slide microglia\n\n\n20260217_Part2_fullobj_slide{1,2}.qs2\nPer-slide full objects\n\n\n\n\n\n\n\n\n\n\n\n\n\nColumn\nValues / Notes\n\n\n\n\nsample_ID\nKK4_465, KK4_492, KK4_504, KK4_496, KK4_502, KK4_464\n\n\nTreatment.Group\n“Adu” or “IgG”\n\n\nRegion\nBrain region (may contain NA)\n\n\nannotatedclusters\nMajor cell types (Endothelial, Astrocyte, Oligodendrocyte, OPC, etc.)\n\n\nannotated_subclusters\nImmune subtypes with spaces (e.g., “Activated DAM”, “Border-like Microglia”)\n\n\nsub.cluster\nMicroglia subclusters (in Kai’s mg object)\n\n\n\n\n\n\n\nXenium — Raw counts only (no data layer). Use for pseudobulk DESeq2.\nSCT — SCT-normalized. Use for visualization/normalization.\nXenium_SPLIT, SCT_SPLIT — SPLIT-decontaminated versions.\n\n\n\n\n\nThree main functions, each with a _help() companion:\n\n\n\n\n\n\n\n\nFunction\nPurpose\nKey packages\n\n\n\n\nfiddle()\nMulti-faceted violin plots with colored cluster labels on y-axis\nggplot2, ggtext, grid\n\n\nanayet()\nDifferential expression (FindMarkers + DESeq2) with auto-scaled volcano plots\nSeurat, EnhancedVolcano\n\n\nscProp()\nCluster proportion summaries per sample, with optional compareGroups table\nggplot2, compareGroups\n\n\n\nAlso includes density_decor() for consistent density plot theming.\nDefault metadata columns expected: final_clusters_clean (cluster), Mouse.ID (sample), Treatment.Group (treatment). Override via function arguments when using objects with different column names.\n\n\n\nThe DEG qmd files (MG, endothelial, astrocytes, oligo, OPC) share an identical structure:\n\nLoad Seurat object → subset to cell type → set Xenium as default assay\nMap over brain regions: check replication (≥2 samples/group), aggregate pseudobulk via AggregateExpression(group.by = \"sample_ID\", return.seurat = TRUE)\nCall anayet() with DESeq2 for each region\nSummary visualizations: DEG count bar plot, cross-region log2FC heatmap, effect size dot plot\nSave results list to results/ as RDS\n\n\n\n\n\nAggregateExpression() converts underscores to hyphens in column names (KK4_465 → KK4-465). Handle with gsub(\"_\", \"-\", ...) when mapping treatment metadata.\nFindMarkers(test.use = \"DESeq2\") on SCT assay triggers CheckDots error — use Xenium assay.\nXenium assay only has counts layer (no data). Pseudobulk via AggregateExpression(return.seurat = TRUE) creates both layers automatically.\n480-gene panel limits GSEA: use minSize = 5 (not default 15) in fgsea().\n\n\n\n\n\nSeurat (v5), tidyverse, ggtext, grid, scales, forcats\nEnhancedVolcano, compareGroups, speckle, kableExtra\nDESeq2, fgsea, msigdbr — for DE and pathway analysis\nNo renv lockfile — packages managed via library() calls\n\n\n\n\n\nUse /coding-standard\nin-line annotate the code (on top)\ndo not include package operator :: (dplyr::, purr::). Load the packages if necessary.\n\n\n\n\n\n\nAll commits must follow this structure:\nTitle line summarizing the change\n\nBullet point explaining specific change\nBullet point explaining another change\nAdditional bullets as needed\n\nThe title should be a brief, complete sentence. Leave one blank line between the title and the bullet points. Each bullet point describes a specific change made in the commit. IMPORTANT: do not include messages indicating that the commit has been made by Claude (e.g., “Committed by Claude”, “Claude made changes”, “Generated with Claude Code”, etc.).\n\n\n\nChanges to analysis code, new visualizations, parameter adjustments, and data processing steps require bullet points explaining what was done. Changes to documentation, comments, or markdown text can use simple title-only messages without bullets.\n\n\n\nAdd differential expression analysis for treatment vs control\n\n- Ran DESeq2 with default parameters on normalized counts\n- Filtered results for padj &lt; 0.05 and log2FC &gt; 1\n- Generated volcano plot saved to figures/volcano_treatment.png\n- Exported significant genes to results/DE_genes_treatment.csv\n\n\n\nUpdate README with installation instructions"
+  },
+  {
+    "objectID": "CLAUDE.html#project-overview",
+    "href": "CLAUDE.html#project-overview",
+    "title": "CLAUDE.md",
+    "section": "",
+    "text": "Differential brain effects of anti-Aβ antibody treatment on Amyloid-Related Imaging Abnormalities (ARIA) in a mouse model expressing human APOE4.\n\nPlatform: 10x Genomics Xenium In Situ spatial transcriptomics (480-gene targeted panel)\nSamples: 6 mouse brains (C57BL/6J with human APOE4 targeted replacement) across 2 slides\nConditions: Aducanumab (anti-Aβ antibody) vs IgG control Slide 1 (0021991): KK4_465 (IgG), KK4_492 (Adu), KK4_504 (IgG) Slide 2 (0021998): KK4_496 (IgG), KK4_502 (Adu), KK4_464 (Adu)"
+  },
+  {
+    "objectID": "CLAUDE.html#rendering",
+    "href": "CLAUDE.html#rendering",
+    "title": "CLAUDE.md",
+    "section": "",
+    "text": "Individual reports: quarto render &lt;file&gt;.qmd"
+  },
+  {
+    "objectID": "CLAUDE.html#directory-contents",
+    "href": "CLAUDE.html#directory-contents",
+    "title": "CLAUDE.md",
+    "section": "",
+    "text": "20260217-helper_functions.R — Reusable R functions (fiddle, anayet, scProp)\nseurat_objects/ — Post-RCTD/SPLIT Seurat objects (qs2 format, not tracked in git)\nresults/ — Saved RDS outputs from DE analyses\ndocs/ — Supporting images (e.g., brain region reference)\n\n\n\nScripts: YYYYMMDD-description.{R|qmd}\n\n\n\nOriginal objects (20260213) had metadata errors and were replaced with corrected 20260217 versions.\n\n\n\n\n\n\n\nFile\nContents\n\n\n\n\n20260217_Part2_fullobj.qs2\nFull object, all cell types\n\n\n20260217_Part2_immune.qs2\nImmune cell subset\n\n\n20260225-mg_kai.qs2\nMicroglia subset (Kai’s annotation, canonical)\n\n\n20260225-mg_kai_slide{1,2}.qs2\nPer-slide microglia\n\n\n20260217_Part2_fullobj_slide{1,2}.qs2\nPer-slide full objects\n\n\n\n\n\n\n\n\n\n\n\n\n\nColumn\nValues / Notes\n\n\n\n\nsample_ID\nKK4_465, KK4_492, KK4_504, KK4_496, KK4_502, KK4_464\n\n\nTreatment.Group\n“Adu” or “IgG”\n\n\nRegion\nBrain region (may contain NA)\n\n\nannotatedclusters\nMajor cell types (Endothelial, Astrocyte, Oligodendrocyte, OPC, etc.)\n\n\nannotated_subclusters\nImmune subtypes with spaces (e.g., “Activated DAM”, “Border-like Microglia”)\n\n\nsub.cluster\nMicroglia subclusters (in Kai’s mg object)\n\n\n\n\n\n\n\nXenium — Raw counts only (no data layer). Use for pseudobulk DESeq2.\nSCT — SCT-normalized. Use for visualization/normalization.\nXenium_SPLIT, SCT_SPLIT — SPLIT-decontaminated versions."
+  },
+  {
+    "objectID": "CLAUDE.html#helper-functions-20260217-helper_functions.r",
+    "href": "CLAUDE.html#helper-functions-20260217-helper_functions.r",
+    "title": "CLAUDE.md",
+    "section": "",
+    "text": "Three main functions, each with a _help() companion:\n\n\n\n\n\n\n\n\nFunction\nPurpose\nKey packages\n\n\n\n\nfiddle()\nMulti-faceted violin plots with colored cluster labels on y-axis\nggplot2, ggtext, grid\n\n\nanayet()\nDifferential expression (FindMarkers + DESeq2) with auto-scaled volcano plots\nSeurat, EnhancedVolcano\n\n\nscProp()\nCluster proportion summaries per sample, with optional compareGroups table\nggplot2, compareGroups\n\n\n\nAlso includes density_decor() for consistent density plot theming.\nDefault metadata columns expected: final_clusters_clean (cluster), Mouse.ID (sample), Treatment.Group (treatment). Override via function arguments when using objects with different column names."
+  },
+  {
+    "objectID": "CLAUDE.html#analysis-workflow-pattern",
+    "href": "CLAUDE.html#analysis-workflow-pattern",
+    "title": "CLAUDE.md",
+    "section": "",
+    "text": "The DEG qmd files (MG, endothelial, astrocytes, oligo, OPC) share an identical structure:\n\nLoad Seurat object → subset to cell type → set Xenium as default assay\nMap over brain regions: check replication (≥2 samples/group), aggregate pseudobulk via AggregateExpression(group.by = \"sample_ID\", return.seurat = TRUE)\nCall anayet() with DESeq2 for each region\nSummary visualizations: DEG count bar plot, cross-region log2FC heatmap, effect size dot plot\nSave results list to results/ as RDS"
+  },
+  {
+    "objectID": "CLAUDE.html#seurat-v5-gotchas",
+    "href": "CLAUDE.html#seurat-v5-gotchas",
+    "title": "CLAUDE.md",
+    "section": "",
+    "text": "AggregateExpression() converts underscores to hyphens in column names (KK4_465 → KK4-465). Handle with gsub(\"_\", \"-\", ...) when mapping treatment metadata.\nFindMarkers(test.use = \"DESeq2\") on SCT assay triggers CheckDots error — use Xenium assay.\nXenium assay only has counts layer (no data). Pseudobulk via AggregateExpression(return.seurat = TRUE) creates both layers automatically.\n480-gene panel limits GSEA: use minSize = 5 (not default 15) in fgsea()."
+  },
+  {
+    "objectID": "CLAUDE.html#key-r-packages",
+    "href": "CLAUDE.html#key-r-packages",
+    "title": "CLAUDE.md",
+    "section": "",
+    "text": "Seurat (v5), tidyverse, ggtext, grid, scales, forcats\nEnhancedVolcano, compareGroups, speckle, kableExtra\nDESeq2, fgsea, msigdbr — for DE and pathway analysis\nNo renv lockfile — packages managed via library() calls"
+  },
+  {
+    "objectID": "CLAUDE.html#coding-style",
+    "href": "CLAUDE.html#coding-style",
+    "title": "CLAUDE.md",
+    "section": "",
+    "text": "Use /coding-standard\nin-line annotate the code (on top)\ndo not include package operator :: (dplyr::, purr::). Load the packages if necessary."
+  },
+  {
+    "objectID": "CLAUDE.html#git-workflow",
+    "href": "CLAUDE.html#git-workflow",
+    "title": "CLAUDE.md",
+    "section": "",
+    "text": "All commits must follow this structure:\nTitle line summarizing the change\n\nBullet point explaining specific change\nBullet point explaining another change\nAdditional bullets as needed\n\nThe title should be a brief, complete sentence. Leave one blank line between the title and the bullet points. Each bullet point describes a specific change made in the commit. IMPORTANT: do not include messages indicating that the commit has been made by Claude (e.g., “Committed by Claude”, “Claude made changes”, “Generated with Claude Code”, etc.).\n\n\n\nChanges to analysis code, new visualizations, parameter adjustments, and data processing steps require bullet points explaining what was done. Changes to documentation, comments, or markdown text can use simple title-only messages without bullets.\n\n\n\nAdd differential expression analysis for treatment vs control\n\n- Ran DESeq2 with default parameters on normalized counts\n- Filtered results for padj &lt; 0.05 and log2FC &gt; 1\n- Generated volcano plot saved to figures/volcano_treatment.png\n- Exported significant genes to results/DE_genes_treatment.csv\n\n\n\nUpdate README with installation instructions"
+  },
+  {
+    "objectID": "20260304-DEG_allCellTypes_brainRegions.html",
+    "href": "20260304-DEG_allCellTypes_brainRegions.html",
+    "title": "Differentially expressed genes across all cell types (Adu vs IgG)",
+    "section": "",
+    "text": "Code\nlibrary(qs2)\nlibrary(Seurat)\nlibrary(purrr)\nlibrary(DESeq2)\nlibrary(patchwork)\nlibrary(gridExtra)\nlibrary(pheatmap)\nlibrary(tidyverse)\nlibrary(kableExtra)\n\nsource(\"20260217-helper_functions.R\")\n\n# Load full object and microglia object (Kai's canonical annotation)\nfull    &lt;- qs_read(\"seurat_objects/20260217_Part2_fullobj.qs2\")\nmg_kai  &lt;- UpdateSeuratObject(qs_read(\"seurat_objects/20260225-mg_kai.qs2\"))\n\n# Discover all cell types\ncell_types &lt;- sort(unique(full$annotatedclusters))"
+  },
+  {
+    "objectID": "20260304-DEG_allCellTypes_brainRegions.html#section",
+    "href": "20260304-DEG_allCellTypes_brainRegions.html#section",
+    "title": "Differentially expressed genes across all cell types (Adu vs IgG)",
+    "section": "1",
+    "text": "1\n\nCell counts\n\n\nCP — cells per treatment\n\n\n\n\nn_cells\n\n\nn_Adu\n\n\nn_IgG\n\n\n\n\n\n\n4129\n\n\n2404\n\n\n1725\n\n\n\n\n\n\nVolcano plot\n\n\n\nPer-sample expression of significant DEGs"
+  },
+  {
+    "objectID": "20260304-DEG_allCellTypes_brainRegions.html#section-1",
+    "href": "20260304-DEG_allCellTypes_brainRegions.html#section-1",
+    "title": "Differentially expressed genes across all cell types (Adu vs IgG)",
+    "section": "2",
+    "text": "2\n\nCell counts\n\n\nEndothelial — cells per treatment\n\n\n\n\nn_cells\n\n\nn_Adu\n\n\nn_IgG\n\n\n\n\n\n\n25583\n\n\n12658\n\n\n12925\n\n\n\n\n\n\nVolcano plot"
+  },
+  {
+    "objectID": "20260304-DEG_allCellTypes_brainRegions.html#section-2",
+    "href": "20260304-DEG_allCellTypes_brainRegions.html#section-2",
+    "title": "Differentially expressed genes across all cell types (Adu vs IgG)",
+    "section": "3",
+    "text": "3\n\nCell counts\n\n\nEpendymal — cells per treatment\n\n\n\n\nn_cells\n\n\nn_Adu\n\n\nn_IgG\n\n\n\n\n\n\n3604\n\n\n2041\n\n\n1563\n\n\n\n\n\n\nVolcano plot\n\n\n\nPer-sample expression of significant DEGs"
+  },
+  {
+    "objectID": "20260304-DEG_allCellTypes_brainRegions.html#section-3",
+    "href": "20260304-DEG_allCellTypes_brainRegions.html#section-3",
+    "title": "Differentially expressed genes across all cell types (Adu vs IgG)",
+    "section": "4",
+    "text": "4\n\nCell counts\n\n\nFibroblast — cells per treatment\n\n\n\n\nn_cells\n\n\nn_Adu\n\n\nn_IgG\n\n\n\n\n\n\n6179\n\n\n2583\n\n\n3596\n\n\n\n\n\n\nVolcano plot"
+  },
+  {
+    "objectID": "20260304-DEG_allCellTypes_brainRegions.html#section-4",
+    "href": "20260304-DEG_allCellTypes_brainRegions.html#section-4",
+    "title": "Differentially expressed genes across all cell types (Adu vs IgG)",
+    "section": "5",
+    "text": "5\n\nCell counts\n\n\nPericyte — cells per treatment\n\n\n\n\nn_cells\n\n\nn_Adu\n\n\nn_IgG\n\n\n\n\n\n\n5927\n\n\n3062\n\n\n2865\n\n\n\n\n\n\nVolcano plot"
+  },
+  {
+    "objectID": "20260304-DEG_allCellTypes_brainRegions.html#section-5",
+    "href": "20260304-DEG_allCellTypes_brainRegions.html#section-5",
+    "title": "Differentially expressed genes across all cell types (Adu vs IgG)",
+    "section": "6",
+    "text": "6\n\nCell counts\n\n\nVLMC — cells per treatment\n\n\n\n\nn_cells\n\n\nn_Adu\n\n\nn_IgG\n\n\n\n\n\n\n658\n\n\n241\n\n\n417\n\n\n\n\n\n\nVolcano plot"
+  },
+  {
+    "objectID": "20260304-DEG_allCellTypes_brainRegions.html#section-6",
+    "href": "20260304-DEG_allCellTypes_brainRegions.html#section-6",
+    "title": "Differentially expressed genes across all cell types (Adu vs IgG)",
+    "section": "7",
+    "text": "7\n\nCell counts\n\n\nVSMC — cells per treatment\n\n\n\n\nn_cells\n\n\nn_Adu\n\n\nn_IgG\n\n\n\n\n\n\n2536\n\n\n1179\n\n\n1357\n\n\n\n\n\n\nVolcano plot"
+  },
+  {
+    "objectID": "20260304-DEG_allCellTypes_brainRegions.html#section-7",
+    "href": "20260304-DEG_allCellTypes_brainRegions.html#section-7",
+    "title": "Differentially expressed genes across all cell types (Adu vs IgG)",
+    "section": "8",
+    "text": "8\n\nCell counts\n\n\nBAM — cells per treatment\n\n\n\n\nn_cells\n\n\nn_Adu\n\n\nn_IgG\n\n\n\n\n\n\n1477\n\n\n717\n\n\n760\n\n\n\n\n\n\nVolcano plot"
+  },
+  {
+    "objectID": "20260304-DEG_allCellTypes_brainRegions.html#section-8",
+    "href": "20260304-DEG_allCellTypes_brainRegions.html#section-8",
+    "title": "Differentially expressed genes across all cell types (Adu vs IgG)",
+    "section": "9",
+    "text": "9\n\nCell counts\n\n\nMicroglia — cells per treatment\n\n\n\n\nn_cells\n\n\nn_Adu\n\n\nn_IgG\n\n\n\n\n\n\n23003\n\n\n12128\n\n\n10875\n\n\n\n\n\n\nVolcano plot"
+  },
+  {
+    "objectID": "20260304-DEG_allCellTypes_brainRegions.html#section-9",
+    "href": "20260304-DEG_allCellTypes_brainRegions.html#section-9",
+    "title": "Differentially expressed genes across all cell types (Adu vs IgG)",
+    "section": "10",
+    "text": "10\n\nCell counts\n\n\nT Cell — cells per treatment\n\n\n\n\nn_cells\n\n\nn_Adu\n\n\nn_IgG\n\n\n\n\n\n\n591\n\n\n354\n\n\n237\n\n\n\n\n\n\nVolcano plot\n\n\n\nPer-sample expression of significant DEGs"
+  },
+  {
+    "objectID": "20260304-DEG_allCellTypes_brainRegions.html#section-10",
+    "href": "20260304-DEG_allCellTypes_brainRegions.html#section-10",
+    "title": "Differentially expressed genes across all cell types (Adu vs IgG)",
+    "section": "11",
+    "text": "11\n\nCell counts\n\n\nAstrocyte — cells per treatment\n\n\n\n\nn_cells\n\n\nn_Adu\n\n\nn_IgG\n\n\n\n\n\n\n48489\n\n\n24115\n\n\n24374\n\n\n\n\n\n\nVolcano plot\n\n\n\nPer-sample expression of significant DEGs"
+  },
+  {
+    "objectID": "20260304-DEG_allCellTypes_brainRegions.html#section-11",
+    "href": "20260304-DEG_allCellTypes_brainRegions.html#section-11",
+    "title": "Differentially expressed genes across all cell types (Adu vs IgG)",
+    "section": "12",
+    "text": "12\n\nCell counts\n\n\nOligodendrocyte — cells per treatment\n\n\n\n\nn_cells\n\n\nn_Adu\n\n\nn_IgG\n\n\n\n\n\n\n70324\n\n\n37189\n\n\n33135\n\n\n\n\n\n\nVolcano plot\n\n\n\nPer-sample expression of significant DEGs"
+  },
+  {
+    "objectID": "20260304-DEG_allCellTypes_brainRegions.html#section-12",
+    "href": "20260304-DEG_allCellTypes_brainRegions.html#section-12",
+    "title": "Differentially expressed genes across all cell types (Adu vs IgG)",
+    "section": "13",
+    "text": "13\n\nCell counts\n\n\nOPC — cells per treatment\n\n\n\n\nn_cells\n\n\nn_Adu\n\n\nn_IgG\n\n\n\n\n\n\n9878\n\n\n5246\n\n\n4632\n\n\n\n\n\n\nVolcano plot\n\n\n\nPer-sample expression of significant DEGs"
+  },
+  {
+    "objectID": "20260304-DEG_allCellTypes_brainRegions.html#section-13",
+    "href": "20260304-DEG_allCellTypes_brainRegions.html#section-13",
+    "title": "Differentially expressed genes across all cell types (Adu vs IgG)",
+    "section": "14",
+    "text": "14\n\nCell counts\n\n\nGABAergic Neuron 1 — cells per treatment\n\n\n\n\nn_cells\n\n\nn_Adu\n\n\nn_IgG\n\n\n\n\n\n\n21175\n\n\n9162\n\n\n12013\n\n\n\n\n\n\nVolcano plot"
+  },
+  {
+    "objectID": "20260304-DEG_allCellTypes_brainRegions.html#section-14",
+    "href": "20260304-DEG_allCellTypes_brainRegions.html#section-14",
+    "title": "Differentially expressed genes across all cell types (Adu vs IgG)",
+    "section": "15",
+    "text": "15\n\nCell counts\n\n\nGABAergic Neuron 2 — cells per treatment\n\n\n\n\nn_cells\n\n\nn_Adu\n\n\nn_IgG\n\n\n\n\n\n\n15026\n\n\n7531\n\n\n7495\n\n\n\n\n\n\nVolcano plot"
+  },
+  {
+    "objectID": "20260304-DEG_allCellTypes_brainRegions.html#section-15",
+    "href": "20260304-DEG_allCellTypes_brainRegions.html#section-15",
+    "title": "Differentially expressed genes across all cell types (Adu vs IgG)",
+    "section": "16",
+    "text": "16\n\nCell counts\n\n\nGABAergic Neuron 3 — cells per treatment\n\n\n\n\nn_cells\n\n\nn_Adu\n\n\nn_IgG\n\n\n\n\n\n\n5074\n\n\n2427\n\n\n2647\n\n\n\n\n\n\nVolcano plot"
+  },
+  {
+    "objectID": "20260304-DEG_allCellTypes_brainRegions.html#section-16",
+    "href": "20260304-DEG_allCellTypes_brainRegions.html#section-16",
+    "title": "Differentially expressed genes across all cell types (Adu vs IgG)",
+    "section": "17",
+    "text": "17\n\nCell counts\n\n\nGABAergic Neuron 4 — cells per treatment\n\n\n\n\nn_cells\n\n\nn_Adu\n\n\nn_IgG\n\n\n\n\n\n\n4091\n\n\n2117\n\n\n1974\n\n\n\n\n\n\nVolcano plot\n\n\n\nPer-sample expression of significant DEGs"
+  },
+  {
+    "objectID": "20260304-DEG_allCellTypes_brainRegions.html#section-17",
+    "href": "20260304-DEG_allCellTypes_brainRegions.html#section-17",
+    "title": "Differentially expressed genes across all cell types (Adu vs IgG)",
+    "section": "18",
+    "text": "18\n\nCell counts\n\n\nGlutamatergic Neuron 1 — cells per treatment\n\n\n\n\nn_cells\n\n\nn_Adu\n\n\nn_IgG\n\n\n\n\n\n\n39421\n\n\n20404\n\n\n19017\n\n\n\n\n\n\nVolcano plot\n\n\n\nPer-sample expression of significant DEGs"
+  },
+  {
+    "objectID": "20260304-DEG_allCellTypes_brainRegions.html#section-18",
+    "href": "20260304-DEG_allCellTypes_brainRegions.html#section-18",
+    "title": "Differentially expressed genes across all cell types (Adu vs IgG)",
+    "section": "19",
+    "text": "19\n\nCell counts\n\n\nGlutamatergic Neuron 2 — cells per treatment\n\n\n\n\nn_cells\n\n\nn_Adu\n\n\nn_IgG\n\n\n\n\n\n\n34335\n\n\n15773\n\n\n18562\n\n\n\n\n\n\nVolcano plot\n\n\n\nPer-sample expression of significant DEGs"
+  },
+  {
+    "objectID": "20260304-DEG_allCellTypes_brainRegions.html#section-19",
+    "href": "20260304-DEG_allCellTypes_brainRegions.html#section-19",
+    "title": "Differentially expressed genes across all cell types (Adu vs IgG)",
+    "section": "20",
+    "text": "20\n\nCell counts\n\n\nGlutamatergic Neuron 3 — cells per treatment\n\n\n\n\nn_cells\n\n\nn_Adu\n\n\nn_IgG\n\n\n\n\n\n\n7483\n\n\n3830\n\n\n3653\n\n\n\n\n\n\nVolcano plot"
+  },
+  {
+    "objectID": "20260304-DEG_allCellTypes_brainRegions.html#section-20",
+    "href": "20260304-DEG_allCellTypes_brainRegions.html#section-20",
+    "title": "Differentially expressed genes across all cell types (Adu vs IgG)",
+    "section": "21",
+    "text": "21\n\nCell counts\n\n\nGlutamatergic Neuron 4 — cells per treatment\n\n\n\n\nn_cells\n\n\nn_Adu\n\n\nn_IgG\n\n\n\n\n\n\n4155\n\n\n2086\n\n\n2069\n\n\n\n\n\n\nVolcano plot"
+  },
+  {
+    "objectID": "20260304-DEG_allCellTypes_brainRegions.html#section-21",
+    "href": "20260304-DEG_allCellTypes_brainRegions.html#section-21",
+    "title": "Differentially expressed genes across all cell types (Adu vs IgG)",
+    "section": "22",
+    "text": "22\n\nCell counts\n\n\nGlutamatergic Neuron 5 — cells per treatment\n\n\n\n\nn_cells\n\n\nn_Adu\n\n\nn_IgG\n\n\n\n\n\n\n1994\n\n\n1038\n\n\n956\n\n\n\n\n\n\nVolcano plot\n\n\n\nPer-sample expression of significant DEGs\n\n\n\nCode\nsaveRDS(\n  map(all_ct_results, \\(res) res$all_results),\n  \"results/20260304-DEG_allCellTypes.rds\"\n)"
+  },
+  {
+    "objectID": "20260304-DEG_allCellTypes_brainRegions.html#deg-counts-per-cell-type",
+    "href": "20260304-DEG_allCellTypes_brainRegions.html#deg-counts-per-cell-type",
+    "title": "Differentially expressed genes across all cell types (Adu vs IgG)",
+    "section": "DEG counts per cell type",
+    "text": "DEG counts per cell type\n\n\nCode\ndeg_counts &lt;- imap(all_ct_results, \\(res, ct) {\n  if (nrow(res$significant_results) == 0) return(NULL)\n  res$significant_results |&gt;\n    rownames_to_column(\"gene\") |&gt;\n    mutate(CellType  = ct,\n           Direction = ifelse(avg_log2FC &gt; 0, \"Up in Adu\", \"Down in Adu\"))\n}) |&gt;\n  compact() |&gt;\n  list_rbind() |&gt;\n  dplyr::count(CellType, Direction)\n\nif (nrow(deg_counts) &gt; 0) {\n  ggplot(deg_counts, aes(x = reorder(CellType, n, sum), y = n, fill = Direction)) +\n    geom_col(position = \"dodge\", width = 0.7, alpha = 0.9) +\n    coord_flip() +\n    scale_fill_manual(values = c(\"Up in Adu\" = \"#d73027\", \"Down in Adu\" = \"#4575b4\")) +\n    labs(\n      title    = \"Significant DEGs per cell type\",\n      subtitle = \"padj &lt; 0.05\",\n      x        = NULL,\n      y        = \"Number of DEGs\",\n      fill     = NULL\n    ) +\n    theme_minimal(base_size = 14) +\n    theme(panel.grid.major.y = element_blank(),\n          axis.text = element_text(size = 14))\n} else {\n  message(\"No significant DEGs found in any cell type.\")\n}"
+  },
+  {
+    "objectID": "20260304-DEG_allCellTypes_brainRegions.html#cross-cell-type-log2fc-heatmap",
+    "href": "20260304-DEG_allCellTypes_brainRegions.html#cross-cell-type-log2fc-heatmap",
+    "title": "Differentially expressed genes across all cell types (Adu vs IgG)",
+    "section": "Cross-cell-type log2FC heatmap",
+    "text": "Cross-cell-type log2FC heatmap\nA heatmap of log2 fold changes (Adu vs IgG) for all genes significant (padj &lt; 0.05) in at least one cell type. Asterisks mark individually significant cell-type–gene combinations.\n\n\nCode\n# Collect all DE results into one long data frame\ncross_long &lt;- imap(all_ct_results, \\(res, ct) {\n  res$all_results |&gt;\n    rownames_to_column(\"gene\") |&gt;\n    mutate(CellType = ct)\n}) |&gt; list_rbind()\n\n# Genes significant in at least one cell type\nsig_genes_cross &lt;- cross_long |&gt;\n  filter(p_val_adj &lt; 0.05) |&gt;\n  pull(gene) |&gt;\n  unique()\n\nif (length(sig_genes_cross) &gt; 0) {\n\n  # If too many genes, keep those significant in &gt;=2 cell types\n  if (length(sig_genes_cross) &gt; 100) {\n    gene_sig_count &lt;- cross_long |&gt;\n      filter(p_val_adj &lt; 0.05) |&gt;\n      distinct(gene, CellType) |&gt;\n      count(gene)\n    filtered &lt;- gene_sig_count |&gt; filter(n &gt;= 2) |&gt; pull(gene)\n    if (length(filtered) &gt; 0) sig_genes_cross &lt;- filtered\n  }\n\n  # log2FC matrix: rows = genes, columns = cell types\n  fc_mat &lt;- cross_long |&gt;\n    filter(gene %in% sig_genes_cross) |&gt;\n    pivot_wider(id_cols = gene, names_from = CellType, values_from = avg_log2FC) |&gt;\n    column_to_rownames(\"gene\") |&gt;\n    as.matrix()\n\n  # Significance matrix\n  sig_mat &lt;- cross_long |&gt;\n    filter(gene %in% sig_genes_cross) |&gt;\n    pivot_wider(id_cols = gene, names_from = CellType, values_from = p_val_adj) |&gt;\n    column_to_rownames(\"gene\") |&gt;\n    as.matrix()\n\n  display_mat &lt;- ifelse(!is.na(sig_mat) & sig_mat &lt; 0.05, \"*\", \"\")\n\n  clim &lt;- ceiling(max(abs(fc_mat), na.rm = TRUE))\n\n  pheatmap(fc_mat,\n    color             = colorRampPalette(c(\"#4575b4\", \"white\", \"#d73027\"))(100),\n    breaks            = seq(-clim, clim, length.out = 101),\n    na_col            = \"grey88\",\n    display_numbers   = display_mat,\n    fontsize_number   = 18,\n    number_color      = \"black\",\n    cluster_rows      = TRUE,\n    cluster_cols      = TRUE,\n    main              = \"Cross-cell-type log2FC (Adu vs IgG)\\n\",\n    fontsize          = 14,\n    fontsize_row      = 12,\n    fontsize_col      = 14,\n    angle_col         = 45,\n    cellwidth         = 30,\n    cellheight        = 20\n  )\n} else {\n  message(\"No significant DEGs found across any cell type — heatmap skipped.\")\n}"
+  },
+  {
+    "objectID": "20260304-DEG_allCellTypes_brainRegions.html#effect-size-dot-plot",
+    "href": "20260304-DEG_allCellTypes_brainRegions.html#effect-size-dot-plot",
+    "title": "Differentially expressed genes across all cell types (Adu vs IgG)",
+    "section": "Effect size dot plot",
+    "text": "Effect size dot plot\n\n\nCode\nsig_all &lt;- imap(all_ct_results, \\(res, ct) {\n  res$significant_results |&gt; rownames_to_column(\"gene\") |&gt; mutate(CellType = ct)\n}) |&gt; list_rbind()\n\nif (nrow(sig_all) &gt; 0) {\n  gene_order &lt;- sig_all |&gt;\n    group_by(gene) |&gt;\n    summarise(mfc = mean(avg_log2FC)) |&gt;\n    arrange(mfc) |&gt;\n    pull(gene)\n\n  sig_all |&gt;\n    mutate(gene = factor(gene, levels = gene_order)) |&gt;\n    ggplot(aes(x = avg_log2FC, y = gene,\n               colour = CellType,\n               size   = -log10(p_val_adj + 1e-300))) +\n    geom_vline(xintercept = 0, linetype = \"dashed\", colour = \"grey60\") +\n    geom_point(alpha = 0.85) +\n    scale_size_continuous(\n      name  = expression(-log[10](p[adj])),\n      range = c(2, 8)\n    ) +\n    scale_colour_brewer(palette = \"Set2\") +\n    labs(\n      title = \"All cell types — significant DEGs (Adu vs IgG)\\n\",\n      x     = expression(log[2] * \"FC  (Adu / IgG)\"),\n      y     = NULL\n    ) +\n    theme_minimal(base_size = 13) +\n    theme(\n      axis.text        = element_text(size = 14, face = \"italic\"),\n      axis.title       = element_text(size = 16),\n      plot.title       = element_text(size = 18),\n      axis.ticks       = element_blank(),\n      panel.grid.major.x = element_blank()\n    )\n} else {\n  message(\"No significant DEGs found — dot plot skipped.\")\n}"
+  }
+]

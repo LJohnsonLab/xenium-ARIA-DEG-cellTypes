@@ -1,12 +1,6 @@
 ---
 title: "Differentially expressed genes in oligodendrocytes across brain regions"
 date: last-modified
-code-fold: true
-embed-resources: true
-execute:
-  message: false
-  warning: false
-format: html
 ---
 
 ```{r setup}

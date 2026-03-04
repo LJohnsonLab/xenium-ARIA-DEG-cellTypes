@@ -1,12 +1,6 @@
 ---
 title: "Microglia Cell proportions"
 date: last-modified
-code-fold: true
-embed-resources: true
-execute: 
-  message: false
-  warning: false
-format: html
 ---
 
 
@@ -120,7 +114,7 @@ prop |> as_tibble () |>
 
 ## Immune cell type proportions by brain region
 
-![](docs/regions.png)
+![](img/regions.png)
 
 ```{r}
 md <- immune@meta.data |> 

@@ -2,12 +2,6 @@
 title: "Microglia GSEA across brain"
 subtitle: "Aducanumab vs IgG, per-region fgsea against MSigDB M7 (Immunologic Signatures) mouse gene sets"
 date: last-modified
-code-fold: true
-embed-resources: true
-execute:
-  message: false
-  warning: false
-format: html
 ---
 
 ```{r setup}
@@ -64,7 +58,7 @@ cat("M7 gene sets loaded:", length(gene_sets_list), "\n")
 ## Load DE results
 
 ```{r load-de-results}
-de_by_region <- readRDS("results/20260223-MG_DE_byRegion.rds")
+de_by_region <- readRDS("results/20260303-DEG_MG_byRegion.rds")
 
 # Panel genes = union of all genes tested across regions
 panel_genes <- de_by_region |> map(\(df) rownames(df)) |> purrr::reduce(union)
