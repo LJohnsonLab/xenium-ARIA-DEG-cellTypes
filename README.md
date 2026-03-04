@@ -1,6 +1,6 @@
-## ARIA: Xenium Spatial Transcriptomics Analysis
+## ARIA: Xenium Spatial Transcriptomics Analysis (DEGs & Cell-type proportions analysis)
 
-https://ljohnsonlab.github.io/ARIA_Xenium/
+https://ljohnsonlab.github.io/xenium-ARIA-DEG-cellTypes/
 
 ### Overview
 
