@@ -1,0 +1,320 @@
+---
+title: "Differentially expressed genes across all cell types (Adu vs IgG)"
+date: last-modified
+format:
+  html:
+    number-sections: false
+---
+
+```{r setup}
+#| message: false
+library(qs2)
+library(Seurat)
+library(purrr)
+library(DESeq2)
+library(patchwork)
+library(gridExtra)
+library(pheatmap)
+library(tidyverse)
+library(kableExtra)
+
+source("20260217-helper_functions.R")
+
+# Load full object and microglia object (Kai's canonical annotation)
+full    <- qs_read("seurat_objects/20260217_Part2_fullobj.qs2")
+mg_kai  <- UpdateSeuratObject(qs_read("seurat_objects/20260225-mg_kai.qs2"))
+
+# Discover all cell types
+cell_types <- sort(unique(full$annotatedclusters))
+```
+
+# Overview
+
+Pseudobulk DESeq2 differential expression analysis (Adu vs IgG) is performed for every cell
+type in `annotatedclusters`. For microglia, Kai's canonical subsetted object is used instead
+of the full-object subset. Each cell type gets a volcano plot, a table of significant DEGs,
+and a per-sample expression heatmap. A cross-cell-type summary is shown at the end.
+
+```{r run-ct-de-function}
+# Per-cell-type DE pipeline: pseudobulk DESeq2, Adu vs IgG (all regions pooled)
+run_ct_de <- function(obj, ct_label) {
+
+  DefaultAssay(obj) <- "Xenium"
+
+  # Cell counts table
+  cat("\n\n<h3>Cell counts</h3>\n\n")
+  tbl <- obj@meta.data |>
+    summarise(
+      n_cells = n(),
+      n_Adu   = sum(Treatment.Group == "Adu"),
+      n_IgG   = sum(Treatment.Group == "IgG")
+    ) |>
+    kbl(caption = paste(ct_label, "— cells per treatment")) |>
+    kable_styling("striped")
+  cat(tbl)
+
+  # Replication guard: DESeq2 needs >=2 samples per treatment group
+  n_per_group <- table(
+    distinct(obj@meta.data, sample_ID, Treatment.Group)$Treatment.Group
+  )
+  if (any(n_per_group < 2)) {
+    cat("\n\n_Skipped: fewer than 2 samples per treatment group._\n\n")
+    return(NULL)
+  }
+
+  # Pseudobulk aggregation
+  bulk <- AggregateExpression(obj, group.by = "sample_ID", return.seurat = TRUE)
+
+  # AggregateExpression converts _ to - (e.g. KK4_465 -> KK4-465)
+  sample_meta <- distinct(obj@meta.data, sample_ID, Treatment.Group) |>
+    mutate(bulk_id = gsub("_", "-", sample_ID))
+  bulk$Treatment.Group <- sample_meta$Treatment.Group[
+    match(colnames(bulk), sample_meta$bulk_id)
+  ]
+  Idents(bulk) <- "Treatment.Group"
+
+  # DESeq2 via anayet
+  res <- anayet(bulk,
+                ident1      = "Adu",
+                ident2      = "IgG",
+                test_method = "DESeq2",
+                min_pct     = 0.1,
+                plot_title  = ct_label,
+                print_plot  = FALSE)
+
+  cat("\n\n<h3>Volcano plot</h3>\n\n")
+
+  sig_tbl <- if (nrow(res$significant_results) > 0) {
+    res$significant_results |>
+      select(p_val, avg_log2FC, p_val_adj) |>
+      mutate(across(where(is.numeric), \(x) signif(x, 3))) |>
+      arrange(p_val_adj) |>
+      tableGrob(theme = ttheme_minimal(base_size = 18))
+  } else {
+    tableGrob(
+      data.frame(Result = "No significant DEGs"),
+      theme = ttheme_minimal(base_size = 20)
+    )
+  }
+
+  print(res$volcano_plot + wrap_elements(sig_tbl) + plot_layout(widths = c(2, 1)))
+
+  # Per-sample heatmap of significant DEGs
+  sig_genes <- rownames(res$significant_results)
+  if (length(sig_genes) > 0) {
+    
+    # Extract normalised pseudobulk expression (data layer created by AggregateExpression)
+    expr_mat <- as.matrix(GetAssayData(bulk, layer = "data")[sig_genes, , drop = FALSE])
+
+    # Z-score per gene for visualisation
+    expr_scaled <- t(scale(t(expr_mat)))
+
+    # Sample annotation: treatment group
+    sample_annot <- data.frame(
+      Treatment = bulk$Treatment.Group,
+      row.names = colnames(bulk)
+    )
+    annot_colors <- list(Treatment = c(Adu = "#d73027", IgG = "#4575b4"))
+
+    pheatmap(expr_scaled,
+      color             = colorRampPalette(c("#4575b4", "white", "#d73027"))(100),
+      annotation_col    = sample_annot,
+      annotation_colors = annot_colors,
+      cluster_cols      = TRUE,
+      cluster_rows      = ifelse(length(sig_genes) > 1, TRUE, FALSE),
+      main              = paste(ct_label, "— significant DEGs per sample (z-score)\n"),
+      fontsize          = 14,
+      fontsize_row      = 12,
+      fontsize_col      = 12,
+      angle_col         = 45,
+      cellwidth         = 40,
+      cellheight        = 20
+    )
+  }
+
+  res
+}
+```
+
+```{r main-loop}
+#| results: asis
+#| column: page
+#| fig.width: 12
+#| fig.height: 5
+#| warning: false
+
+# Run DE for every cell type; use Kai's microglia object for Microglia
+all_ct_results <- map(cell_types, \(ct) {
+  cat("\n\n<h2>", ct, "</h2>\n\n")
+  obj <- if (ct == "Microglia") mg_kai else subset(full, annotatedclusters == ct)
+  run_ct_de(obj, ct)
+}) |> set_names(cell_types) |> compact()
+```
+
+```{r save-results}
+saveRDS(
+  map(all_ct_results, \(res) res$all_results),
+  "results/20260304-DEG_allCellTypes.rds"
+)
+```
+
+# Summary
+
+## DEG counts per cell type
+
+```{r deg-counts}
+#| fig.width: 6
+#| fig.height: 5
+
+deg_counts <- imap(all_ct_results, \(res, ct) {
+  if (nrow(res$significant_results) == 0) return(NULL)
+  res$significant_results |>
+    rownames_to_column("gene") |>
+    mutate(CellType  = ct,
+           Direction = ifelse(avg_log2FC > 0, "Up in Adu", "Down in Adu"))
+}) |>
+  compact() |>
+  list_rbind() |>
+  dplyr::count(CellType, Direction)
+
+if (nrow(deg_counts) > 0) {
+  ggplot(deg_counts, aes(x = reorder(CellType, n, sum), y = n, fill = Direction)) +
+    geom_col(position = "dodge", width = 0.7, alpha = 0.9) +
+    coord_flip() +
+    scale_fill_manual(values = c("Up in Adu" = "#d73027", "Down in Adu" = "#4575b4")) +
+    labs(
+      title    = "Significant DEGs per cell type",
+      subtitle = "padj < 0.05",
+      x        = NULL,
+      y        = "Number of DEGs",
+      fill     = NULL
+    ) +
+    theme_minimal(base_size = 14) +
+    theme(panel.grid.major.y = element_blank(),
+          axis.text = element_text(size = 14))
+} else {
+  message("No significant DEGs found in any cell type.")
+}
+```
+
+## Cross-cell-type log2FC heatmap
+
+A heatmap of log~2~ fold changes (Adu vs IgG) for all genes significant (padj < 0.05) in at
+least one cell type. Asterisks mark individually significant cell-type–gene combinations.
+
+```{r cross-celltype-heatmap}
+#| column: page
+#| fig.width: 12
+#| fig.height: 6
+
+# Collect all DE results into one long data frame
+cross_long <- imap(all_ct_results, \(res, ct) {
+  res$all_results |>
+    rownames_to_column("gene") |>
+    mutate(CellType = ct)
+}) |> list_rbind()
+
+# Genes significant in at least one cell type
+sig_genes_cross <- cross_long |>
+  filter(p_val_adj < 0.05) |>
+  pull(gene) |>
+  unique()
+
+if (length(sig_genes_cross) > 0) {
+
+  # If too many genes, keep those significant in >=2 cell types
+  if (length(sig_genes_cross) > 100) {
+    gene_sig_count <- cross_long |>
+      filter(p_val_adj < 0.05) |>
+      distinct(gene, CellType) |>
+      count(gene)
+    filtered <- gene_sig_count |> filter(n >= 2) |> pull(gene)
+    if (length(filtered) > 0) sig_genes_cross <- filtered
+  }
+
+  # log2FC matrix: rows = genes, columns = cell types
+  fc_mat <- cross_long |>
+    filter(gene %in% sig_genes_cross) |>
+    pivot_wider(id_cols = gene, names_from = CellType, values_from = avg_log2FC) |>
+    column_to_rownames("gene") |>
+    as.matrix()
+
+  # Significance matrix
+  sig_mat <- cross_long |>
+    filter(gene %in% sig_genes_cross) |>
+    pivot_wider(id_cols = gene, names_from = CellType, values_from = p_val_adj) |>
+    column_to_rownames("gene") |>
+    as.matrix()
+
+  display_mat <- ifelse(!is.na(sig_mat) & sig_mat < 0.05, "*", "")
+
+  clim <- ceiling(max(abs(fc_mat), na.rm = TRUE))
+
+  pheatmap(fc_mat,
+    color             = colorRampPalette(c("#4575b4", "white", "#d73027"))(100),
+    breaks            = seq(-clim, clim, length.out = 101),
+    na_col            = "grey88",
+    display_numbers   = display_mat,
+    fontsize_number   = 18,
+    number_color      = "black",
+    cluster_rows      = TRUE,
+    cluster_cols      = TRUE,
+    main              = "Cross-cell-type log2FC (Adu vs IgG)\n",
+    fontsize          = 14,
+    fontsize_row      = 12,
+    fontsize_col      = 14,
+    angle_col         = 45,
+    cellwidth         = 30,
+    cellheight        = 20
+  )
+} else {
+  message("No significant DEGs found across any cell type — heatmap skipped.")
+}
+```
+
+## Effect size dot plot
+
+```{r dotplot}
+#| fig.width: 10
+#| fig.height: 8
+
+sig_all <- imap(all_ct_results, \(res, ct) {
+  res$significant_results |> rownames_to_column("gene") |> mutate(CellType = ct)
+}) |> list_rbind()
+
+if (nrow(sig_all) > 0) {
+  gene_order <- sig_all |>
+    group_by(gene) |>
+    summarise(mfc = mean(avg_log2FC)) |>
+    arrange(mfc) |>
+    pull(gene)
+
+  sig_all |>
+    mutate(gene = factor(gene, levels = gene_order)) |>
+    ggplot(aes(x = avg_log2FC, y = gene,
+               colour = CellType,
+               size   = -log10(p_val_adj + 1e-300))) +
+    geom_vline(xintercept = 0, linetype = "dashed", colour = "grey60") +
+    geom_point(alpha = 0.85) +
+    scale_size_continuous(
+      name  = expression(-log[10](p[adj])),
+      range = c(2, 8)
+    ) +
+    scale_colour_brewer(palette = "Set2") +
+    labs(
+      title = "All cell types — significant DEGs (Adu vs IgG)\n",
+      x     = expression(log[2] * "FC  (Adu / IgG)"),
+      y     = NULL
+    ) +
+    theme_minimal(base_size = 13) +
+    theme(
+      axis.text        = element_text(size = 14, face = "italic"),
+      axis.title       = element_text(size = 16),
+      plot.title       = element_text(size = 18),
+      axis.ticks       = element_blank(),
+      panel.grid.major.x = element_blank()
+    )
+} else {
+  message("No significant DEGs found — dot plot skipped.")
+}
+```
