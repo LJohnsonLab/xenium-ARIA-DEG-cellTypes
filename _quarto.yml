@@ -24,10 +24,17 @@ website:
             href: 20260303-DEG_oligo_brainRegions.qmd
           - text: OPC
             href: 20260303-DEG_OPC_brainRegions.qmd
-      - text: Proportions
-        href: 20260303-cellType_proportions_microglia.qmd
+      - text: Microglia
+        menu:
+          - text: Proportions
+            href: 20260303-cellType_proportions_microglia.qmd
       - text: GSEA
         href: 20260223-MG_GSEA_brainRegions.qmd
+      - text: Astrocytes
+        menu:
+          - text: Reclustered
+            href: 20260305-astrocytes_reclustered.qmd
+
 
 format:
   html:

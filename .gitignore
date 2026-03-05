@@ -24,3 +24,5 @@ seurat_objects/*
 
 /.quarto/
 **/*.quarto_ipynb
+
+*.pdf
