@@ -34,6 +34,8 @@ website:
         menu:
           - text: Reclustered
             href: 20260305-astrocytes_reclustered.qmd
+          - text: Cluster characterization
+            href: 20260305-astrocytes_cluster_characterization.qmd
 
 
 format:
