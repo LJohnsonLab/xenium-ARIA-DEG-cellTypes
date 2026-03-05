@@ -1,0 +1,291 @@
+---
+title: "Astrocyte cluster characterization"
+subtitle: "Characterization of astrocyte clusters 0, 1, and 7 from reclustering at resolution 0.3"
+date: last-modified
+format:
+  html:
+    number-sections: false
+---
+
+```{r setup}
+#| message: false
+library(qs2)
+library(Seurat)
+library(patchwork)
+library(tidyverse)
+library(kableExtra)
+library(DESeq2)
+library(gridExtra)
+library(grid)
+library(compareGroups)
+library(pheatmap)
+
+source("20260217-helper_functions.R")
+
+# Load reclustered astrocyte object (resolution 0.3, 11 clusters)
+astro <- qs_read("seurat_objects/20260305-astro_0.3.qs2")
+
+# Subset to clusters of interest: 0 and 1 (confirmed astrocytes), 7 (uncertain)
+astro_sub <- subset(astro, seurat_clusters %in% c(0, 1, 7))
+```
+
+## Canonical marker genes
+
+### Astrocyte identity and reactive markers
+
+```{r dotplot-identity}
+#| fig-width: 10
+#| fig-height: 5
+
+DefaultAssay(astro_sub) <- "SCT"
+
+# Astrocyte identity markers
+astro_markers <- c("Gfap", "Aqp4", "Aldh1l1", "Slc1a3", "Slc1a2", "Gja1", "S100b", "Ckb", "Aldoc")
+astro_markers <- intersect(astro_markers, rownames(astro_sub))
+
+DotPlot(astro_sub, features = astro_markers, group.by = "seurat_clusters") +
+  coord_flip() +
+  labs(title = "Astrocyte identity markers") +
+  theme(axis.text.x = element_text(size = 14),
+        axis.text.y = element_text(size = 12, face = "italic"))
+```
+
+```{r dotplot-reactive}
+#| fig-width: 8
+#| fig-height: 4
+
+# Reactive / inflammatory markers
+reactive_markers <- c("Cxcl10", "Ccl2", "Vim", "Serpina3n", "Lcn2", "C3", "Tnf")
+reactive_markers <- intersect(reactive_markers, rownames(astro_sub))
+
+DotPlot(astro_sub, features = reactive_markers, group.by = "seurat_clusters") +
+  coord_flip() +
+  labs(title = "Reactive / inflammatory markers") +
+  theme(axis.text.x = element_text(size = 14),
+        axis.text.y = element_text(size = 12, face = "italic"))
+```
+
+### Top marker genes per cluster
+
+```{r fiddle-top-markers}
+#| column: screen
+#| fig-width: 15
+#| fig-height: 4
+
+# Read precomputed markers, filter to clusters 0, 1, 7, pick top 5 per cluster
+top_genes <- read_csv("results/20260305-astrocyte_all_markers_0.3.csv",
+                      show_col_types = FALSE) |>
+  filter(cluster %in% c(0, 1, 7)) |>
+  group_by(cluster) |>
+  arrange(desc(avg_log2FC), .by_group = TRUE) |>
+  slice_head(n = 5) |>
+  pull(gene) |>
+  unique()
+
+fiddle(astro_sub,
+       genes_of_interest = top_genes,
+       classification_col = "seurat_clusters",
+       assay = "SCT")
+```
+
+## Proportions and brain region distribution
+
+### Cluster proportions per sample
+
+```{r proportions}
+#| fig-width: 10
+#| fig-height: 6
+
+prop_res <- scProp(astro_sub,
+                   cluster_col   = "seurat_clusters",
+                   sample_col    = "sample_ID",
+                   treatment_col = "Treatment.Group")
+
+prop_res$counts_plot / prop_res$proportions_plot
+```
+
+```{r proportions-table}
+#| results: asis
+export2md(prop_res$summary_table)
+```
+
+### Cell counts by brain region
+
+```{r region-bar}
+#| column: page
+#| fig-width: 10
+#| fig-height: 5
+#| label: region-bar
+
+
+# Cell counts per Region, faceted by cluster, dodged by treatment
+astro_sub@meta.data |>
+  filter(!is.na(Region)) |>
+  dplyr::count(seurat_clusters, Region, Treatment.Group) |>
+  ggplot(aes(x = Region, y = n, fill = Treatment.Group)) +
+  geom_col(position = "dodge", alpha = 0.85) +
+  facet_wrap(~seurat_clusters, scales = "free_y", labeller = label_both) +
+  scale_fill_manual(values = c("Adu" = "#d73027", "IgG" = "#4575b4")) +
+  labs(title = "Cell counts per brain region",
+       y = "Number of cells", x = NULL, fill = NULL) +
+  theme_minimal(base_size = 16) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        panel.grid.major.x = element_blank(),
+        strip.text = element_text(size = 14, face = "bold"))
+```
+
+## Pairwise DE between clusters
+
+Pseudobulk DESeq2 comparing cluster pairs. For each comparison, cells from both
+clusters are pooled across all samples, aggregated per sample-cluster combination,
+and tested with DESeq2.
+
+```{r pairwise-de-compute}
+#| eval: false
+#| label: pairwise-de-compute
+
+DefaultAssay(astro) <- "Xenium"
+
+# Define pairwise comparisons
+pairs <- list(c("0", "1"), c("0", "7"), c("1", "7"))
+
+pairwise_de <- map(pairs, \(pr) {
+  # Subset to the two clusters
+  sub_obj <- subset(astro, seurat_clusters %in% pr)
+
+  # Create combined sample-cluster ID for pseudobulk
+  sub_obj$sample_cluster <- paste0(sub_obj$sample_ID, "_cl", sub_obj$seurat_clusters)
+
+  # Pseudobulk aggregation per sample-cluster
+  bulk <- AggregateExpression(sub_obj, group.by = "sample_cluster", return.seurat = TRUE)
+
+  # Extract cluster label from column names (e.g., KK4-465-cl0 -> 0)
+  bulk$cluster_label <- gsub(".*cl", "", colnames(bulk))
+  Idents(bulk) <- "cluster_label"
+
+  # DESeq2 via anayet
+  anayet(bulk,
+         ident1      = pr[1],
+         ident2      = pr[2],
+         test_method = "DESeq2",
+         min_pct     = 0,
+         plot_title  = paste("Cluster", pr[1], "vs", pr[2]),
+         print_plot  = FALSE)
+
+}) |> set_names(paste0("cl", map_chr(pairs, 1), "_vs_cl", map_chr(pairs, 2)))
+
+saveRDS(pairwise_de, "results/20260305-pairwise_DE_astro_clusters.rds")
+```
+
+### DEG counts per comparison
+
+The bar chart below tallies the number of significant DEGs (adjusted *p* < 0.05) for each
+pairwise cluster comparison, stratified by direction of effect: genes with higher expression
+in the first cluster of the pair (red) versus genes with higher expression in the second (blue).
+
+```{r}
+#| fig-width: 5
+#| fig-height: 4
+#| label: pairwise-deg-counts
+
+
+library(pheatmap)
+
+pairwise_de <- readRDS("results/20260305-pairwise_DE_astro_clusters.rds")
+
+# Bar chart of up/down DEG counts per comparison
+deg_counts <- imap(pairwise_de, \(res, comp) {
+  if (nrow(res$significant_results) == 0) return(NULL)
+  label <- gsub("cl(\\d+)_vs_cl(\\d+)", "\\1 vs \\2", comp)
+  res$significant_results |>
+    rownames_to_column("gene") |>
+    mutate(Comparison = label,
+           Direction  = ifelse(avg_log2FC > 0, "Up in first", "Down in first"))
+}) |>
+  compact() |>
+  list_rbind() |>
+  dplyr::count(Comparison, Direction)
+
+ggplot(deg_counts, aes(x = Comparison, y = n, fill = Direction)) +
+  geom_col(position = "dodge", width = 0.7, alpha = 0.9) +
+  scale_fill_manual(values = c("Up in first" = "#d73027", "Down in first" = "#4575b4")) +
+  labs(title = "Significant DEGs per pairwise comparison",
+       subtitle = "padj < 0.05",
+       x = NULL, y = "Number of DEGs", fill = NULL) +
+  theme_minimal(base_size = 14) +
+  theme(panel.grid.major.x = element_blank(),
+        axis.text.x = element_text(size = 14))
+```
+
+### Top DEG heatmap
+
+To highlight genes that most strongly distinguish the three clusters, a heatmap displays the
+log~2~ fold change for the top 20 most significant DEGs (by adjusted *p*-value) from each
+pairwise comparison. Each column represents a cluster pair (e.g., "0 vs 1") and each row a
+gene. The colour scale is symmetric around zero, with red indicating higher expression in the
+first cluster and blue indicating higher expression in the second. Asterisks mark gene–comparison
+combinations that individually reach significance (adjusted *p* < 0.05). Genes are
+hierarchically clustered by their fold-change profiles to reveal shared and comparison-specific
+expression patterns.
+
+```{r}
+#| fig-width: 10
+#| fig-height: 25
+#| label: pairwise-heatmap
+
+# Collect all results into a long table with log2FC and padj per comparison
+all_de_long <- imap(pairwise_de, \(res, comp) {
+  label <- gsub("cl(\\d+)_vs_cl(\\d+)", "\\1 vs \\2", comp)
+  res$all_results |>
+    rownames_to_column("gene") |>
+    mutate(Comparison = label)
+}) |> list_rbind()
+
+# Select top 20 DEGs per comparison by padj
+top_genes <- all_de_long |>
+  filter(p_val_adj < 0.05) |>
+  group_by(Comparison) |>
+  arrange(p_val_adj, .by_group = TRUE) |>
+  slice_head(n = 20) |>
+  pull(gene) |>
+  unique()
+
+if (length(top_genes) > 0) {
+  # Build log2FC matrix (genes x comparisons)
+  fc_matrix <- all_de_long |>
+    filter(gene %in% top_genes) |>
+    pivot_wider(id_cols = gene, names_from = Comparison, values_from = avg_log2FC) |>
+    column_to_rownames("gene") |>
+    as.matrix()
+
+  # Build significance matrix for asterisk overlay
+  sig_matrix <- all_de_long |>
+    filter(gene %in% top_genes) |>
+    pivot_wider(id_cols = gene, names_from = Comparison, values_from = p_val_adj) |>
+    column_to_rownames("gene") |>
+    as.matrix()
+
+  display_matrix <- ifelse(!is.na(sig_matrix) & sig_matrix < 0.05, "*", "")
+
+  clim <- ceiling(max(abs(fc_matrix), na.rm = TRUE))
+
+  pheatmap(fc_matrix,
+    color           = colorRampPalette(c("#4575b4", "white", "#d73027"))(100),
+    breaks          = seq(-clim, clim, length.out = 101),
+    na_col          = "grey88",
+    display_numbers = display_matrix,
+    fontsize_number = 24,
+    number_color    = "black",
+    cluster_rows    = TRUE,
+    cluster_cols    = FALSE,
+    main            = "Top DEGs — pairwise cluster comparisons\n",
+    fontsize        = 18,
+    fontsize_row    = 13,
+    angle_col       = 45,
+    cellwidth       = 30,
+    cellheight      = 30
+  )
+} else {
+  message("No significant DEGs found across any comparison — heatmap skipped.")
+}
+```
