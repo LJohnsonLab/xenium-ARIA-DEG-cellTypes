@@ -18,7 +18,7 @@ library(kableExtra)
 
 
 
-astro <- qs2::qs_read("seurat_objects/20260305-astro.qs2")
+astro <- qs2::qs_read("seurat_objects/20260305-astro_0.3.qs2")
 
 ```
 
@@ -72,6 +72,7 @@ ElbowPlot(astro, ndims = 50) +
 ```
 
 ```{r}
+#| fig-height: 5
 #| label: PCA biplots
 
 # PCA biplots coloured by sample and treatment
@@ -93,15 +94,15 @@ set.seed(1234)
 astro <- FindNeighbors(astro, reduction = "pca", dims = 1:30, graph.name = "astro_snn")
 
 # Perform clustering at multiple resolutions for later comparison
-astro <- FindClusters(astro, graph.name = "astro_snn", resolution = 0.1)
+astro <- FindClusters(astro, graph.name = "astro_snn", resolution = 0.3)
 
 # Compute UMAP for visualization
 astro <- RunUMAP(astro, reduction = "pca", dims = 1:30, verbose = FALSE)
 
-qs_save(astro, "seurat_objects/20260305-astro.qs2")
+# qs_save(astro, "seurat_objects/20260305-astro_0.3.qs2")
 ```
 
-resolution = 0.1 
+resolution = 0.3 
 
 ```{r}
 #|fig-width: 5
@@ -111,7 +112,7 @@ DimPlot(astro)
 ```
 
 ```{r}
-
+#| fig-height: 5
 #| label: plot UMAPs 2
 DimPlot(astro, split.by = "Treatment.Group")
 ```
@@ -125,7 +126,7 @@ DimPlot(astro, split.by = "Treatment.Group")
 Idents(astro) <- astro$seurat_clusters
 DefaultAssay(astro) <- "SCT"
 all_markers <- FindAllMarkers(astro, only.pos = TRUE, densify = TRUE)
-# write_csv(all_markers, file = "seurat_objects/20260305-astrocyte_all_markers.csv")
+# write_csv(all_markers, file = "results/20260305-astrocyte_all_markers_0.3.csv")
 ```
 
 ```{r}
@@ -133,7 +134,7 @@ all_markers <- FindAllMarkers(astro, only.pos = TRUE, densify = TRUE)
 #| column: screen
 #| fig-width: 15
 #| fig-height: 4
-top <- read_csv("seurat_objects/20260305-astrocyte_all_markers.csv") |> 
+top <- read_csv("results/20260305-astrocyte_all_markers_0.3.csv") |> 
   group_by(cluster) |>
   arrange(desc(avg_log2FC),.by_group = TRUE) |> 
   top_n(5, avg_log2FC) |> 
@@ -174,7 +175,7 @@ p <- ggplot(violin_data_long, aes(x = seurat_clusters, y = value, fill = seurat_
         axis.text.x = element_text(size = 6),
         panel.grid.major.x = element_blank(),
         panel.grid.minor.x = element_blank(),
-        strip.text = element_text(size = 11, face = "italic")
+        strip.text = element_text(size = 10.5, face = "italic", angle = 85, hjust = 1,vjust = 0.7)
     )
 
 # Convert to grob and remove duplicate y-axes from all facets except the first
