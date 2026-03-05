@@ -1,0 +1,195 @@
+---
+title: "Astrocyte subpopulations"
+subtitle: "Identification of Astrocyte subpopulations after subsetting and reclustering"
+date: last-modified
+format:
+  html:
+    number-sections: false
+---
+
+```{r}
+#| label: setup
+#| message: false
+library(qs2)
+library(Seurat)
+library(patchwork)
+library(tidyverse)
+library(kableExtra)
+
+
+
+astro <- qs2::qs_read("seurat_objects/20260305-astro.qs2")
+
+```
+
+
+```{r}
+#| eval: false
+#| label: SCTransform
+# Load full object 
+full    <- qs_read("seurat_objects/20260217_Part2_fullobj.qs2")
+astro0  <- subset(full, subset = annotatedclusters == "Astrocyte")
+# Keep only the assay needed for fresh SCTransform
+DefaultAssay(astro0) <- "Xenium"
+astro0 <- DietSeurat(astro0, assays = "Xenium", dimreducs = NULL, graphs = NULL)
+# Drop Xenium image/FOV segmentation data; otherwise merge triggers huge future globals
+astro0@images <- list()
+
+# SCTransform on all astrocytes together (no split/merge, no integration)
+astro <- astro0
+astro <- SCTransform(
+  astro,
+  assay = "Xenium",
+  new.assay.name = "SCT",
+  verbose = FALSE
+)
+```
+
+
+
+
+## PCA and dimensionality selection
+
+```{r}
+#| eval: false
+#| label: Run PCA on SCT assay
+DefaultAssay(astro) <- "SCT"
+astro <- RunPCA(
+  astro,
+  assay   = "SCT",
+  features = VariableFeatures(astro),
+  verbose = FALSE)
+```
+```{r}
+#| fig-width: 5
+#| fig-height: 3
+#| label: Elbow plot
+# Elbow plot to visualise variance explained per PC
+ElbowPlot(astro, ndims = 50) +
+  geom_vline(xintercept = 30, linetype = "dashed", color = "red") +
+  labs(title = "Elbow plot") +
+  theme_minimal()
+```
+
+```{r}
+#| label: PCA biplots
+
+# PCA biplots coloured by sample and treatment
+p1 <- DimPlot(astro, reduction = "pca", group.by = "Slide") +
+  labs(title = "PCA — Slide")
+p2 <- DimPlot(astro, reduction = "pca", group.by = "Treatment.Group") +
+  labs(title = "PCA — Treatment")
+p1 + p2
+```
+
+```{r}
+#| label: neighbors & UMAP
+#| eval: false
+
+# Set seed for reproducibility
+set.seed(1234)
+
+# Compute nearest neighbors using first 30 PCs
+astro <- FindNeighbors(astro, reduction = "pca", dims = 1:30, graph.name = "astro_snn")
+
+# Perform clustering at multiple resolutions for later comparison
+astro <- FindClusters(astro, graph.name = "astro_snn", resolution = 0.1)
+
+# Compute UMAP for visualization
+astro <- RunUMAP(astro, reduction = "pca", dims = 1:30, verbose = FALSE)
+
+qs_save(astro, "seurat_objects/20260305-astro.qs2")
+```
+
+resolution = 0.1 
+
+```{r}
+#|fig-width: 5
+#|fig-height: 5
+#| label: plot UMAPs 1
+DimPlot(astro)
+```
+
+```{r}
+
+#| label: plot UMAPs 2
+DimPlot(astro, split.by = "Treatment.Group")
+```
+
+## Top marker genes per cluster
+
+`FindAllMArkers` run on log-normalized residual expression values from SCTransform in the SCT assay (Values are continuous and typically centered around 0)
+```{r}
+#| eval: false
+#| label: find markers
+Idents(astro) <- astro$seurat_clusters
+DefaultAssay(astro) <- "SCT"
+all_markers <- FindAllMarkers(astro, only.pos = TRUE, densify = TRUE)
+# write_csv(all_markers, file = "seurat_objects/20260305-astrocyte_all_markers.csv")
+```
+
+```{r}
+#| label: top markers per cluster
+#| column: screen
+#| fig-width: 15
+#| fig-height: 4
+top <- read_csv("seurat_objects/20260305-astrocyte_all_markers.csv") |> 
+  group_by(cluster) |>
+  arrange(desc(avg_log2FC),.by_group = TRUE) |> 
+  top_n(5, avg_log2FC) |> 
+  pull(gene)
+
+############################# violin plots ###########
+library(gtable)
+library(grid)
+
+genes_of_interest <- unique(top)
+violin_data <- FetchData(astro, c(genes_of_interest, "seurat_clusters"), assay = "SCT")
+violin_data_long <- violin_data |>
+    pivot_longer(-seurat_clusters) |>
+    mutate(seurat_clusters = fct_rev(seurat_clusters),
+           name = factor(name, levels = genes_of_interest))
+
+# Get the default ggplot discrete colors
+cluster_levels <- levels(violin_data_long$seurat_clusters)
+palette_colors <- scales::hue_pal()(length(cluster_levels))
+names(palette_colors) <- cluster_levels
+
+p <- ggplot(violin_data_long, aes(x = seurat_clusters, y = value, fill = seurat_clusters)) +
+    geom_violin(aes(color = seurat_clusters),
+                scale = "width", trim = TRUE, adjust = 1, show.legend = FALSE) +
+    coord_flip() +
+    scale_fill_manual(values = palette_colors) +
+    scale_color_manual(values = palette_colors) +
+    facet_wrap(~name, scales = "free_x", nrow = 1) +
+    theme_minimal() +
+    labs(x = "Cluster", y = "Expression Levels") +
+    theme(
+        legend.position = "left",
+        # Color each y-axis label to match its cluster
+        axis.text.y = element_text(
+            size = 12,
+            color = rev(palette_colors[cluster_levels])
+        ),
+        axis.text.x = element_text(size = 6),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        strip.text = element_text(size = 11, face = "italic")
+    )
+
+# Convert to grob and remove duplicate y-axes from all facets except the first
+g <- ggplotGrob(p)
+axis_grobs <- which(grepl("axis-l", g$layout$name))
+invisible(
+  map(axis_grobs, function(i) {
+    if (g$layout[i, "name"] != "axis-l-1-1") {
+      g$grobs[[i]] <<- nullGrob()
+    }
+  })
+)
+
+grid.newpage()
+grid.draw(g)
+
+
+```
