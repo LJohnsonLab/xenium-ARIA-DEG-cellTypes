@@ -18,7 +18,6 @@ if (!require(dplyr, quietly = TRUE)) library(dplyr)
 if (!require(tidyr, quietly = TRUE)) library(tidyr)
 if (!require(forcats, quietly = TRUE)) library(forcats)
 if (!require(purrr, quietly = TRUE)) library(purrr)
-if (!require(ggtext, quietly = TRUE)) library(ggtext)
 if (!require(grid, quietly = TRUE)) library(grid)
 if (!require(scales, quietly = TRUE)) library(scales)
 
@@ -30,88 +29,85 @@ if (!require(scales, quietly = TRUE)) library(scales)
 #' @param assay Character string specifying which assay to use (default: "RNA")
 #' @param axis_text_y_size Numeric, size of y-axis text (default: 12)
 #' @param axis_text_x_size Numeric, size of x-axis text (default: 6)
-#' @param strip_text_size Numeric, size of facet strip text (default: 11)
+#' @param strip_text_size Numeric, size of facet strip text (default: 10.5)
+#' @param strip_angle Numeric, angle for strip text (default: 85)
 #' @param violin_scale Character, scaling method for violins (default: "width")
 #' @param violin_trim Logical, whether to trim violin tails (default: TRUE)
 #' @param violin_adjust Numeric, bandwidth adjustment for violins (default: 1)
 #' @param facet_nrow Numeric, number of rows for facet_wrap (default: 1)
 #'
-#' @return A list containing the ggplot object (p) and the modified grob (g)
+#' @return Draws the plot; returns invisible NULL
 #' @export
-fiddle <- function(seurat_obj, 
+fiddle <- function(seurat_obj,
                    genes_of_interest,
                    classification_col,
                    assay = "RNA",
                    axis_text_y_size = 12,
                    axis_text_x_size = 6,
-                   strip_text_size = 11,
+                   strip_text_size = 10.5,
+                   strip_angle = 85,
                    violin_scale = "width",
                    violin_trim = TRUE,
                    violin_adjust = 1,
                    facet_nrow = 1) {
-    
+
     # Validate inputs
     if (!classification_col %in% colnames(seurat_obj@meta.data)) {
         stop(paste("Classification column", classification_col, "not found in Seurat object metadata"))
     }
-    
+
     # Fetch data from Seurat object
     violin_data <- FetchData(seurat_obj, c(genes_of_interest, classification_col), assay = assay)
-    
+
     # Reshape data to long format
-    violin_data_long <- violin_data %>%
-        pivot_longer(-all_of(classification_col)) %>% 
+    violin_data_long <- violin_data |>
+        pivot_longer(-all_of(classification_col)) |>
         mutate(seurat_clusters = fct_rev(.data[[classification_col]]),
                name = factor(name, levels = genes_of_interest))
-    
-    # Generate color palette
+
+    # Generate color palette matching default ggplot discrete colors
     cluster_levels <- levels(violin_data_long$seurat_clusters)
     palette_colors <- scales::hue_pal()(length(cluster_levels))
     names(palette_colors) <- cluster_levels
-    
-    # Create colored axis labels (HTML span with color)
-    axis_labels <- purrr::map2_chr(cluster_levels, palette_colors,
-                                   ~sprintf("<span style='color:%s'>%s</span>", .y, .x))
-    
-    # Create the base plot
+
+    # Build the violin plot
     p <- ggplot(violin_data_long, aes(x = seurat_clusters, y = value, fill = seurat_clusters)) +
         geom_violin(aes(color = seurat_clusters),
-                    scale = violin_scale, 
-                    trim = violin_trim, 
-                    adjust = violin_adjust, 
+                    scale = violin_scale,
+                    trim = violin_trim,
+                    adjust = violin_adjust,
                     show.legend = FALSE) +
         coord_flip() +
         scale_fill_manual(values = palette_colors) +
         scale_color_manual(values = palette_colors) +
         facet_wrap(~name, scales = "free_x", nrow = facet_nrow) +
         theme_minimal() +
-        labs(x = "", y = "") +
+        labs(x = "Cluster", y = "Expression Levels") +
         theme(
             legend.position = "left",
-            axis.text.y = element_markdown(size = axis_text_y_size),
+            # Color each y-axis label to match its cluster
+            axis.text.y = element_text(
+                size = axis_text_y_size,
+                color = rev(palette_colors[cluster_levels])
+            ),
             axis.text.x = element_text(size = axis_text_x_size),
             panel.grid.major.x = element_blank(),
             panel.grid.minor.x = element_blank(),
-            strip.text = element_text(size = strip_text_size, face = "italic")
-        ) +
-        scale_x_discrete(labels = axis_labels)
-    
-    # Convert ggplot object to grob (graphical object)
+            strip.text = element_text(size = strip_text_size, face = "italic",
+                                      angle = strip_angle, hjust = 1, vjust = 0.7)
+        )
+
+    # Convert to grob and remove duplicate y-axes from all facets except the first
     g <- ggplotGrob(p)
-    
-    # Find all the left axis grobs (y-axis elements)
     axis_grobs <- which(grepl("axis-l", g$layout$name))
-    
-    # Remove y-axis text from all but the first facet
     invisible(
         map(axis_grobs, function(i) {
-            # The first facet left axis is named 'axis-l-1-1'
             if (g$layout[i, "name"] != "axis-l-1-1") {
                 g$grobs[[i]] <<- nullGrob()
             }
         })
     )
-    
+
     # Display the plot
     grid.newpage()
     grid.draw(g)
@@ -132,25 +128,16 @@ fiddle_help <- function() {
     cat("  assay             - Assay to use (default: 'RNA')\n")
     cat("  axis_text_y_size  - Y-axis text size (default: 12)\n")
     cat("  axis_text_x_size  - X-axis text size (default: 6)\n")
-    cat("  strip_text_size   - Facet strip text size (default: 11)\n")
+    cat("  strip_text_size   - Facet strip text size (default: 10.5)\n")
+    cat("  strip_angle       - Strip text angle (default: 85)\n")
     cat("  violin_scale      - Violin scaling method (default: 'width')\n")
     cat("  violin_trim       - Trim violin tails (default: TRUE)\n")
     cat("  violin_adjust     - Bandwidth adjustment (default: 1)\n")
     cat("  facet_nrow        - Number of facet rows (default: 1)\n\n")
-    cat("Returns: List with plot, grob, and colors\n\n")
+    cat("Returns: Draws the plot (invisible NULL)\n\n")
     cat("Example:\n")
-    cat("  result <- fiddle(aria, c('Gene1', 'Gene2'), 'lance_classification')\n")
+    cat("  fiddle(astro, c('Gfap', 'Aqp4'), 'seurat_clusters', assay = 'SCT')\n")
 }
-
-# Example usage:
-# result <- fiddle(
-#   seurat_obj = aria,
-#   genes_of_interest = c("Gene1", "Gene2", "Gene3"),
-#   classification_col = "lance_classification"
-# )
-# 
-# # For help, run:
-# fiddle_help()
 ######################################################################################################
 
 
