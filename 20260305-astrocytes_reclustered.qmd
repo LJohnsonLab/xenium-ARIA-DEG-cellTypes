@@ -15,7 +15,8 @@ library(Seurat)
 library(patchwork)
 library(tidyverse)
 library(kableExtra)
-
+library(DESeq2)
+library(gridExtra)
 
 
 astro <- qs2::qs_read("seurat_objects/20260305-astro_0.3.qs2")
@@ -134,63 +135,121 @@ all_markers <- FindAllMarkers(astro, only.pos = TRUE, densify = TRUE)
 #| column: screen
 #| fig-width: 15
 #| fig-height: 4
-top <- read_csv("results/20260305-astrocyte_all_markers_0.3.csv") |> 
+source("20260217-helper_functions.R")
+
+# Top 5 markers per cluster by avg_log2FC
+top_genes <- read_csv("results/20260305-astrocyte_all_markers_0.3.csv",
+                      show_col_types = FALSE) |>
   group_by(cluster) |>
-  arrange(desc(avg_log2FC),.by_group = TRUE) |> 
-  top_n(5, avg_log2FC) |> 
-  pull(gene)
+  arrange(desc(avg_log2FC), .by_group = TRUE) |>
+  slice_head(n = 5) |>
+  pull(gene) |>
+  unique()
 
-############################# violin plots ###########
-library(gtable)
-library(grid)
-
-genes_of_interest <- unique(top)
-violin_data <- FetchData(astro, c(genes_of_interest, "seurat_clusters"), assay = "SCT")
-violin_data_long <- violin_data |>
-    pivot_longer(-seurat_clusters) |>
-    mutate(seurat_clusters = fct_rev(seurat_clusters),
-           name = factor(name, levels = genes_of_interest))
-
-# Get the default ggplot discrete colors
-cluster_levels <- levels(violin_data_long$seurat_clusters)
-palette_colors <- scales::hue_pal()(length(cluster_levels))
-names(palette_colors) <- cluster_levels
-
-p <- ggplot(violin_data_long, aes(x = seurat_clusters, y = value, fill = seurat_clusters)) +
-    geom_violin(aes(color = seurat_clusters),
-                scale = "width", trim = TRUE, adjust = 1, show.legend = FALSE) +
-    coord_flip() +
-    scale_fill_manual(values = palette_colors) +
-    scale_color_manual(values = palette_colors) +
-    facet_wrap(~name, scales = "free_x", nrow = 1) +
-    theme_minimal() +
-    labs(x = "Cluster", y = "Expression Levels") +
-    theme(
-        legend.position = "left",
-        # Color each y-axis label to match its cluster
-        axis.text.y = element_text(
-            size = 12,
-            color = rev(palette_colors[cluster_levels])
-        ),
-        axis.text.x = element_text(size = 6),
-        panel.grid.major.x = element_blank(),
-        panel.grid.minor.x = element_blank(),
-        strip.text = element_text(size = 10.5, face = "italic", angle = 85, hjust = 1,vjust = 0.7)
-    )
-
-# Convert to grob and remove duplicate y-axes from all facets except the first
-g <- ggplotGrob(p)
-axis_grobs <- which(grepl("axis-l", g$layout$name))
-invisible(
-  map(axis_grobs, function(i) {
-    if (g$layout[i, "name"] != "axis-l-1-1") {
-      g$grobs[[i]] <<- nullGrob()
-    }
-  })
-)
-
-grid.newpage()
-grid.draw(g)
-
-
+fiddle(astro,
+       genes_of_interest = top_genes,
+       classification_col = "seurat_clusters",
+       assay = "SCT")
 ```
+
+### Cluster identity assessment
+
+Based on the top 5 marker genes per cluster, we assessed whether each cluster represents true astrocytes or contaminating cell types from the initial subsetting.
+
+| Cluster | Top markers | Identity | Astrocyte? |
+|---------|------------|----------|------------|
+| 0 | Agt, Calb2, Apoc1, Pgm1, Folh1 | Astrocyte — Agt is a canonical astrocyte marker | Yes |
+| 1 | Fezf2, Hsd11b1, Vim, Plpp3, Scg3 | Astrocyte — Vim and Hsd11b1 are astrocyte-enriched | Yes |
+| 2 | Lamp5, Slc17a7, Egr1, Grin2a, Vip | Neurons — Slc17a7 (Vglut1) is glutamatergic; Lamp5/Vip are interneuron markers | No |
+| 3 | Cd209a, Mgl2, Kcnj8, Slc47a1, Mrc1 | Perivascular macrophages / pericytes — Mrc1 (CD206), Cd209a, Mgl2 are macrophage markers; Kcnj8 is pericyte | No |
+| 4 | Nlrp3, Cst7, Cd14, Itgax, Trem2 | Microglia (DAM) — classic disease-associated microglia signature | No |
+| 5 | Mog, Mag, Cldn11, Ermn, Aspa | Oligodendrocytes — all canonical oligodendrocyte markers | No |
+| 6 | Ido1, Nts, Tac1, Otof, Slc17a6 | Neurons — Slc17a6 (Vglut2) and Tac1 are neuronal markers | No |
+| 7 | Cxcl10, Acod1, Ccl2, Ccl12, Tnf | Reactive astrocytes or immune — Cxcl10/Ccl2 can mark reactive astrocytes, but Tnf/Acod1 suggest immune contamination | Uncertain |
+| 8 | Cldn5, Emcn, Flt1, Cxcl12, Klf4 | Endothelial cells — Cldn5, Flt1, Emcn are canonical endothelial markers | No |
+| 9 | Ttr, Tmem212, Ccdc153, Lypd1, Otof | Ependymal / choroid plexus — Ttr, Ccdc153, Tmem212 are ependymal markers | No |
+| 10 | Pdgfra, Tnr, Pllp, Plpp4, Lpcat2 | OPCs — Pdgfra is the canonical OPC marker | No |
+
+
+
+## Differential expression by treatment
+
+Pseudobulk DESeq2 was performed on each true astrocyte cluster (0 and 1) separately,
+comparing aducanumab (Adu) vs isotype control (IgG) pooled across all brain regions.
+Raw Xenium counts were aggregated per biological sample using `AggregateExpression`,
+yielding one pseudobulk profile per brain (n = 3 Adu, n = 3 IgG per cluster).
+
+```{r pseudobulk-de-clusters}
+#| eval: false
+#| message: false
+#| warning: false
+#| label: pseudobulk-de-clusters
+
+source("20260217-helper_functions.R")
+
+# Run pseudobulk DESeq2 for each true astrocyte cluster
+DefaultAssay(astro) <- "Xenium"
+clusters_of_interest <- c(0, 1, 7)
+
+de_by_cluster <- map(clusters_of_interest, \(cl) {
+  # Subset to cells in this cluster
+  sub_obj <- subset(astro, seurat_clusters == cl)
+
+  # Pseudobulk aggregation per sample
+  bulk <- AggregateExpression(sub_obj, group.by = "sample_ID", return.seurat = TRUE)
+
+  # Map treatment metadata (AggregateExpression converts _ to -)
+  sample_meta <- distinct(sub_obj@meta.data, sample_ID, Treatment.Group) |>
+    mutate(bulk_id = gsub("_", "-", sample_ID))
+  bulk$Treatment.Group <- sample_meta$Treatment.Group[
+    match(colnames(bulk), sample_meta$bulk_id)
+  ]
+  Idents(bulk) <- "Treatment.Group"
+
+  # DESeq2 via anayet helper
+  anayet(bulk,
+         ident1      = "Adu",
+         ident2      = "IgG",
+         test_method = "DESeq2",
+         min_pct     = 0,
+         plot_title  = paste("Astrocyte cluster", cl, "— Adu vs IgG"),
+         print_plot  = FALSE)
+
+}) |> set_names(paste0("cluster_", clusters_of_interest))
+
+# saveRDS(de_by_cluster, "results/20260305-DEG_astrocytes_clusters0-1.rds")
+```
+
+
+```{r display-de-clusters}
+#| results: asis
+#| column: page
+#| fig.width: 14
+#| fig.height: 6
+#| warning: false
+#| label: display-de-clusters
+de_by_cluster <- readRDS("results/20260305-DEG_astrocytes_clusters0-1.rds")
+
+# Display volcano plot + significant genes table for each cluster
+walk(names(de_by_cluster), \(cl) {
+  res <- de_by_cluster[[cl]]
+  label <- gsub("_", " ", cl) |> str_to_title()
+  cat("\n\n###", label, "\n\n")
+
+  sig_tbl <- if (nrow(res$significant_results) > 0) {
+    res$significant_results |>
+      select(p_val, avg_log2FC, p_val_adj) |>
+      mutate(across(where(is.numeric), \(x) signif(x, 3))) |>
+      arrange(p_val_adj) |>
+      tableGrob(theme = ttheme_minimal(base_size = 18))
+  } else {
+    tableGrob(
+      data.frame(Result = "No significant DEGs"),
+      theme = ttheme_minimal(base_size = 20)
+    )
+  }
+
+  print(res$volcano_plot + wrap_elements(sig_tbl) + plot_layout(widths = c(2, 1)))
+})
+```
+
