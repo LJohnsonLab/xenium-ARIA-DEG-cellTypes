@@ -1,0 +1,2 @@
+cell_type,Cortex_up,Hippocampus_up,Hypothalamus_up,Thalamus_up,WM_up,Cortex_down,Hippocampus_down,Hypothalamus_down,Thalamus_down,WM_down,Cortex_total,Hippocampus_total,Hypothalamus_total,Thalamus_total,WM_total
+Microglia,"Cd74, H2-Eb1",Ccl12,Lgals3bp,,Ccl12,,,Mdh2,,"App, Mdh1",2,1,2,0,3

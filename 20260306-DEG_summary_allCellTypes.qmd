@@ -1,0 +1,256 @@
+---
+title: "DEG summary across cell types and brain regions"
+date: last-modified
+format:
+  html:
+    number-sections: false
+---
+
+This report consolidates differential expression results across cell
+types and five brain regions
+(Cortex, Hippocampus, Hypothalamus, Thalamus, White Matter).
+
+
+**DE testing.** For each cell type and brain region, cells were pseudobulk-aggregated per
+sample using `AggregateExpression()` on the Xenium raw-counts assay (integer counts, no
+normalisation). Differential expression was then tested with DESeq2 via Seurat's
+`FindMarkers(test.use = "DESeq2")`, comparing Adu vs IgG. Regions with fewer than two
+biological replicates per group were excluded. Genes with adjusted *p*-value < 0.1 were
+considered significant.
+
+```{r setup}
+#| message: false
+
+library(tidyverse)
+library(pheatmap)
+library(patchwork)
+library(UpSetR)
+
+# auto-discover all per-cell-type DEG CSVs
+csv_files <- list.files("deg_number", pattern = "\\.csv$", full.names = TRUE)
+deg_wide  <- map(csv_files, read_csv, show_col_types = FALSE) |> list_rbind()
+
+# extract region names from the _total columns
+regions <- str_remove(names(deg_wide)[str_detect(names(deg_wide), "_total$")], "_total")
+
+# pivot total counts to long format
+deg_total <- deg_wide |>
+  select(cell_type, ends_with("_total")) |>
+  pivot_longer(-cell_type, names_to = "region", values_to = "total") |>
+  mutate(region = str_remove(region, "_total"))
+
+# pivot up/down counts to long format
+deg_long <- deg_wide |>
+  select(cell_type, ends_with("_up"), ends_with("_down")) |>
+  pivot_longer(-cell_type, names_to = "col", values_to = "genes") |>
+  mutate(
+    direction = if_else(str_detect(col, "_up$"), "Up", "Down"),
+    region    = str_remove(col, "_(up|down)$")
+  ) |>
+  select(-col)
+
+# count genes per cell_type/region/direction
+deg_counts <- deg_long |>
+  mutate(count = map_int(genes, \(x) {
+    if (is.na(x) || x == "") 0L else length(str_split_1(x, ",\\s*"))
+  })) |>
+  select(cell_type, region, direction, count)
+```
+
+# Total DEGs per cell type and region
+
+Hierarchically clustered heatmap of total DEG counts (**padj < 0.1**) across all cell types
+and brain regions. Rows and columns are clustered to highlight similarities. Numbers inside
+cells indicate the count of significant DEGs.
+
+```{r heatmap-total}
+#| fig.width: 8
+#| fig.height: 5
+
+# build matrix: rows = cell types, cols = regions
+mat <- deg_total |>
+  pivot_wider(names_from = region, values_from = total) |>
+  column_to_rownames("cell_type") |>
+  as.matrix()
+
+pheatmap(mat,
+  color           = colorRampPalette(c("white", "#d73027"))(100),
+  display_numbers = TRUE,
+  number_format   = "%.0f",
+  fontsize_number = 14,
+  number_color    = "black",
+  cluster_rows    = TRUE,
+  cluster_cols    = TRUE,
+  main            = "Total DEGs by cell type and brain region\n",
+  fontsize        = 14,
+  fontsize_row    = 12,
+  fontsize_col    = 14,
+  angle_col       = 45,
+  cellwidth       = 50,
+  cellheight      = 30
+)
+```
+
+# Up vs Down DEGs
+
+Dodged bar chart showing the number of upregulated and downregulated DEGs for each cell type,
+faceted by brain region. This allows comparison of directionality across cell types within each
+region.
+
+```{r bar-chart-direction}
+#| fig.width: 12
+#| fig.height: 6
+
+deg_counts |>
+  ggplot(aes(x = cell_type, y = count, fill = direction)) +
+  geom_col(position = "dodge", width = 0.7) +
+  facet_wrap(~ region, nrow = 1) +
+  scale_fill_manual(values = c(Up = "#d73027", Down = "#4575b4")) +
+  labs(
+    title = "DEGs by direction, cell type, and brain region\n",
+    x     = NULL,
+    y     = "Number of DEGs",
+    fill  = NULL
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    axis.text.x      = element_text(size = 11, angle = 45, hjust = 1),
+    panel.grid.major.x = element_blank(),
+    strip.text       = element_text(size = 13, face = "bold")
+  )
+```
+
+# Up and Down heatmaps
+
+Side-by-side heatmaps of upregulated and downregulated DEG counts, allowing comparison
+of directionality patterns across cell types and regions.
+
+```{r heatmap-updown}
+#| fig.width: 14
+#| fig.height: 5
+
+# build separate matrices for up and down
+mat_up <- deg_counts |>
+  filter(direction == "Up") |>
+  pivot_wider(names_from = region, values_from = count, id_cols = cell_type) |>
+  column_to_rownames("cell_type") |>
+  as.matrix()
+
+mat_down <- deg_counts |>
+  filter(direction == "Down") |>
+  pivot_wider(names_from = region, values_from = count, id_cols = cell_type) |>
+  column_to_rownames("cell_type") |>
+  as.matrix()
+
+# shared color ceiling
+max_val <- max(c(mat_up, mat_down), na.rm = TRUE)
+
+# draw both heatmaps
+p_up <- pheatmap(mat_up,
+  color           = colorRampPalette(c("white", "#d73027"))(100),
+  breaks          = seq(0, max_val, length.out = 101),
+  display_numbers = TRUE,
+  number_format   = "%.0f",
+  fontsize_number = 14,
+  number_color    = "black",
+  cluster_rows    = FALSE,
+  cluster_cols    = FALSE,
+  main            = "Upregulated DEGs\n",
+  fontsize        = 14,
+  fontsize_row    = 12,
+  fontsize_col    = 14,
+  angle_col       = 45,
+  cellwidth       = 50,
+  cellheight      = 30,
+  silent          = TRUE
+)
+
+p_down <- pheatmap(mat_down,
+  color           = colorRampPalette(c("white", "#4575b4"))(100),
+  breaks          = seq(0, max_val, length.out = 101),
+  display_numbers = TRUE,
+  number_format   = "%.0f",
+  fontsize_number = 14,
+  number_color    = "black",
+  cluster_rows    = FALSE,
+  cluster_cols    = FALSE,
+  main            = "Downregulated DEGs\n",
+  fontsize        = 14,
+  fontsize_row    = 12,
+  fontsize_col    = 14,
+  angle_col       = 45,
+  cellwidth       = 50,
+  cellheight      = 30,
+  silent          = TRUE
+)
+
+# arrange side by side
+gridExtra::grid.arrange(p_up$gtable, p_down$gtable, ncol = 2)
+```
+
+
+
+# Gene overlap across cell types
+
+For each brain region, identify DEGs shared across multiple cell types. Genes appearing in
+more than one cell type within the same region may indicate conserved responses to treatment.
+
+```{r gene-overlap}
+#| fig.width: 10
+#| fig.height: 8
+
+# parse gene lists into a tidy data frame
+gene_df <- deg_long |>
+  filter(!is.na(genes) & genes != "") |>
+  mutate(gene = str_split(genes, ",\\s*")) |>
+  unnest(gene) |>
+  select(cell_type, region, direction, gene)
+
+# for each region, count how many cell types share each gene
+shared_genes <- gene_df |>
+  distinct(cell_type, region, gene) |>
+  group_by(region, gene) |>
+  summarise(
+    n_cell_types = n(),
+    cell_types   = paste(cell_type, collapse = ", "),
+    .groups      = "drop"
+  ) |>
+  filter(n_cell_types > 1) |>
+  arrange(region, desc(n_cell_types))
+
+if (nrow(shared_genes) > 0) {
+  shared_genes |>
+    kableExtra::kbl(
+      caption = "DEGs shared across cell types within each brain region",
+      col.names = c("Region", "Gene", "# Cell types", "Cell types")
+    ) |>
+    kableExtra::kable_styling("striped", full_width = FALSE)
+} else {
+  cat("No DEGs shared across multiple cell types in any region.")
+}
+```
+
+```{r upset-plot}
+#| fig.width: 10
+#| fig.height: 6
+
+# UpSet plot: for each region with shared genes, show cell-type overlaps
+# pool all genes across regions for global cell-type overlap view
+gene_by_ct <- gene_df |>
+  distinct(cell_type, gene) |>
+  mutate(present = 1) |>
+  pivot_wider(names_from = cell_type, values_from = present, values_fill = 0) |>
+  as.data.frame()
+
+if (nrow(gene_by_ct) > 1 && ncol(gene_by_ct) > 2) {
+  upset(gene_by_ct,
+    sets      = setdiff(names(gene_by_ct), "gene"),
+    order.by  = "freq",
+    text.scale = 1.3,
+    mainbar.y.label = "Shared DEGs",
+    sets.x.label    = "DEGs per cell type"
+  )
+} else {
+  cat("Not enough overlap data for UpSet plot.")
+}
+```

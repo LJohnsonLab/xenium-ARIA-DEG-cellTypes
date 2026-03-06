@@ -1,0 +1,2 @@
+cell_type,Cortex_up,Hippocampus_up,Hypothalamus_up,Thalamus_up,WM_up,Cortex_down,Hippocampus_down,Hypothalamus_down,Thalamus_down,WM_down,Cortex_total,Hippocampus_total,Hypothalamus_total,Thalamus_total,WM_total
+Astrocytes,,"Agt, Ifitm3, Ifitm2, Ifit2, Ccl12","Abca1, Apod, Plin4, Hacd2",,,,Hsd11b1,,,,0,6,4,0,0

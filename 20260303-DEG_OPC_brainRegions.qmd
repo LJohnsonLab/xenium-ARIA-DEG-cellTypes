@@ -146,6 +146,30 @@ saveRDS(
 )
 ```
 
+```{r save-degs}
+# Build one-row CSV summarising DEGs per region (gene names + counts)
+deg_summary <- imap(de_by_region, \(res, reg) {
+  sig <- res$significant_results |> rownames_to_column("gene")
+  up_genes   <- sig |> filter(avg_log2FC > 0) |> pull(gene)
+  down_genes <- sig |> filter(avg_log2FC < 0) |> pull(gene)
+  tibble(
+    region = reg,
+    up     = paste(up_genes, collapse = ", "),
+    down   = paste(down_genes, collapse = ", "),
+    total  = nrow(sig)
+  )
+}) |> list_rbind()
+
+# Pivot to wide format: one column per region per direction
+deg_wide <- deg_summary |>
+  pivot_wider(names_from = region,
+              values_from = c(up, down, total),
+              names_glue = "{region}_{.value}") |>
+  mutate(cell_type = "OPCs", .before = 1)
+
+write_csv(deg_wide, "deg_number/DEG_OPCs.csv")
+```
+
 ## Summary visualisations
 
 The following figures integrate findings across all brain regions to facilitate cross-regional

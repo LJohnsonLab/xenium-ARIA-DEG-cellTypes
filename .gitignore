@@ -26,3 +26,6 @@ seurat_objects/*
 **/*.quarto_ipynb
 
 *.pdf
+
+# Text and image drafts
+text_pics/
