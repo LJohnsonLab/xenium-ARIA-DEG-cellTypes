@@ -165,12 +165,13 @@ pairwise_de <- map(pairs, \(pr) {
 
   # DESeq2 via anayet
   anayet(bulk,
-         ident1      = pr[1],
-         ident2      = pr[2],
-         test_method = "DESeq2",
-         min_pct     = 0,
-         plot_title  = paste("Cluster", pr[1], "vs", pr[2]),
-         print_plot  = FALSE)
+         ident1          = pr[1],
+         ident2          = pr[2],
+         test_method     = "DESeq2",
+         min_pct         = 0,
+         p_adj_threshold = 0.1,
+         plot_title      = paste("Cluster", pr[1], "vs", pr[2]),
+         print_plot      = FALSE)
 
 }) |> set_names(paste0("cl", map_chr(pairs, 1), "_vs_cl", map_chr(pairs, 2)))
 
@@ -179,7 +180,7 @@ saveRDS(pairwise_de, "results/20260305-pairwise_DE_astro_clusters.rds")
 
 ### DEG counts per comparison
 
-The bar chart below tallies the number of significant DEGs (adjusted *p* < 0.05) for each
+The bar chart below tallies the number of significant DEGs (adjusted *p* < 0.1) for each
 pairwise cluster comparison, stratified by direction of effect: genes with higher expression
 in the first cluster of the pair (red) versus genes with higher expression in the second (blue).
 
@@ -210,7 +211,7 @@ ggplot(deg_counts, aes(x = Comparison, y = n, fill = Direction)) +
   geom_col(position = "dodge", width = 0.7, alpha = 0.9) +
   scale_fill_manual(values = c("Up in first" = "#d73027", "Down in first" = "#4575b4")) +
   labs(title = "Significant DEGs per pairwise comparison",
-       subtitle = "padj < 0.05",
+       subtitle = "padj < 0.1",
        x = NULL, y = "Number of DEGs", fill = NULL) +
   theme_minimal(base_size = 14) +
   theme(panel.grid.major.x = element_blank(),
@@ -224,7 +225,7 @@ log~2~ fold change for the top 20 most significant DEGs (by adjusted *p*-value) 
 pairwise comparison. Each column represents a cluster pair (e.g., "0 vs 1") and each row a
 gene. The colour scale is symmetric around zero, with red indicating higher expression in the
 first cluster and blue indicating higher expression in the second. Asterisks mark gene–comparison
-combinations that individually reach significance (adjusted *p* < 0.05). Genes are
+combinations that individually reach significance (adjusted *p* < 0.1). Genes are
 hierarchically clustered by their fold-change profiles to reveal shared and comparison-specific
 expression patterns.
 
@@ -243,7 +244,7 @@ all_de_long <- imap(pairwise_de, \(res, comp) {
 
 # Select top 20 DEGs per comparison by padj
 top_genes <- all_de_long |>
-  filter(p_val_adj < 0.05) |>
+  filter(p_val_adj < 0.1) |>
   group_by(Comparison) |>
   arrange(p_val_adj, .by_group = TRUE) |>
   slice_head(n = 20) |>
@@ -265,7 +266,7 @@ if (length(top_genes) > 0) {
     column_to_rownames("gene") |>
     as.matrix()
 
-  display_matrix <- ifelse(!is.na(sig_matrix) & sig_matrix < 0.05, "*", "")
+  display_matrix <- ifelse(!is.na(sig_matrix) & sig_matrix < 0.1, "*", "")
 
   clim <- ceiling(max(abs(fc_matrix), na.rm = TRUE))
 

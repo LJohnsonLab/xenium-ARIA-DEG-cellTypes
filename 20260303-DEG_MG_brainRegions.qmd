@@ -67,7 +67,7 @@ via Seurat's `FindMarkers` interface with `test.use = "DESeq2"` and no minimum e
 filter (`min.pct = 0`), ensuring all detected genes were considered. 
 
 For each eligible region, results are displayed as a volcano plot, highlighting genes reaching
-statistical significance (Benjamini-Hochberg-adjusted *p* < 0.05), alongside a table of
+statistical significance (Benjamini-Hochberg-adjusted *p* < 0.1), alongside a table of
 significant differentially expressed genes (DEGs), ranked by adjusted *p*-value.
 
 ```{r pseudobulk-de}
@@ -101,12 +101,13 @@ de_by_region <- map(regions, \(reg) {
   Idents(bulk) <- "Treatment.Group"
 
   res <- anayet(bulk,
-                ident1      = "Adu",
-                ident2      = "IgG",
-                test_method = "DESeq2",
-                min_pct     = 0,
-                plot_title  = paste("Microglia —", reg),
-                print_plot  = FALSE)
+                ident1          = "Adu",
+                ident2          = "IgG",
+                test_method     = "DESeq2",
+                min_pct         = 0,
+                p_adj_threshold = 0.1,
+                plot_title      = paste("Microglia —", reg),
+                print_plot      = FALSE)
 
   cat("\n\n###", reg, "\n\n")
 
@@ -145,7 +146,7 @@ comparison of microglial transcriptional responses to aducanumab treatment.
 ### DEG counts per region
 
 To provide an overview of the magnitude and directionality of transcriptional responses across
-brain regions, the total number of significant DEGs (Benjamini-Hochberg-adjusted *p* < 0.05)
+brain regions, the total number of significant DEGs (Benjamini-Hochberg-adjusted *p* < 0.1)
 was tallied per region and stratified by direction of effect: genes upregulated in aducanumab-
 treated animals relative to IgG controls (Up in Adu) and genes downregulated (Down in Adu).
 Regions with no significant DEGs are absent from the plot.
@@ -170,7 +171,7 @@ ggplot(deg_counts, aes(x = Region, y = n, fill = Direction)) +
   scale_fill_manual(values = c("Up in Adu" = "#d73027", "Down in Adu" = "#4575b4")) +
   labs(
     title    = "Significant DEGs per brain region",
-    subtitle = "padj < 0.05",
+    subtitle = "padj < 0.1",
     x        = NULL,
     y        = "Number of DEGs",
     fill     = NULL
@@ -184,12 +185,12 @@ ggplot(deg_counts, aes(x = Region, y = n, fill = Direction)) +
 
 To identify genes with consistent or divergent regulation across brain regions, a hierarchically
 clustered heatmap was constructed for all genes reaching statistical significance (adjusted
-*p* < 0.05) in at least one region.  
+*p* < 0.1) in at least one region.  
 
 Each cell displays the log~2~ fold change (Adu vs IgG) for
 that gene–region combination. The colour scale is symmetric and centred at zero, with red
 denoting upregulation in aducanumab-treated animals and blue denoting downregulation. Asterisks
-mark gene–region combinations that individually meet the adjusted *p* < 0.05 threshold. Genes and regions
+mark gene–region combinations that individually meet the adjusted *p* < 0.1 threshold. Genes and regions
 were clustered hierarchically by their fold-change profiles to reveal co-regulated gene modules and similarities between brain regions.
 
 ```{r heatmap}
@@ -203,7 +204,7 @@ all_de_long <- imap(de_by_region, \(res, reg) {
 }) |> list_rbind()
 
 sig_genes <- all_de_long |>
-  filter(p_val_adj < 0.05) |>
+  filter(p_val_adj < 0.1) |>
   pull(gene) |>
   unique()
 
@@ -220,7 +221,7 @@ if (length(sig_genes) > 0) {
     column_to_rownames("gene") |>
     as.matrix()
 
-  display_matrix <- ifelse(!is.na(sig_matrix) & sig_matrix < 0.05, "*", "")
+  display_matrix <- ifelse(!is.na(sig_matrix) & sig_matrix < 0.1, "*", "")
 
   clim <- ceiling(max(abs(fc_matrix), na.rm = TRUE))
 

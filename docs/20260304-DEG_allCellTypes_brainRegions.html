@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-03-04">
+<meta name="dcterms.date" content="2026-03-06">
 
 <title>Differentially expressed genes across all cell types (Adu vs IgG) – ARIA Xenium Analysis</title>
 <style>
@@ -236,7 +236,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">March 4, 2026</p>
+      <p class="date">March 6, 2026</p>
     </div>
   </div>
   
@@ -316,65 +316,66 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>  <span class="co"># DESeq2 via anayet</span></span>
 <span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>  res <span class="ot">&lt;-</span> <span class="fu">anayet</span>(bulk,</span>
-<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>                <span class="at">ident1      =</span> <span class="st">"Adu"</span>,</span>
-<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>                <span class="at">ident2      =</span> <span class="st">"IgG"</span>,</span>
-<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>                <span class="at">test_method =</span> <span class="st">"DESeq2"</span>,</span>
-<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>                <span class="at">min_pct     =</span> <span class="fl">0.1</span>,</span>
-<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>                <span class="at">plot_title  =</span> ct_label,</span>
-<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>                <span class="at">print_plot  =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n\n</span><span class="st">&lt;h3&gt;Volcano plot&lt;/h3&gt;</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
-<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>  sig_tbl <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="fu">nrow</span>(res<span class="sc">$</span>significant_results) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
-<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>    res<span class="sc">$</span>significant_results <span class="sc">|&gt;</span></span>
-<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>      <span class="fu">select</span>(p_val, avg_log2FC, p_val_adj) <span class="sc">|&gt;</span></span>
-<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), \(x) <span class="fu">signif</span>(x, <span class="dv">3</span>))) <span class="sc">|&gt;</span></span>
-<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>      <span class="fu">arrange</span>(p_val_adj) <span class="sc">|&gt;</span></span>
-<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>      <span class="fu">tableGrob</span>(<span class="at">theme =</span> <span class="fu">ttheme_minimal</span>(<span class="at">base_size =</span> <span class="dv">18</span>))</span>
-<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
-<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tableGrob</span>(</span>
-<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>      <span class="fu">data.frame</span>(<span class="at">Result =</span> <span class="st">"No significant DEGs"</span>),</span>
-<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>      <span class="at">theme =</span> <span class="fu">ttheme_minimal</span>(<span class="at">base_size =</span> <span class="dv">20</span>)</span>
-<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(res<span class="sc">$</span>volcano_plot <span class="sc">+</span> <span class="fu">wrap_elements</span>(sig_tbl) <span class="sc">+</span> <span class="fu">plot_layout</span>(<span class="at">widths =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>)))</span>
-<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Per-sample heatmap of significant DEGs</span></span>
-<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>  sig_genes <span class="ot">&lt;-</span> <span class="fu">rownames</span>(res<span class="sc">$</span>significant_results)</span>
-<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">length</span>(sig_genes) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
-<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Extract normalised pseudobulk expression (data layer created by AggregateExpression)</span></span>
-<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>    expr_mat <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(<span class="fu">GetAssayData</span>(bulk, <span class="at">layer =</span> <span class="st">"data"</span>)[sig_genes, , <span class="at">drop =</span> <span class="cn">FALSE</span>])</span>
-<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Z-score per gene for visualisation</span></span>
-<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>    expr_scaled <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">scale</span>(<span class="fu">t</span>(expr_mat)))</span>
-<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Sample annotation: treatment group</span></span>
-<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>    sample_annot <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a>      <span class="at">Treatment =</span> bulk<span class="sc">$</span>Treatment.Group,</span>
-<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>      <span class="at">row.names =</span> <span class="fu">colnames</span>(bulk)</span>
-<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>    annot_colors <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">Treatment =</span> <span class="fu">c</span>(<span class="at">Adu =</span> <span class="st">"#d73027"</span>, <span class="at">IgG =</span> <span class="st">"#4575b4"</span>))</span>
-<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pheatmap</span>(expr_scaled,</span>
-<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a>      <span class="at">color             =</span> <span class="fu">colorRampPalette</span>(<span class="fu">c</span>(<span class="st">"#4575b4"</span>, <span class="st">"white"</span>, <span class="st">"#d73027"</span>))(<span class="dv">100</span>),</span>
-<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>      <span class="at">annotation_col    =</span> sample_annot,</span>
-<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a>      <span class="at">annotation_colors =</span> annot_colors,</span>
-<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>      <span class="at">cluster_cols      =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>      <span class="at">cluster_rows      =</span> <span class="fu">ifelse</span>(<span class="fu">length</span>(sig_genes) <span class="sc">&gt;</span> <span class="dv">1</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span>),</span>
-<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>      <span class="at">main              =</span> <span class="fu">paste</span>(ct_label, <span class="st">"— significant DEGs per sample (z-score)</span><span class="sc">\n</span><span class="st">"</span>),</span>
-<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a>      <span class="at">fontsize          =</span> <span class="dv">14</span>,</span>
-<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a>      <span class="at">fontsize_row      =</span> <span class="dv">12</span>,</span>
-<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a>      <span class="at">fontsize_col      =</span> <span class="dv">12</span>,</span>
-<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>      <span class="at">angle_col         =</span> <span class="dv">45</span>,</span>
-<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a>      <span class="at">cellwidth         =</span> <span class="dv">40</span>,</span>
-<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>      <span class="at">cellheight        =</span> <span class="dv">20</span></span>
-<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>  res</span>
-<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>                <span class="at">ident1          =</span> <span class="st">"Adu"</span>,</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>                <span class="at">ident2          =</span> <span class="st">"IgG"</span>,</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>                <span class="at">test_method     =</span> <span class="st">"DESeq2"</span>,</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>                <span class="at">min_pct         =</span> <span class="fl">0.1</span>,</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>                <span class="at">p_adj_threshold =</span> <span class="fl">0.1</span>,</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>                <span class="at">plot_title      =</span> ct_label,</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>                <span class="at">print_plot      =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n\n</span><span class="st">&lt;h3&gt;Volcano plot&lt;/h3&gt;</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>  sig_tbl <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="fu">nrow</span>(res<span class="sc">$</span>significant_results) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>    res<span class="sc">$</span>significant_results <span class="sc">|&gt;</span></span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>      <span class="fu">select</span>(p_val, avg_log2FC, p_val_adj) <span class="sc">|&gt;</span></span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), \(x) <span class="fu">signif</span>(x, <span class="dv">3</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>      <span class="fu">arrange</span>(p_val_adj) <span class="sc">|&gt;</span></span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>      <span class="fu">tableGrob</span>(<span class="at">theme =</span> <span class="fu">ttheme_minimal</span>(<span class="at">base_size =</span> <span class="dv">18</span>))</span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tableGrob</span>(</span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>      <span class="fu">data.frame</span>(<span class="at">Result =</span> <span class="st">"No significant DEGs"</span>),</span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>      <span class="at">theme =</span> <span class="fu">ttheme_minimal</span>(<span class="at">base_size =</span> <span class="dv">20</span>)</span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(res<span class="sc">$</span>volcano_plot <span class="sc">+</span> <span class="fu">wrap_elements</span>(sig_tbl) <span class="sc">+</span> <span class="fu">plot_layout</span>(<span class="at">widths =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>)))</span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Per-sample heatmap of significant DEGs</span></span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>  sig_genes <span class="ot">&lt;-</span> <span class="fu">rownames</span>(res<span class="sc">$</span>significant_results)</span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">length</span>(sig_genes) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Extract normalised pseudobulk expression (data layer created by AggregateExpression)</span></span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>    expr_mat <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(<span class="fu">GetAssayData</span>(bulk, <span class="at">layer =</span> <span class="st">"data"</span>)[sig_genes, , <span class="at">drop =</span> <span class="cn">FALSE</span>])</span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Z-score per gene for visualisation</span></span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>    expr_scaled <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">scale</span>(<span class="fu">t</span>(expr_mat)))</span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Sample annotation: treatment group</span></span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a>    sample_annot <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>      <span class="at">Treatment =</span> bulk<span class="sc">$</span>Treatment.Group,</span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>      <span class="at">row.names =</span> <span class="fu">colnames</span>(bulk)</span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a>    annot_colors <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">Treatment =</span> <span class="fu">c</span>(<span class="at">Adu =</span> <span class="st">"#d73027"</span>, <span class="at">IgG =</span> <span class="st">"#4575b4"</span>))</span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pheatmap</span>(expr_scaled,</span>
+<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>      <span class="at">color             =</span> <span class="fu">colorRampPalette</span>(<span class="fu">c</span>(<span class="st">"#4575b4"</span>, <span class="st">"white"</span>, <span class="st">"#d73027"</span>))(<span class="dv">100</span>),</span>
+<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a>      <span class="at">annotation_col    =</span> sample_annot,</span>
+<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>      <span class="at">annotation_colors =</span> annot_colors,</span>
+<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>      <span class="at">cluster_cols      =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>      <span class="at">cluster_rows      =</span> <span class="fu">ifelse</span>(<span class="fu">length</span>(sig_genes) <span class="sc">&gt;</span> <span class="dv">1</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span>),</span>
+<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a>      <span class="at">main              =</span> <span class="fu">paste</span>(ct_label, <span class="st">"— significant DEGs per sample (z-score)</span><span class="sc">\n</span><span class="st">"</span>),</span>
+<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a>      <span class="at">fontsize          =</span> <span class="dv">14</span>,</span>
+<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a>      <span class="at">fontsize_row      =</span> <span class="dv">12</span>,</span>
+<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>      <span class="at">fontsize_col      =</span> <span class="dv">12</span>,</span>
+<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a>      <span class="at">angle_col         =</span> <span class="dv">45</span>,</span>
+<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>      <span class="at">cellwidth         =</span> <span class="dv">40</span>,</span>
+<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a>      <span class="at">cellheight        =</span> <span class="dv">20</span></span>
+<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a>  res</span>
+<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div class="cell column-page">
@@ -468,7 +469,7 @@ n_IgG
 <h3 class="anchored">
 Volcano plot
 </h3>
-<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-3.svg" class="img-fluid" width="1152"></p>
+<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-3.svg" class="img-fluid" width="1152"><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-4.svg" class="img-fluid" width="1152"></p>
 <h2 class="anchored">
 3
 </h2>
@@ -509,7 +510,7 @@ n_IgG
 <h3 class="anchored">
 Volcano plot
 </h3>
-<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-4.svg" class="img-fluid" width="1152"><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-5.svg" class="img-fluid" width="1152"></p>
+<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-5.svg" class="img-fluid" width="1152"><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-6.svg" class="img-fluid" width="1152"></p>
 <h2 class="anchored">
 4
 </h2>
@@ -550,7 +551,7 @@ n_IgG
 <h3 class="anchored">
 Volcano plot
 </h3>
-<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-6.svg" class="img-fluid" width="1152"></p>
+<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-7.svg" class="img-fluid" width="1152"></p>
 <h2 class="anchored">
 5
 </h2>
@@ -591,7 +592,7 @@ n_IgG
 <h3 class="anchored">
 Volcano plot
 </h3>
-<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-7.svg" class="img-fluid" width="1152"></p>
+<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-8.svg" class="img-fluid" width="1152"></p>
 <h2 class="anchored">
 6
 </h2>
@@ -632,7 +633,7 @@ n_IgG
 <h3 class="anchored">
 Volcano plot
 </h3>
-<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-8.svg" class="img-fluid" width="1152"></p>
+<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-9.svg" class="img-fluid" width="1152"></p>
 <h2 class="anchored">
 7
 </h2>
@@ -673,7 +674,7 @@ n_IgG
 <h3 class="anchored">
 Volcano plot
 </h3>
-<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-9.svg" class="img-fluid" width="1152"></p>
+<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-10.svg" class="img-fluid" width="1152"></p>
 <h2 class="anchored">
 8
 </h2>
@@ -714,7 +715,7 @@ n_IgG
 <h3 class="anchored">
 Volcano plot
 </h3>
-<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-10.svg" class="img-fluid" width="1152"></p>
+<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-11.svg" class="img-fluid" width="1152"><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-12.svg" class="img-fluid" width="1152"></p>
 <h2 class="anchored">
 9
 </h2>
@@ -755,7 +756,7 @@ n_IgG
 <h3 class="anchored">
 Volcano plot
 </h3>
-<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-11.svg" class="img-fluid" width="1152"></p>
+<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-13.svg" class="img-fluid" width="1152"></p>
 <h2 class="anchored">
 10
 </h2>
@@ -796,7 +797,7 @@ n_IgG
 <h3 class="anchored">
 Volcano plot
 </h3>
-<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-12.svg" class="img-fluid" width="1152"><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-13.svg" class="img-fluid" width="1152"></p>
+<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-14.svg" class="img-fluid" width="1152"><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-15.svg" class="img-fluid" width="1152"></p>
 <h2 class="anchored">
 11
 </h2>
@@ -837,7 +838,7 @@ n_IgG
 <h3 class="anchored">
 Volcano plot
 </h3>
-<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-14.svg" class="img-fluid" width="1152"><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-15.svg" class="img-fluid" width="1152"></p>
+<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-16.svg" class="img-fluid" width="1152"><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-17.svg" class="img-fluid" width="1152"></p>
 <h2 class="anchored">
 12
 </h2>
@@ -878,7 +879,7 @@ n_IgG
 <h3 class="anchored">
 Volcano plot
 </h3>
-<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-16.svg" class="img-fluid" width="1152"><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-17.svg" class="img-fluid" width="1152"></p>
+<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-18.svg" class="img-fluid" width="1152"><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-19.svg" class="img-fluid" width="1152"></p>
 <h2 class="anchored">
 13
 </h2>
@@ -919,7 +920,7 @@ n_IgG
 <h3 class="anchored">
 Volcano plot
 </h3>
-<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-18.svg" class="img-fluid" width="1152"><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-19.svg" class="img-fluid" width="1152"></p>
+<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-20.svg" class="img-fluid" width="1152"><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-21.svg" class="img-fluid" width="1152"></p>
 <h2 class="anchored">
 14
 </h2>
@@ -960,7 +961,7 @@ n_IgG
 <h3 class="anchored">
 Volcano plot
 </h3>
-<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-20.svg" class="img-fluid" width="1152"></p>
+<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-22.svg" class="img-fluid" width="1152"></p>
 <h2 class="anchored">
 15
 </h2>
@@ -1001,7 +1002,7 @@ n_IgG
 <h3 class="anchored">
 Volcano plot
 </h3>
-<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-21.svg" class="img-fluid" width="1152"></p>
+<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-23.svg" class="img-fluid" width="1152"></p>
 <h2 class="anchored">
 16
 </h2>
@@ -1042,7 +1043,7 @@ n_IgG
 <h3 class="anchored">
 Volcano plot
 </h3>
-<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-22.svg" class="img-fluid" width="1152"></p>
+<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-24.svg" class="img-fluid" width="1152"></p>
 <h2 class="anchored">
 17
 </h2>
@@ -1083,7 +1084,7 @@ n_IgG
 <h3 class="anchored">
 Volcano plot
 </h3>
-<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-23.svg" class="img-fluid" width="1152"><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-24.svg" class="img-fluid" width="1152"></p>
+<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-25.svg" class="img-fluid" width="1152"><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-26.svg" class="img-fluid" width="1152"></p>
 <h2 class="anchored">
 18
 </h2>
@@ -1124,7 +1125,7 @@ n_IgG
 <h3 class="anchored">
 Volcano plot
 </h3>
-<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-25.svg" class="img-fluid" width="1152"><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-26.svg" class="img-fluid" width="1152"></p>
+<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-27.svg" class="img-fluid" width="1152"><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-28.svg" class="img-fluid" width="1152"></p>
 <h2 class="anchored">
 19
 </h2>
@@ -1165,7 +1166,7 @@ n_IgG
 <h3 class="anchored">
 Volcano plot
 </h3>
-<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-27.svg" class="img-fluid" width="1152"><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-28.svg" class="img-fluid" width="1152"></p>
+<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-29.svg" class="img-fluid" width="1152"><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-30.svg" class="img-fluid" width="1152"></p>
 <h2 class="anchored">
 20
 </h2>
@@ -1206,7 +1207,7 @@ n_IgG
 <h3 class="anchored">
 Volcano plot
 </h3>
-<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-29.svg" class="img-fluid" width="1152"></p>
+<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-31.svg" class="img-fluid" width="1152"></p>
 <h2 class="anchored">
 21
 </h2>
@@ -1247,7 +1248,7 @@ n_IgG
 <h3 class="anchored">
 Volcano plot
 </h3>
-<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-30.svg" class="img-fluid" width="1152"></p>
+<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-32.svg" class="img-fluid" width="1152"></p>
 <h2 class="anchored">
 22
 </h2>
@@ -1288,7 +1289,7 @@ n_IgG
 <h3 class="anchored">
 Volcano plot
 </h3>
-<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-31.svg" class="img-fluid" width="1152"><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-32.svg" class="img-fluid" width="1152"></p>
+<p><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-33.svg" class="img-fluid" width="1152"><img src="20260304-DEG_allCellTypes_brainRegions_files/figure-html/main-loop-34.svg" class="img-fluid" width="1152"></p>
 </div>
 <div class="cell">
 <details class="code-fold">
@@ -1325,7 +1326,7 @@ Volcano plot
 <span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Up in Adu"</span> <span class="ot">=</span> <span class="st">"#d73027"</span>, <span class="st">"Down in Adu"</span> <span class="ot">=</span> <span class="st">"#4575b4"</span>)) <span class="sc">+</span></span>
 <span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
 <span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">title    =</span> <span class="st">"Significant DEGs per cell type"</span>,</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>      <span class="at">subtitle =</span> <span class="st">"padj &lt; 0.05"</span>,</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>      <span class="at">subtitle =</span> <span class="st">"padj &lt; 0.1"</span>,</span>
 <span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>      <span class="at">x        =</span> <span class="cn">NULL</span>,</span>
 <span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>      <span class="at">y        =</span> <span class="st">"Number of DEGs"</span>,</span>
 <span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>      <span class="at">fill     =</span> <span class="cn">NULL</span></span>
@@ -1348,7 +1349,7 @@ Volcano plot
 </section>
 <section id="cross-cell-type-log2fc-heatmap" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="cross-cell-type-log2fc-heatmap">Cross-cell-type log2FC heatmap</h2>
-<p>A heatmap of log<sub>2</sub> fold changes (Adu vs IgG) for all genes significant (padj &lt; 0.05) in at least one cell type. Asterisks mark individually significant cell-type–gene combinations.</p>
+<p>A heatmap of log<sub>2</sub> fold changes (Adu vs IgG) for all genes significant (padj &lt; 0.1) in at least one cell type. Asterisks mark individually significant cell-type–gene combinations.</p>
 <div class="cell page-columns page-full">
 <details class="code-fold">
 <summary>Code</summary>
@@ -1361,7 +1362,7 @@ Volcano plot
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Genes significant in at least one cell type</span></span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>sig_genes_cross <span class="ot">&lt;-</span> cross_long <span class="sc">|&gt;</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(p_val_adj <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">|&gt;</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(p_val_adj <span class="sc">&lt;</span> <span class="fl">0.1</span>) <span class="sc">|&gt;</span></span>
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(gene) <span class="sc">|&gt;</span></span>
 <span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>()</span>
 <span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
@@ -1370,7 +1371,7 @@ Volcano plot
 <span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># If too many genes, keep those significant in &gt;=2 cell types</span></span>
 <span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">length</span>(sig_genes_cross) <span class="sc">&gt;</span> <span class="dv">100</span>) {</span>
 <span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    gene_sig_count <span class="ot">&lt;-</span> cross_long <span class="sc">|&gt;</span></span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(p_val_adj <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">|&gt;</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(p_val_adj <span class="sc">&lt;</span> <span class="fl">0.1</span>) <span class="sc">|&gt;</span></span>
 <span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>      <span class="fu">distinct</span>(gene, CellType) <span class="sc">|&gt;</span></span>
 <span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>      <span class="fu">count</span>(gene)</span>
 <span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    filtered <span class="ot">&lt;-</span> gene_sig_count <span class="sc">|&gt;</span> <span class="fu">filter</span>(n <span class="sc">&gt;=</span> <span class="dv">2</span>) <span class="sc">|&gt;</span> <span class="fu">pull</span>(gene)</span>
@@ -1391,7 +1392,7 @@ Volcano plot
 <span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>    <span class="fu">column_to_rownames</span>(<span class="st">"gene"</span>) <span class="sc">|&gt;</span></span>
 <span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as.matrix</span>()</span>
 <span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>  display_mat <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="sc">!</span><span class="fu">is.na</span>(sig_mat) <span class="sc">&amp;</span> sig_mat <span class="sc">&lt;</span> <span class="fl">0.05</span>, <span class="st">"*"</span>, <span class="st">""</span>)</span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>  display_mat <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="sc">!</span><span class="fu">is.na</span>(sig_mat) <span class="sc">&amp;</span> sig_mat <span class="sc">&lt;</span> <span class="fl">0.1</span>, <span class="st">"*"</span>, <span class="st">""</span>)</span>
 <span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>  clim <span class="ot">&lt;-</span> <span class="fu">ceiling</span>(<span class="fu">max</span>(<span class="fu">abs</span>(fc_mat), <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
 <span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a></span>

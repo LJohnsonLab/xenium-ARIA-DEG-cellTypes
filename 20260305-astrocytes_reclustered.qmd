@@ -217,6 +217,7 @@ Pseudobulk DESeq2 was performed on each true astrocyte cluster (0 and 1) separat
 comparing aducanumab (Adu) vs isotype control (IgG) pooled across all brain regions.
 Raw Xenium counts were aggregated per biological sample using `AggregateExpression`,
 yielding one pseudobulk profile per brain (n = 3 Adu, n = 3 IgG per cluster).
+Significance threshold: adjusted p-value < 0.1.
 
 ```{r pseudobulk-de-clusters}
 #| eval: false
@@ -246,13 +247,15 @@ de_by_cluster <- map(clusters_of_interest, \(cl) {
   Idents(bulk) <- "Treatment.Group"
 
   # DESeq2 via anayet helper
+  # Relaxed threshold (p_adj < 0.1) for astrocyte subclusters
   anayet(bulk,
-         ident1      = "Adu",
-         ident2      = "IgG",
-         test_method = "DESeq2",
-         min_pct     = 0,
-         plot_title  = paste("Astrocyte cluster", cl, "— Adu vs IgG"),
-         print_plot  = FALSE)
+         ident1          = "Adu",
+         ident2          = "IgG",
+         test_method     = "DESeq2",
+         min_pct         = 0,
+         p_adj_threshold = 0.1,
+         plot_title      = paste("Astrocyte cluster", cl, "— Adu vs IgG"),
+         print_plot      = FALSE)
 
 }) |> set_names(paste0("cluster_", clusters_of_interest))
 

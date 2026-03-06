@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-03-05">
+<meta name="dcterms.date" content="2026-03-06">
 
 <title>Astrocyte cluster characterization – ARIA Xenium Analysis</title>
 <style>
@@ -247,7 +247,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">March 5, 2026</p>
+      <p class="date">March 6, 2026</p>
     </div>
   </div>
   
@@ -482,21 +482,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># DESeq2 via anayet</span></span>
 <span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">anayet</span>(bulk,</span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>         <span class="at">ident1      =</span> pr[<span class="dv">1</span>],</span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>         <span class="at">ident2      =</span> pr[<span class="dv">2</span>],</span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>         <span class="at">test_method =</span> <span class="st">"DESeq2"</span>,</span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>         <span class="at">min_pct     =</span> <span class="dv">0</span>,</span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>         <span class="at">plot_title  =</span> <span class="fu">paste</span>(<span class="st">"Cluster"</span>, pr[<span class="dv">1</span>], <span class="st">"vs"</span>, pr[<span class="dv">2</span>]),</span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>         <span class="at">print_plot  =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>}) <span class="sc">|&gt;</span> <span class="fu">set_names</span>(<span class="fu">paste0</span>(<span class="st">"cl"</span>, <span class="fu">map_chr</span>(pairs, <span class="dv">1</span>), <span class="st">"_vs_cl"</span>, <span class="fu">map_chr</span>(pairs, <span class="dv">2</span>)))</span>
-<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(pairwise_de, <span class="st">"results/20260305-pairwise_DE_astro_clusters.rds"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>         <span class="at">ident1          =</span> pr[<span class="dv">1</span>],</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>         <span class="at">ident2          =</span> pr[<span class="dv">2</span>],</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>         <span class="at">test_method     =</span> <span class="st">"DESeq2"</span>,</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>         <span class="at">min_pct         =</span> <span class="dv">0</span>,</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>         <span class="at">p_adj_threshold =</span> <span class="fl">0.1</span>,</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>         <span class="at">plot_title      =</span> <span class="fu">paste</span>(<span class="st">"Cluster"</span>, pr[<span class="dv">1</span>], <span class="st">"vs"</span>, pr[<span class="dv">2</span>]),</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>         <span class="at">print_plot      =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>}) <span class="sc">|&gt;</span> <span class="fu">set_names</span>(<span class="fu">paste0</span>(<span class="st">"cl"</span>, <span class="fu">map_chr</span>(pairs, <span class="dv">1</span>), <span class="st">"_vs_cl"</span>, <span class="fu">map_chr</span>(pairs, <span class="dv">2</span>)))</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(pairwise_de, <span class="st">"results/20260305-pairwise_DE_astro_clusters.rds"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <section id="deg-counts-per-comparison" class="level3">
 <h3 class="anchored" data-anchor-id="deg-counts-per-comparison">DEG counts per comparison</h3>
-<p>The bar chart below tallies the number of significant DEGs (adjusted <em>p</em> &lt; 0.05) for each pairwise cluster comparison, stratified by direction of effect: genes with higher expression in the first cluster of the pair (red) versus genes with higher expression in the second (blue).</p>
+<p>The bar chart below tallies the number of significant DEGs (adjusted <em>p</em> &lt; 0.1) for each pairwise cluster comparison, stratified by direction of effect: genes with higher expression in the first cluster of the pair (red) versus genes with higher expression in the second (blue).</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -521,7 +522,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">"dodge"</span>, <span class="at">width =</span> <span class="fl">0.7</span>, <span class="at">alpha =</span> <span class="fl">0.9</span>) <span class="sc">+</span></span>
 <span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Up in first"</span> <span class="ot">=</span> <span class="st">"#d73027"</span>, <span class="st">"Down in first"</span> <span class="ot">=</span> <span class="st">"#4575b4"</span>)) <span class="sc">+</span></span>
 <span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Significant DEGs per pairwise comparison"</span>,</span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"padj &lt; 0.05"</span>,</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"padj &lt; 0.1"</span>,</span>
 <span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Number of DEGs"</span>, <span class="at">fill =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
 <span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
 <span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid.major.x =</span> <span class="fu">element_blank</span>(),</span>
@@ -538,7 +539,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="top-deg-heatmap" class="level3">
 <h3 class="anchored" data-anchor-id="top-deg-heatmap">Top DEG heatmap</h3>
-<p>To highlight genes that most strongly distinguish the three clusters, a heatmap displays the log<sub>2</sub> fold change for the top 20 most significant DEGs (by adjusted <em>p</em>-value) from each pairwise comparison. Each column represents a cluster pair (e.g., “0 vs 1”) and each row a gene. The colour scale is symmetric around zero, with red indicating higher expression in the first cluster and blue indicating higher expression in the second. Asterisks mark gene–comparison combinations that individually reach significance (adjusted <em>p</em> &lt; 0.05). Genes are hierarchically clustered by their fold-change profiles to reveal shared and comparison-specific expression patterns.</p>
+<p>To highlight genes that most strongly distinguish the three clusters, a heatmap displays the log<sub>2</sub> fold change for the top 20 most significant DEGs (by adjusted <em>p</em>-value) from each pairwise comparison. Each column represents a cluster pair (e.g., “0 vs 1”) and each row a gene. The colour scale is symmetric around zero, with red indicating higher expression in the first cluster and blue indicating higher expression in the second. Asterisks mark gene–comparison combinations that individually reach significance (adjusted <em>p</em> &lt; 0.1). Genes are hierarchically clustered by their fold-change profiles to reveal shared and comparison-specific expression patterns.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
@@ -552,7 +553,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Select top 20 DEGs per comparison by padj</span></span>
 <span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>top_genes <span class="ot">&lt;-</span> all_de_long <span class="sc">|&gt;</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(p_val_adj <span class="sc">&lt;</span> <span class="fl">0.05</span>) <span class="sc">|&gt;</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(p_val_adj <span class="sc">&lt;</span> <span class="fl">0.1</span>) <span class="sc">|&gt;</span></span>
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Comparison) <span class="sc">|&gt;</span></span>
 <span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(p_val_adj, <span class="at">.by_group =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
 <span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">20</span>) <span class="sc">|&gt;</span></span>
@@ -574,7 +575,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">column_to_rownames</span>(<span class="st">"gene"</span>) <span class="sc">|&gt;</span></span>
 <span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as.matrix</span>()</span>
 <span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>  display_matrix <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="sc">!</span><span class="fu">is.na</span>(sig_matrix) <span class="sc">&amp;</span> sig_matrix <span class="sc">&lt;</span> <span class="fl">0.05</span>, <span class="st">"*"</span>, <span class="st">""</span>)</span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>  display_matrix <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="sc">!</span><span class="fu">is.na</span>(sig_matrix) <span class="sc">&amp;</span> sig_matrix <span class="sc">&lt;</span> <span class="fl">0.1</span>, <span class="st">"*"</span>, <span class="st">""</span>)</span>
 <span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>  clim <span class="ot">&lt;-</span> <span class="fu">ceiling</span>(<span class="fu">max</span>(<span class="fu">abs</span>(fc_matrix), <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
 <span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a></span>

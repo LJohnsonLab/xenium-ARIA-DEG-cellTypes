@@ -75,12 +75,13 @@ run_ct_de <- function(obj, ct_label) {
 
   # DESeq2 via anayet
   res <- anayet(bulk,
-                ident1      = "Adu",
-                ident2      = "IgG",
-                test_method = "DESeq2",
-                min_pct     = 0.1,
-                plot_title  = ct_label,
-                print_plot  = FALSE)
+                ident1          = "Adu",
+                ident2          = "IgG",
+                test_method     = "DESeq2",
+                min_pct         = 0.1,
+                p_adj_threshold = 0.1,
+                plot_title      = ct_label,
+                print_plot      = FALSE)
 
   cat("\n\n<h3>Volcano plot</h3>\n\n")
 
@@ -184,7 +185,7 @@ if (nrow(deg_counts) > 0) {
     scale_fill_manual(values = c("Up in Adu" = "#d73027", "Down in Adu" = "#4575b4")) +
     labs(
       title    = "Significant DEGs per cell type",
-      subtitle = "padj < 0.05",
+      subtitle = "padj < 0.1",
       x        = NULL,
       y        = "Number of DEGs",
       fill     = NULL
@@ -199,7 +200,7 @@ if (nrow(deg_counts) > 0) {
 
 ## Cross-cell-type log2FC heatmap
 
-A heatmap of log~2~ fold changes (Adu vs IgG) for all genes significant (padj < 0.05) in at
+A heatmap of log~2~ fold changes (Adu vs IgG) for all genes significant (padj < 0.1) in at
 least one cell type. Asterisks mark individually significant cell-type–gene combinations.
 
 ```{r cross-celltype-heatmap}
@@ -216,7 +217,7 @@ cross_long <- imap(all_ct_results, \(res, ct) {
 
 # Genes significant in at least one cell type
 sig_genes_cross <- cross_long |>
-  filter(p_val_adj < 0.05) |>
+  filter(p_val_adj < 0.1) |>
   pull(gene) |>
   unique()
 
@@ -225,7 +226,7 @@ if (length(sig_genes_cross) > 0) {
   # If too many genes, keep those significant in >=2 cell types
   if (length(sig_genes_cross) > 100) {
     gene_sig_count <- cross_long |>
-      filter(p_val_adj < 0.05) |>
+      filter(p_val_adj < 0.1) |>
       distinct(gene, CellType) |>
       count(gene)
     filtered <- gene_sig_count |> filter(n >= 2) |> pull(gene)
@@ -246,7 +247,7 @@ if (length(sig_genes_cross) > 0) {
     column_to_rownames("gene") |>
     as.matrix()
 
-  display_mat <- ifelse(!is.na(sig_mat) & sig_mat < 0.05, "*", "")
+  display_mat <- ifelse(!is.na(sig_mat) & sig_mat < 0.1, "*", "")
 
   clim <- ceiling(max(abs(fc_mat), na.rm = TRUE))
 
