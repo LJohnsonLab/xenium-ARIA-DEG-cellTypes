@@ -556,9 +556,9 @@
 <line x1='369.37' y1='335.52' x2='369.37' y2='70.99' style='stroke-width: 0.85; stroke-dasharray: 7.97,3.41; stroke-linecap: butt;' />
 <line x1='369.92' y1='335.52' x2='369.92' y2='70.99' style='stroke-width: 0.85; stroke-dasharray: 7.97,3.41; stroke-linecap: butt;' />
 <line x1='64.66' y1='323.50' x2='674.63' y2='323.50' style='stroke-width: 0.85; stroke-dasharray: 7.97,3.41; stroke-linecap: butt;' />
-<line x1='138.87' y1='196.06' x2='141.47' y2='193.10' style='stroke-width: 1.07; stroke: #1A1A1A;' />
-<polygon points='139.39,193.47 138.87,196.06 141.37,195.22 ' style='stroke-width: 1.07; stroke: #1A1A1A; fill: #FFFFFF;' />
-<text x='121.92' y='206.27' text-anchor='middle' style='font-size: 14.23px; font-style: italic; font-family: "Arial";' textLength='30.30px' lengthAdjust='spacingAndGlyphs'>Tac1</text>
+<line x1='145.21' y1='188.88' x2='142.56' y2='191.87' style='stroke-width: 1.07; stroke: #1A1A1A;' />
+<polygon points='144.68,191.47 145.21,188.88 142.70,189.72 ' style='stroke-width: 1.07; stroke: #1A1A1A; fill: #FFFFFF;' />
+<text x='162.15' y='188.86' text-anchor='middle' style='font-size: 14.23px; font-style: italic; font-family: "Arial";' textLength='30.30px' lengthAdjust='spacingAndGlyphs'>Tac1</text>
 <line x1='64.66' y1='192.49' x2='674.63' y2='192.49' style='stroke-width: 2.33; stroke-dasharray: 12.42,12.42; stroke-linecap: butt;' />
 <polyline points='64.66,335.52 64.66,70.99 ' style='stroke-width: 1.71; stroke-linecap: butt;' />
 <text x='53.90' y='329.94' text-anchor='end' style='font-size: 18.00px;fill: #4D4D4D; font-family: "Arial";' textLength='10.02px' lengthAdjust='spacingAndGlyphs'>0</text>

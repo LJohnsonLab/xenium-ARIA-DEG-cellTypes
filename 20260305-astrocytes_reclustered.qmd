@@ -170,8 +170,47 @@ Based on the top 5 marker genes per cluster, we assessed whether each cluster re
 | 9 | Ttr, Tmem212, Ccdc153, Lypd1, Otof | Ependymal / choroid plexus — Ttr, Ccdc153, Tmem212 are ependymal markers | No |
 | 10 | Pdgfra, Tnr, Pllp, Plpp4, Lpcat2 | OPCs — Pdgfra is the canonical OPC marker | No |
 
+## Astrocyte markers
 
 
+```{r}
+#| label: astrocyte-markers-featureplot
+#| column: page
+#| fig-height: 12
+#| fig-width: 10
+
+FeaturePlot(astro,features = c("Aldh1l1",	"Aldoc",	"Gfap",	"Slc7a10",	"Aqp4"), ncol=2, min.cutoff = "q20")
+```
+
+```{r}
+#| label: astrocyte-markers-violin
+#| column: page
+#| fig-height: 12
+#| fig-width: 10
+
+VlnPlot(astro,features = c("Aldh1l1",	"Aldoc",	"Gfap",	"Slc7a10",	"Aqp4"),alpha = 0, ncol=2)
+```
+
+## Purity score
+
+```{r}
+#| column: page
+#| fig-height: 5
+#| fig-width: 10
+#| label: split-UMAP
+
+Idents(astro) <- "first_type_class"
+sp <- DimPlot(astro, label =T, repel = TRUE)+ NoLegend()+ ggtitle("SPLIT ???")
+Idents(astro) <- "seurat_clusters"
+sc <- DimPlot(astro, label =T, repel = TRUE)+ NoLegend()
+
+sp+sc
+```
+
+
+```{r}
+FeaturePlot(astro,features = "singlet_score",min.cutoff = "q25")
+```
 ## Differential expression by treatment
 
 Pseudobulk DESeq2 was performed on each true astrocyte cluster (0 and 1) separately,
