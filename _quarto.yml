@@ -25,6 +25,10 @@ website:
             href: 20260303-DEG_oligo_brainRegions.qmd
           - text: OPC
             href: 20260303-DEG_OPC_brainRegions.qmd
+          - text: BAM
+            href: 20260309-DEG_BAM_brainRegions.qmd
+          - text: T-Cell
+            href: 20260309-DEG_TCell_brainRegions.qmd
           - ---
           - text: Summary cell types x brain regions
             href: 20260306-DEG_summary_allCellTypes.qmd

@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='648.00pt' height='216.00pt' viewBox='0 0 648.00 216.00'>
+<g class='svglite'>
+<defs>
+  <style type='text/css'><![CDATA[
+    .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {
+      fill: none;
+      stroke: #000000;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-miterlimit: 10.00;
+    }
+    .svglite text {
+      white-space: pre;
+    }
+    .svglite g.glyphgroup path {
+      fill: inherit;
+      stroke: none;
+    }
+  ]]></style>
+</defs>
+<rect width='100%' height='100%' style='stroke: none; fill: #FFFFFF;'/>
+<defs>
+  <clipPath id='cpMC4wMHw2NDguMDB8MC4wMHwyMTYuMDA='>
+    <rect x='0.00' y='0.00' width='648.00' height='216.00' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpMC4wMHw2NDguMDB8MC4wMHwyMTYuMDA=)'>
+<rect x='0.00' y='0.000000000000028' width='648.00' height='216.00' style='stroke-width: 1.26; stroke: none; fill: #FFFFFF;' />
+</g>
+<defs>
+  <clipPath id='cpNzAuMTZ8NTI1LjQxfDUzLjA4fDE2NC45Mw=='>
+    <rect x='70.16' y='53.08' width='455.25' height='111.85' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpNzAuMTZ8NTI1LjQxfDUzLjA4fDE2NC45Mw==)'>
+<polyline points='96.00,164.93 96.00,53.08 ' style='stroke-width: 0.63; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='201.44,164.93 201.44,53.08 ' style='stroke-width: 0.63; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='306.89,164.93 306.89,53.08 ' style='stroke-width: 0.63; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='412.34,164.93 412.34,53.08 ' style='stroke-width: 0.63; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='517.79,164.93 517.79,53.08 ' style='stroke-width: 0.63; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='70.16,152.03 525.41,152.03 ' style='stroke-width: 1.26; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='70.16,130.52 525.41,130.52 ' style='stroke-width: 1.26; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='70.16,109.01 525.41,109.01 ' style='stroke-width: 1.26; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='70.16,87.50 525.41,87.50 ' style='stroke-width: 1.26; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='70.16,65.99 525.41,65.99 ' style='stroke-width: 1.26; stroke: #EBEBEB; stroke-linecap: butt;' />
+<line x1='254.17' y1='164.93' x2='254.17' y2='53.08' style='stroke-width: 1.26; stroke: #999999; stroke-dasharray: 6.73,6.73; stroke-linecap: butt;' />
+<circle cx='124.45' cy='130.52' r='8.95' style='stroke-width: 0.84; stroke: #66C2A5; stroke-opacity: 0.85; fill: #66C2A5; fill-opacity: 0.85;' />
+<circle cx='334.05' cy='109.01' r='6.70' style='stroke-width: 0.84; stroke: #66C2A5; stroke-opacity: 0.85; fill: #66C2A5; fill-opacity: 0.85;' />
+<circle cx='337.91' cy='87.50' r='2.55' style='stroke-width: 0.84; stroke: #66C2A5; stroke-opacity: 0.85; fill: #66C2A5; fill-opacity: 0.85;' />
+<circle cx='90.86' cy='152.03' r='4.03' style='stroke-width: 0.84; stroke: #FC8D62; stroke-opacity: 0.85; fill: #FC8D62; fill-opacity: 0.85;' />
+<circle cx='504.72' cy='65.99' r='4.74' style='stroke-width: 0.84; stroke: #8DA0CB; stroke-opacity: 0.85; fill: #8DA0CB; fill-opacity: 0.85;' />
+</g>
+<g clip-path='url(#cpMC4wMHw2NDguMDB8MC4wMHwyMTYuMDA=)'>
+<text x='64.34' y='157.76' text-anchor='end' style='font-size: 16.00px; font-style: italic;fill: #4D4D4D; font-family: "Arial";' textLength='41.84px' lengthAdjust='spacingAndGlyphs'>Cldn5</text>
+<text x='64.34' y='136.25' text-anchor='end' style='font-size: 16.00px; font-style: italic;fill: #4D4D4D; font-family: "Arial";' textLength='19.56px' lengthAdjust='spacingAndGlyphs'>Ttr</text>
+<text x='64.34' y='114.74' text-anchor='end' style='font-size: 16.00px; font-style: italic;fill: #4D4D4D; font-family: "Arial";' textLength='55.20px' lengthAdjust='spacingAndGlyphs'>Snap25</text>
+<text x='64.34' y='93.23' text-anchor='end' style='font-size: 16.00px; font-style: italic;fill: #4D4D4D; font-family: "Arial";' textLength='57.86px' lengthAdjust='spacingAndGlyphs'>Slc17a7</text>
+<text x='64.34' y='71.72' text-anchor='end' style='font-size: 16.00px; font-style: italic;fill: #4D4D4D; font-family: "Arial";' textLength='24.03px' lengthAdjust='spacingAndGlyphs'>Vtn</text>
+<text x='148.72' y='182.22' text-anchor='middle' style='font-size: 16.00px; font-style: italic;fill: #4D4D4D; font-family: "Arial";' textLength='14.23px' lengthAdjust='spacingAndGlyphs'>-2</text>
+<text x='254.17' y='182.22' text-anchor='middle' style='font-size: 16.00px; font-style: italic;fill: #4D4D4D; font-family: "Arial";' textLength='8.91px' lengthAdjust='spacingAndGlyphs'>0</text>
+<text x='359.62' y='182.22' text-anchor='middle' style='font-size: 16.00px; font-style: italic;fill: #4D4D4D; font-family: "Arial";' textLength='8.91px' lengthAdjust='spacingAndGlyphs'>2</text>
+<text x='465.07' y='182.22' text-anchor='middle' style='font-size: 16.00px; font-style: italic;fill: #4D4D4D; font-family: "Arial";' textLength='8.91px' lengthAdjust='spacingAndGlyphs'>4</text>
+<text x='221.26' y='201.94' style='font-size: 18.00px; font-family: "Arial";' textLength='4.00px' lengthAdjust='spacingAndGlyphs'>l</text>
+<text x='225.25' y='201.94' style='font-size: 18.00px; font-family: "Arial";' textLength='10.02px' lengthAdjust='spacingAndGlyphs'>o</text>
+<text x='235.26' y='201.94' style='font-size: 18.00px; font-family: "Arial";' textLength='10.02px' lengthAdjust='spacingAndGlyphs'>g</text>
+<text x='245.27' y='205.20' style='font-size: 12.60px; font-family: "Arial";' textLength='7.00px' lengthAdjust='spacingAndGlyphs'>2</text>
+<text x='252.27' y='201.94' style='font-size: 18.00px; font-family: "Arial";' textLength='122.05px' lengthAdjust='spacingAndGlyphs'>FC  (Adu / IgG)</text>
+<text x='544.84' y='40.62' style='font-size: 13.00px; font-family: "Arial";' textLength='41.22px' lengthAdjust='spacingAndGlyphs'>Region</text>
+<circle cx='553.48' cy='57.11' r='2.31' style='stroke-width: 0.84; stroke: #66C2A5; stroke-opacity: 0.85; fill: #66C2A5; fill-opacity: 0.85;' />
+<circle cx='553.48' cy='74.39' r='2.31' style='stroke-width: 0.84; stroke: #FC8D62; stroke-opacity: 0.85; fill: #FC8D62; fill-opacity: 0.85;' />
+<circle cx='553.48' cy='91.67' r='2.31' style='stroke-width: 0.84; stroke: #8DA0CB; stroke-opacity: 0.85; fill: #8DA0CB; fill-opacity: 0.85;' />
+<text x='568.60' y='60.83' style='font-size: 10.40px; font-family: "Arial";' textLength='63.56px' lengthAdjust='spacingAndGlyphs'>Hippocampus</text>
+<text x='568.60' y='78.11' style='font-size: 10.40px; font-family: "Arial";' textLength='66.45px' lengthAdjust='spacingAndGlyphs'>Hypothalamus</text>
+<text x='568.60' y='95.39' style='font-size: 10.40px; font-family: "Arial";' textLength='45.64px' lengthAdjust='spacingAndGlyphs'>Thalamus</text>
+<text x='544.84' y='139.34' style='font-size: 13.00px; font-family: "Symbol";' textLength='7.14px' lengthAdjust='spacingAndGlyphs'>−</text>
+<text x='553.78' y='139.34' style='font-size: 13.00px; font-family: "Arial";' textLength='2.89px' lengthAdjust='spacingAndGlyphs'>l</text>
+<text x='556.67' y='139.34' style='font-size: 13.00px; font-family: "Arial";' textLength='7.23px' lengthAdjust='spacingAndGlyphs'>o</text>
+<text x='563.90' y='139.34' style='font-size: 13.00px; font-family: "Arial";' textLength='7.23px' lengthAdjust='spacingAndGlyphs'>g</text>
+<text x='571.12' y='141.70' style='font-size: 9.10px; font-family: "Arial";' textLength='10.12px' lengthAdjust='spacingAndGlyphs'>10</text>
+<text x='581.25' y='139.34' style='font-size: 16.25px; font-family: "Symbol";' textLength='5.41px' lengthAdjust='spacingAndGlyphs'>(</text>
+<text x='586.66' y='139.34' style='font-size: 13.00px; font-family: "Arial";' textLength='7.23px' lengthAdjust='spacingAndGlyphs'>p</text>
+<text x='593.89' y='141.70' style='font-size: 9.10px; font-family: "Arial";' textLength='5.06px' lengthAdjust='spacingAndGlyphs'>a</text>
+<text x='598.95' y='141.70' style='font-size: 9.10px; font-family: "Arial";' textLength='5.06px' lengthAdjust='spacingAndGlyphs'>d</text>
+<text x='604.00' y='141.70' style='font-size: 9.10px; font-family: "Arial";' textLength='2.02px' lengthAdjust='spacingAndGlyphs'>j</text>
+<text x='606.02' y='139.34' style='font-size: 16.25px; font-family: "Symbol";' textLength='5.41px' lengthAdjust='spacingAndGlyphs'>)</text>
+<circle cx='554.50' cy='160.10' r='5.90' style='stroke-width: 0.84; stroke: #000000; stroke-opacity: 0.85; fill: #000000; fill-opacity: 0.85;' />
+<circle cx='554.50' cy='178.41' r='7.69' style='stroke-width: 0.84; stroke: #000000; stroke-opacity: 0.85; fill: #000000; fill-opacity: 0.85;' />
+<text x='570.64' y='163.82' style='font-size: 10.40px; font-family: "Arial";' textLength='14.45px' lengthAdjust='spacingAndGlyphs'>1.5</text>
+<text x='570.64' y='182.13' style='font-size: 10.40px; font-family: "Arial";' textLength='14.45px' lengthAdjust='spacingAndGlyphs'>2.0</text>
+<text x='70.16' y='20.80' style='font-size: 20.00px; font-family: "Arial";' textLength='293.08px' lengthAdjust='spacingAndGlyphs'>T Cells DEGs — all brain regions</text>
+<text x='70.16' y='42.40' style='font-size: 20.00px; font-family: "Arial";' textLength='0.00px' lengthAdjust='spacingAndGlyphs'></text>
+</g>
+</g>
+</svg>
