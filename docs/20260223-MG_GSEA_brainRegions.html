@@ -165,6 +165,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="./20260303-DEG_OPC_brainRegions.html">
  <span class="dropdown-text">OPC</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="./20260309-DEG_BAM_brainRegions.html">
+ <span class="dropdown-text">BAM</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./20260309-DEG_TCell_brainRegions.html">
+ <span class="dropdown-text">T-Cell</span></a>
+  </li>  
         <li><hr class="dropdown-divider"></li>
         <li>
     <a class="dropdown-item" href="./20260306-DEG_summary_allCellTypes.html">
@@ -199,6 +207,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li>
     <a class="dropdown-item" href="./20260305-astrocytes_cluster_characterization.html">
  <span class="dropdown-text">Cluster characterization</span></a>
+  </li>  
+        <li><hr class="dropdown-divider"></li>
+        <li>
+    <a class="dropdown-item" href="./20260309-astrocytes_reclustered_cleaned.html">
+ <span class="dropdown-text">Cleaned and reclustered</span></a>
   </li>  
     </ul>
   </li>
@@ -608,10 +621,10 @@ leadingEdge
 Cdc2 ifna1 response up
 </td>
 <td style="text-align:right;">
-1.99
+1.98
 </td>
 <td style="text-align:right;">
-0.0186
+0.0473
 </td>
 <td style="text-align:right;">
 39
@@ -625,10 +638,10 @@ C3, Ccl5, Ifitm3, Cxcl10, Lgals3bp, Ifit2, Ccl12, Ifit1, Axl, C1qb, Hif1a, Selpl
 Langerhans ifna1 response up
 </td>
 <td style="text-align:right;">
-1.86
+1.80
 </td>
 <td style="text-align:right;">
-0.0186
+0.0473
 </td>
 <td style="text-align:right;">
 5
@@ -673,10 +686,10 @@ leadingEdge
 Monocyte il15 response up
 </td>
 <td style="text-align:right;">
-2.13
+2.14
 </td>
 <td style="text-align:right;">
-1.58e-05
+6.80e-06
 </td>
 <td style="text-align:right;">
 23
@@ -690,10 +703,10 @@ Ccl12, Msr1, Cxcl10, Ifit2, Ccl2, Ifit1, Acod1, Vim, C3, Ccl4, Clec2d
 Macrophage il15 response up
 </td>
 <td style="text-align:right;">
-2.00
+2.03
 </td>
 <td style="text-align:right;">
-2.36e-04
+1.68e-04
 </td>
 <td style="text-align:right;">
 35
@@ -707,10 +720,10 @@ Ccl12, Msr1, Cxcl10, Ifit2, Ccl2, Il1b, Ifit1, Ifitm3, Ccl5, Acod1, Ccl4, Clec2d
 Cdc2 il15 response up
 </td>
 <td style="text-align:right;">
-1.99
+2.01
 </td>
 <td style="text-align:right;">
-2.36e-04
+3.77e-04
 </td>
 <td style="text-align:right;">
 39
@@ -721,36 +734,19 @@ Ccl12, Cxcl10, Ifit2, Ccl2, Ifit1, Ifitm3, Tnf, Vim, C3, Myo1e, Axl, Clec2d, Lga
 </tr>
 <tr>
 <td style="text-align:left;">
-Macrophage il12 response up
+Macrophage il1b response up
 </td>
 <td style="text-align:right;">
-1.80
+1.83
 </td>
 <td style="text-align:right;">
-1.05e-03
+6.54e-03
 </td>
 <td style="text-align:right;">
-6
+18
 </td>
 <td style="text-align:left;">
-Ccl12, Cxcl10, Ifit2, Ccl2, Ifit1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Macrophage il1a response up
-</td>
-<td style="text-align:right;">
-1.81
-</td>
-<td style="text-align:right;">
-7.23e-03
-</td>
-<td style="text-align:right;">
-17
-</td>
-<td style="text-align:left;">
-Ccl12, Msr1, Ccl2, Il1b, Nlrp3, Hmox1, Plin2, Bcl2a1b
+Ccl12, Msr1, Ccl2, Il1b, Lgals3, Ifitm3, Hmox1, Plin2, Bcl2a1b
 </td>
 </tr>
 </tbody>
@@ -789,10 +785,10 @@ leadingEdge
 Cdc2 ifna1 response up
 </td>
 <td style="text-align:right;">
-2.17
+2.20
 </td>
 <td style="text-align:right;">
-0.00191
+0.00208
 </td>
 <td style="text-align:right;">
 39
@@ -806,10 +802,10 @@ Lgals3, Ifitm3, Ccl5, C3, Cxcl10, Lgals3bp, Ccl2, Bcl2a1b, Axl, Ifit1, Ifit2, Hk
 Macrophage il15 response up
 </td>
 <td style="text-align:right;">
-2.16
+2.18
 </td>
 <td style="text-align:right;">
-0.00191
+0.00238
 </td>
 <td style="text-align:right;">
 35
@@ -826,7 +822,7 @@ Cdc2 il18 response up
 2.05
 </td>
 <td style="text-align:right;">
-0.00191
+0.00238
 </td>
 <td style="text-align:right;">
 43
@@ -840,16 +836,33 @@ C3, Cxcl10, Tnf, Lgals3bp, Vim, Plac8, Myo1e, Ccl2, Bcl2a1b, Lpl, Ifit1, Mgl2, I
 Migdc il3 response up
 </td>
 <td style="text-align:right;">
-2.02
+2.09
 </td>
 <td style="text-align:right;">
-0.00522
+0.00459
 </td>
 <td style="text-align:right;">
 10
 </td>
 <td style="text-align:left;">
 H2-Eb1, Cd74, Vim, Plac8, Bcl2a1b
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+T cell gd ifna1 response dn
+</td>
+<td style="text-align:right;">
+1.90
+</td>
+<td style="text-align:right;">
+0.02200
+</td>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:left;">
+Ccl5, Cd3d, Fxyd5
 </td>
 </tr>
 </tbody>
@@ -894,10 +907,10 @@ leadingEdge
 Treg ifnb response up
 </td>
 <td style="text-align:right;">
-2.03
+2.04
 </td>
 <td style="text-align:right;">
-0.0205
+0.0371
 </td>
 <td style="text-align:right;">
 10
@@ -908,13 +921,30 @@ Ifitm3, Ifit2, Ms4a4b, St6galnac4, Cxcl10, Lgals3bp, Clec2d, Ifit1
 </tr>
 <tr>
 <td style="text-align:left;">
+Macrophage tnfa response up
+</td>
+<td style="text-align:right;">
+1.99
+</td>
+<td style="text-align:right;">
+0.0385
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:left;">
+Ccl12, Msr1, Ccl5, Cxcl10, Nlrp3, Il1b
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 Cdc2 il18 response up
 </td>
 <td style="text-align:right;">
-1.82
+1.80
 </td>
 <td style="text-align:right;">
-0.0482
+0.0385
 </td>
 <td style="text-align:right;">
 43

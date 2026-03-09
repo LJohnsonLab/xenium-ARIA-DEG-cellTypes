@@ -1,0 +1,191 @@
+---
+title: "Astrocyte subpopulations after cleaning"
+subtitle: "Identification of Astrocyte subpopulations after subsetting and reclustering"
+date: last-modified
+format:
+  html:
+    number-sections: false
+---
+
+```{r}
+#| label: setup
+#| message: false
+library(qs2)
+library(Seurat)
+library(patchwork)
+library(tidyverse)
+library(kableExtra)
+library(DESeq2)
+library(gridExtra)
+
+
+astro <- qs2::qs_read("seurat_objects/20260309-astro_cleaned_0.3.qs2")
+
+```
+
+
+```{r}
+#| eval: false
+#| label: SCTransform
+
+# Load seurat with subsetted astrocytes object 
+astro_subset <- qs2::qs_read("seurat_objects/20260305-astro_0.3.qs2")
+
+# genes to remove
+genes_to_remove <- read_csv("results/20260309_astrocyteSubcluster_genes_removed.csv") |> pull(Gene)
+all_features <- Features(astro_subset)
+keep_genes <- all_features[!all_features %in% genes_to_remove]
+
+
+astro_cleaned  <- subset(astro_subset, features = keep_genes)
+# Keep only the assay needed for fresh SCTransform
+DefaultAssay(astro_cleaned) <- "Xenium"
+astro0 <- DietSeurat(astro_cleaned, assays = "Xenium", dimreducs = NULL, graphs = NULL)
+# Drop Xenium image/FOV segmentation data; otherwise merge triggers huge future globals
+astro0@images <- list()
+
+# SCTransform on all astrocytes together (no split/merge, no integration)
+astro <- SCTransform(
+  astro0,
+  assay = "Xenium",
+  new.assay.name = "SCT",
+  verbose = FALSE
+)
+```
+
+
+
+
+## PCA and dimensionality selection
+
+```{r}
+#| eval: false
+#| label: Run PCA on SCT assay
+DefaultAssay(astro) <- "SCT"
+astro <- RunPCA(
+  astro,
+  assay   = "SCT",
+  features = VariableFeatures(astro),
+  verbose = FALSE)
+```
+```{r}
+#| fig-width: 5
+#| fig-height: 3
+#| label: Elbow plot
+# Elbow plot to visualise variance explained per PC
+ElbowPlot(astro, ndims = 50) +
+  geom_vline(xintercept = 30, linetype = "dashed", color = "red") +
+  labs(title = "Elbow plot") +
+  theme_minimal()
+```
+
+```{r}
+#| fig-height: 5
+#| label: PCA biplots
+
+# PCA biplots coloured by sample and treatment
+p1 <- DimPlot(astro, reduction = "pca", group.by = "Slide") +
+  labs(title = "PCA — Slide")
+p2 <- DimPlot(astro, reduction = "pca", group.by = "Treatment.Group") +
+  labs(title = "PCA — Treatment")
+p1 + p2
+```
+
+```{r}
+#| label: neighbors & UMAP
+#| eval: false
+
+# Set seed for reproducibility
+set.seed(1234)
+
+# Compute nearest neighbors using first 30 PCs
+astro <- FindNeighbors(astro, reduction = "pca", dims = 1:30, graph.name = "astro_snn")
+
+# Perform clustering at multiple resolutions for later comparison
+astro <- FindClusters(astro, graph.name = "astro_snn", resolution = 0.3)
+
+# Compute UMAP for visualization
+astro <- RunUMAP(astro, reduction = "pca", dims = 1:30, verbose = FALSE)
+
+# qs_save(astro, "seurat_objects/20260309-astro_cleaned_0.3.qs2")
+```
+
+resolution = 0.3 
+
+```{r}
+#|fig-width: 5
+#|fig-height: 5
+#| label: plot UMAPs 1
+DimPlot(astro)
+```
+
+```{r}
+#| fig-height: 5
+#| label: plot UMAPs 2
+DimPlot(astro, split.by = "Treatment.Group")
+```
+
+## Top marker genes per cluster
+
+`FindAllMArkers` run on log-normalized residual expression values from SCTransform in the SCT assay (Values are continuous and typically centered around 0)
+```{r}
+#| eval: false
+#| label: find markers
+Idents(astro) <- astro$seurat_clusters
+DefaultAssay(astro) <- "SCT"
+all_markers <- FindAllMarkers(astro, only.pos = TRUE, densify = TRUE)
+# write_csv(all_markers, file = "results/20260309-astrocyte_cleaned_all_markers_0.3.csv")
+```
+
+```{r}
+#| label: top markers per cluster
+#| column: screen
+#| fig-width: 15
+#| fig-height: 4
+source("20260217-helper_functions.R")
+
+# Top 5 markers per cluster by avg_log2FC
+top_genes <- read_csv("results/20260309-astrocyte_cleaned_all_markers_0.3.csv",
+                      show_col_types = FALSE) |>
+  group_by(cluster) |>
+  arrange(desc(avg_log2FC), .by_group = TRUE) |>
+  slice_head(n = 5) |>
+  pull(gene) |>
+  unique()
+
+fiddle(astro,
+       genes_of_interest = top_genes,
+       classification_col = "seurat_clusters",
+       assay = "SCT")
+```
+
+### Cluster identity assessment
+
+Based on the top 5 marker genes per cluster, we assessed whether each cluster represents true astrocytes or contaminating cell types from the initial subsetting.
+
+
+
+## Astrocyte markers
+
+
+```{r}
+#| label: astrocyte-markers-featureplot
+#| column: page
+#| fig-height: 12
+#| fig-width: 10
+
+FeaturePlot(astro,features = c("Aldh1l1",	"Aldoc",	"Gfap",	"Slc7a10",	"Aqp4"), ncol=2, min.cutoff = "q20")
+```
+
+```{r}
+#| label: astrocyte-markers-violin
+#| column: page
+#| fig-height: 12
+#| fig-width: 10
+
+VlnPlot(astro,features = c("Aldh1l1",	"Aldoc",	"Gfap",	"Slc7a10",	"Aqp4"),alpha = 0, ncol=2)
+```
+
+
+
+
