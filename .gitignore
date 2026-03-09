@@ -10,12 +10,7 @@
 CLAUDE.md
 docs/CLAUDE.html
 
-# Large data files
-*.rds
-*.qs2
-*.h5
-*.h5ad
-*.h5seurat
+
 
 # Seurat objects directory
 seurat_objects/*
