@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='288.00pt' height='360.00pt' viewBox='0 0 288.00 360.00'>
+<g class='svglite'>
+<defs>
+  <style type='text/css'><![CDATA[
+    .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {
+      fill: none;
+      stroke: #000000;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-miterlimit: 10.00;
+    }
+    .svglite text {
+      white-space: pre;
+    }
+    .svglite g.glyphgroup path {
+      fill: inherit;
+      stroke: none;
+    }
+  ]]></style>
+</defs>
+<rect width='100%' height='100%' style='stroke: none; fill: #FFFFFF;'/>
+<defs>
+  <clipPath id='cpMC4wMHwyODguMDB8MC4wMHwzNjAuMDA='>
+    <rect x='0.00' y='0.00' width='288.00' height='360.00' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpMC4wMHwyODguMDB8MC4wMHwzNjAuMDA=)'>
+<rect x='-0.000000000000032' y='0.00' width='288.00' height='360.00' style='stroke-width: 1.36; stroke: none; fill: #FFFFFF;' />
+</g>
+<defs>
+  <clipPath id='cpNTEuNDd8MTY2LjA4fDQ5LjQ2fDMwMi45Mg=='>
+    <rect x='51.47' y='49.46' width='114.61' height='253.47' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpNTEuNDd8MTY2LjA4fDQ5LjQ2fDMwMi45Mg==)'>
+<polyline points='51.47,262.60 166.08,262.60 ' style='stroke-width: 0.68; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='51.47,204.99 166.08,204.99 ' style='stroke-width: 0.68; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='51.47,147.39 166.08,147.39 ' style='stroke-width: 0.68; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='51.47,89.78 166.08,89.78 ' style='stroke-width: 0.68; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='51.47,291.40 166.08,291.40 ' style='stroke-width: 1.36; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='51.47,233.80 166.08,233.80 ' style='stroke-width: 1.36; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='51.47,176.19 166.08,176.19 ' style='stroke-width: 1.36; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='51.47,118.58 166.08,118.58 ' style='stroke-width: 1.36; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='51.47,60.98 166.08,60.98 ' style='stroke-width: 1.36; stroke: #EBEBEB; stroke-linecap: butt;' />
+<rect x='75.35' y='60.98' width='66.86' height='230.42' style='stroke-width: 1.36; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #4575B4; fill-opacity: 0.90;' />
+</g>
+<g clip-path='url(#cpMC4wMHwyODguMDB8MC4wMHwzNjAuMDA=)'>
+<text x='45.19' y='295.41' text-anchor='end' style='font-size: 11.20px;fill: #4D4D4D; font-family: "Arial";' textLength='21.77px' lengthAdjust='spacingAndGlyphs'>0.00</text>
+<text x='45.19' y='237.80' text-anchor='end' style='font-size: 11.20px;fill: #4D4D4D; font-family: "Arial";' textLength='21.77px' lengthAdjust='spacingAndGlyphs'>0.25</text>
+<text x='45.19' y='180.20' text-anchor='end' style='font-size: 11.20px;fill: #4D4D4D; font-family: "Arial";' textLength='21.77px' lengthAdjust='spacingAndGlyphs'>0.50</text>
+<text x='45.19' y='122.59' text-anchor='end' style='font-size: 11.20px;fill: #4D4D4D; font-family: "Arial";' textLength='21.77px' lengthAdjust='spacingAndGlyphs'>0.75</text>
+<text x='45.19' y='64.98' text-anchor='end' style='font-size: 11.20px;fill: #4D4D4D; font-family: "Arial";' textLength='21.77px' lengthAdjust='spacingAndGlyphs'>1.00</text>
+<text transform='translate(116.88,317.30) rotate(-45)' text-anchor='end' style='font-size: 16.00px;fill: #4D4D4D; font-family: "Arial";' textLength='47.16px' lengthAdjust='spacingAndGlyphs'>Cortex</text>
+<text transform='translate(17.00,176.19) rotate(-90)' text-anchor='middle' style='font-size: 14.00px; font-family: "Arial";' textLength='106.56px' lengthAdjust='spacingAndGlyphs'>Number of DEGs</text>
+<rect x='187.90' y='168.45' width='15.48' height='15.48' style='stroke-width: 1.36; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #4575B4; fill-opacity: 0.90;' />
+<text x='211.26' y='180.20' style='font-size: 11.20px; font-family: "Arial";' textLength='62.80px' lengthAdjust='spacingAndGlyphs'>Down in Adu</text>
+<text x='51.47' y='39.54' style='font-size: 14.00px; font-family: "Arial";' textLength='61.86px' lengthAdjust='spacingAndGlyphs'>padj &lt; 0.1</text>
+<text x='51.47' y='19.01' style='font-size: 16.80px; font-family: "Arial";' textLength='249.36px' lengthAdjust='spacingAndGlyphs'>Significant DEGs per brain region</text>
+</g>
+</g>
+</svg>

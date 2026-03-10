@@ -1,0 +1,350 @@
+---
+title: "Differentially expressed genes in GABAergic Neuron 2 across brain regions"
+date: last-modified
+---
+
+```{r setup}
+#| message: false
+library(qs2)
+library(Seurat)
+library(purrr)
+library(DESeq2)
+library(patchwork)
+library(gridExtra)
+library(pheatmap)
+library(tidyverse)
+library(kableExtra)
+
+
+# fgsea: Fast Gene Set Enrichment Analysis
+# https://bioconductor.org/packages/release/bioc/vignettes/fgsea/inst/doc/fgsea-tutorial.html
+library(fgsea)
+# msigdbr: Access to MSigDB gene sets for multiple species
+library(msigdbr)
+
+source("20260217-helper_functions.R")
+
+
+full <- qs_read("seurat_objects/20260217_Part2_fullobj.qs2")
+gaba2  <- subset(full, annotatedclusters == "GABAergic Neuron 2")
+```
+
+# DE
+
+To characterise region-specific transcriptional responses of GABAergic Neuron 2 cells to aducanumab treatment,
+GABAergic Neuron 2 cells were isolated from the full spatial transcriptomics object on the basis of the
+`annotatedclusters` annotation.
+
+The Xenium raw counts assay was set as the default to ensure
+that downstream pseudobulk aggregation and DESeq2 normalization operated on unmodified integer
+counts. Cells lacking a brain-region assignment were excluded prior to differential expression
+analysis to avoid confounding by spatially unassigned transcriptomes.
+
+## Cell counts per region
+
+The table below enumerates the total number of GABAergic Neuron 2 cells captured per brain region and
+their distribution across treatment groups (aducanumab, Adu; isotype control IgG).
+
+```{r region-summary}
+gaba2@meta.data |>
+  group_by(Region) |>
+  summarise(
+    n_cells = n(),
+    n_Adu   = sum(Treatment.Group == "Adu"),
+    n_IgG   = sum(Treatment.Group == "IgG")
+  ) |>
+  arrange(desc(n_cells)) |>
+  kbl(caption = "GABAergic Neuron 2 per brain region") |>
+  kable_styling("striped")
+```
+
+```{r remove-NA-regions}
+DefaultAssay(gaba2) <- "Xenium"
+gaba2 <- subset(gaba2, !is.na(Region))
+```
+
+## Pseudobulk DE (Adu vs IgG) per region
+
+To identify transcriptional changes induced by aducanumab in a spatially resolved manner,
+pseudobulk differential expression analysis was performed independently for each brain region.
+
+Within each region, raw Xenium counts were summed per biological sample using
+`AggregateExpression`, yielding one pseudobulk profile per animal (n = 3 Adu, n = 3 IgG).
+Differential expression between treatment groups was then assessed using DESeq2, as implemented
+via Seurat's `FindMarkers` interface with `test.use = "DESeq2"` and no minimum expression
+filter (`min.pct = 0`), ensuring all detected genes were considered.
+
+For each eligible region, results are displayed as a volcano plot, highlighting genes reaching
+statistical significance (Benjamini-Hochberg-adjusted *p* < 0.1), alongside a table of
+significant differentially expressed genes (DEGs), ranked by adjusted *p*-value.
+
+```{r pseudobulk-de}
+#| results: asis
+#| fig.width: 14
+#| fig.height: 6
+#| warning: false
+
+regions <- sort(unique(gaba2$Region))
+
+de_by_region <- map(regions, \(reg) {
+  sub_obj <- subset(gaba2, Region == reg)
+
+  # Replication guard: DESeq2 needs >=2 samples per treatment group
+  n_per_group <- table(factor(
+    distinct(sub_obj@meta.data, sample_ID, Treatment.Group)$Treatment.Group,
+    levels = c("Adu", "IgG")
+  ))
+  if (any(n_per_group < 2)) {
+    cat("\n\n###", reg, "\n\n_Skipped: fewer than 2 samples per treatment group._\n\n")
+    return(NULL)
+  }
+
+  bulk <- AggregateExpression(sub_obj, group.by = "sample_ID", return.seurat = TRUE)
+
+  # AggregateExpression converts _ to - (e.g. KK4_465 -> KK4-465)
+  sample_meta <- distinct(sub_obj@meta.data, sample_ID, Treatment.Group) |>
+    mutate(bulk_id = gsub("_", "-", sample_ID))
+  bulk$Treatment.Group <- sample_meta$Treatment.Group[
+    match(colnames(bulk), sample_meta$bulk_id)
+  ]
+  Idents(bulk) <- "Treatment.Group"
+
+  res <- anayet(bulk,
+                ident1          = "Adu",
+                ident2          = "IgG",
+                test_method     = "DESeq2",
+                min_pct         = 0,
+                p_adj_threshold = 0.1,
+                plot_title      = paste("GABAergic Neuron 2 —", reg),
+                print_plot      = FALSE,
+                min_cells_group = 2)
+
+  cat("\n\n###", reg, "\n\n")
+
+  sig_tbl <- if (nrow(res$significant_results) > 0) {
+    res$significant_results |>
+      select(p_val, avg_log2FC, p_val_adj) |>
+      mutate(across(where(is.numeric), \(x) signif(x, 3))) |>
+      arrange(p_val_adj) |>
+      tableGrob(theme = ttheme_minimal(base_size = 18))
+  } else {
+    tableGrob(
+      data.frame(Result = "No significant DEGs"),
+      theme = ttheme_minimal(base_size = 20)
+    )
+  }
+
+  print(res$volcano_plot + wrap_elements(sig_tbl) + plot_layout(widths = c(2, 1)))
+  res
+
+}) |> set_names(regions) |> compact()
+```
+
+```{r save-de-results}
+
+saveRDS(
+  map(de_by_region, \(res) res$all_results),
+  "results/20260310-DEG_GABAergicNeuron2_byRegion.rds"
+)
+```
+
+```{r save-degs}
+# Build one-row CSV summarising DEGs per region (gene names + counts)
+if (length(de_by_region) > 0) {
+
+  deg_summary <- imap(de_by_region, \(res, reg) {
+    sig <- res$significant_results |> rownames_to_column("gene")
+    up_genes   <- sig |> filter(avg_log2FC > 0) |> pull(gene)
+    down_genes <- sig |> filter(avg_log2FC < 0) |> pull(gene)
+    tibble(
+      region = reg,
+      up     = paste(up_genes, collapse = ", "),
+      down   = paste(down_genes, collapse = ", "),
+      total  = nrow(sig)
+    )
+  }) |> list_rbind()
+
+  deg_wide <- deg_summary |>
+    pivot_wider(names_from = region,
+                values_from = c(up, down, total),
+                names_glue = "{region}_{.value}") |>
+    mutate(cell_type = "GABAergic Neuron 2", .before = 1)
+} else {
+  message("No regions with sufficient replication — writing empty summary.")
+  deg_wide <- tibble(cell_type = "GABAergic Neuron 2")
+}
+
+if (!dir.exists("deg_number")) dir.create("deg_number")
+write_csv(deg_wide, "deg_number/DEG_GABAergicNeuron2.csv")
+```
+
+## Summary visualisations
+
+The following figures integrate findings across all brain regions to facilitate cross-regional
+comparison of GABAergic Neuron 2 transcriptional responses to aducanumab treatment.
+
+### DEG counts per region
+
+To provide an overview of the magnitude and directionality of transcriptional responses across
+brain regions, the total number of significant DEGs (Benjamini-Hochberg-adjusted *p* < 0.1)
+was tallied per region and stratified by direction of effect: genes upregulated in aducanumab-
+treated animals relative to IgG controls (Up in Adu) and genes downregulated (Down in Adu).
+Regions with no significant DEGs are absent from the plot.
+
+```{r deg-counts}
+#| fig.width: 4
+#| fig.height: 5
+
+deg_counts <- imap(de_by_region, \(res, reg) {
+  if (nrow(res$significant_results) == 0) return(NULL)
+  res$significant_results |>
+    rownames_to_column("gene") |>
+    mutate(Region    = reg,
+           Direction = ifelse(avg_log2FC > 0, "Up in Adu", "Down in Adu"))
+}) |>
+  compact() |>
+  list_rbind()
+
+if (nrow(deg_counts) == 0) {
+  message("No significant DEGs in any region — bar chart skipped.")
+} else {
+deg_counts <- dplyr::count(deg_counts, Region, Direction)
+ggplot(deg_counts, aes(x = Region, y = n, fill = Direction)) +
+  geom_col(position = "dodge", width = 0.7, alpha = 0.9) +
+  scale_fill_manual(values = c("Up in Adu" = "#d73027", "Down in Adu" = "#4575b4")) +
+  labs(
+    title    = "Significant DEGs per brain region",
+    subtitle = "padj < 0.1",
+    x        = NULL,
+    y        = "Number of DEGs",
+    fill     = NULL
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(panel.grid.major.x = element_blank(),
+  axis.text.x = element_text(size = 16,angle = 45, hjust = 1))
+}
+```
+
+### Cross-region log2FC heatmap
+
+To identify genes with consistent or divergent regulation across brain regions, a hierarchically
+clustered heatmap was constructed for all genes reaching statistical significance (adjusted
+*p* < 0.1) in at least one region.
+
+Each cell displays the log~2~ fold change (Adu vs IgG) for
+that gene–region combination. The colour scale is symmetric and centred at zero, with red
+denoting upregulation in aducanumab-treated animals and blue denoting downregulation. Asterisks
+mark gene–region combinations that individually meet the adjusted *p* < 0.1 threshold. Genes and regions
+were clustered hierarchically by their fold-change profiles to reveal co-regulated gene modules and similarities between brain regions.
+
+```{r heatmap}
+#| fig.width: 10
+#| fig.height: 10
+
+
+
+all_de_long <- imap(de_by_region, \(res, reg) {
+  res$all_results |> rownames_to_column("gene") |> mutate(Region = reg)
+}) |> list_rbind()
+
+sig_genes <- all_de_long |>
+  filter(p_val_adj < 0.1) |>
+  pull(gene) |>
+  unique()
+
+if (length(sig_genes) > 0) {
+  fc_matrix <- all_de_long |>
+    filter(gene %in% sig_genes) |>
+    pivot_wider(id_cols = gene, names_from = Region, values_from = avg_log2FC) |>
+    column_to_rownames("gene") |>
+    as.matrix()
+
+  sig_matrix <- all_de_long |>
+    filter(gene %in% sig_genes) |>
+    pivot_wider(id_cols = gene, names_from = Region, values_from = p_val_adj) |>
+    column_to_rownames("gene") |>
+    as.matrix()
+
+  display_matrix <- ifelse(!is.na(sig_matrix) & sig_matrix < 0.1, "*", "")
+
+  clim <- ceiling(max(abs(fc_matrix), na.rm = TRUE))
+
+  pheatmap(fc_matrix,
+    color         = colorRampPalette(c("#4575b4", "white", "#d73027"))(100),
+    breaks        = seq(-clim, clim, length.out = 101),
+    na_col        = "grey88",
+    display_numbers = display_matrix,
+    fontsize_number = 24,
+    number_color  = "black",
+    cluster_rows  = F,
+    cluster_cols  = T,
+    main          = "GABAergic Neuron 2 log2FC (Adu vs IgG) by region\n",
+    fontsize      = 18,
+    fontsize_row  = 15,
+    angle_col     = 45,
+    cellwidth = 30,
+    cellheight = 30
+  )
+} else {
+  message("No significant DEGs found across any region — heatmap skipped.")
+}
+```
+
+### Effect size dot plot
+
+To simultaneously visualise the effect size, statistical significance, and regional distribution
+of all significant DEGs, a dot plot was generated in which each point represents a single
+gene–region observation.
+
+The horizontal position encodes the log~2~ fold change (Adu vs IgG),
+dot size reflects the strength of statistical evidence (−log~10~ adjusted *p*-value), and colour
+denotes the brain region. Genes are ordered along the vertical axis by their mean log~2~ fold
+change across all regions in which they were significant, placing consistently downregulated
+genes at the top and upregulated genes at the bottom.
+
+```{r dotplot}
+#| fig.width: 9
+#| fig.height: 3
+
+sig_all <- imap(de_by_region, \(res, reg) {
+  res$significant_results |> rownames_to_column("gene") |> mutate(Region = reg)
+}) |> list_rbind()
+
+if (nrow(sig_all) > 0) {
+  gene_order <- sig_all |>
+    group_by(gene) |>
+    summarise(mfc = mean(avg_log2FC)) |>
+    arrange(mfc) |>
+    pull(gene)
+
+  sig_all |>
+    mutate(gene = factor(gene, levels = gene_order)) |>
+    ggplot(aes(x = avg_log2FC, y = gene,
+               colour = Region,
+               size   = -log10(p_val_adj + 1e-300))) +
+    geom_vline(xintercept = 0, linetype = "dashed", colour = "grey60") +
+    geom_point(alpha = 0.85) +
+    scale_size_continuous(
+      name  = expression(-log[10](p[adj])),
+      range = c(2, 8)
+    ) +
+    scale_colour_brewer(palette = "Set2") +
+    labs(
+      title = "GABAergic Neuron 2 DEGs — all brain regions\n",
+      x     = expression(log[2] * "FC  (Adu / IgG)"),
+      y     = NULL
+    ) +
+    theme_minimal(base_size = 13) +
+    theme(
+      axis.text         = element_text(size= 16,face = "italic"),
+      axis.title = element_text(size = 18),
+      plot.title = element_text(size = 20),
+      axis.ticks = element_blank(),
+      panel.grid.major.x  = element_blank()
+    )
+} else {
+  message("No significant DEGs found — dot plot skipped.")
+}
+```
+
+
