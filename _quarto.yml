@@ -34,19 +34,21 @@ website:
             href: 20260306-DEG_summary_allCellTypes.qmd
       - text: Microglia
         menu:
-          - text: Proportions
+          - text: Cell-type Proportions
             href: 20260303-cellType_proportions_microglia.qmd
       - text: GSEA
         href: 20260223-MG_GSEA_brainRegions.qmd
       - text: Astrocytes
         menu:
-          - text: Reclustered
+          - text: Reclustered from full object
             href: 20260305-astrocytes_reclustered.qmd
           - text: Cluster characterization
             href: 20260305-astrocytes_cluster_characterization.qmd
           - ---
-          - text: Cleaned and reclustered
+          - text: Cleaned and reclustered again
             href: 20260309-astrocytes_reclustered_cleaned.qmd
+          - text: Cell-type Proportions
+            href: 20260310-cellType_proportions_astrocytes.qmd
 
 
 format:
