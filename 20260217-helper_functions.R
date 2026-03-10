@@ -222,7 +222,8 @@ anayet <- function(seurat_obj,
     p_adj_threshold = 0.05,
     fc_cutoff = 0.001,
     plot_title = "Differentially expressed genes",
-    print_plot = TRUE) {
+    print_plot = TRUE,
+    min_cells_group = 3) {
 
 if (!require(dplyr, quietly = TRUE)) library(dplyr)
 if (!require(EnhancedVolcano, quietly = TRUE)) library(EnhancedVolcano)
@@ -232,7 +233,8 @@ de_results <- FindMarkers(seurat_obj,
                min.pct = min_pct,
                ident.1 = ident1,
                ident.2 = ident2,
-               test.use = test_method)
+               test.use = test_method,
+               min.cells.group = min_cells_group)
 
 # --- Filter significant ---
 de_results_significant <- de_results |>
