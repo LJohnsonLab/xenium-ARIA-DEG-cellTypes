@@ -65,7 +65,7 @@ cells indicate the count of significant DEGs.
 
 ```{r heatmap-total}
 #| fig.width: 8
-#| fig.height: 5
+#| fig.height: 12
 
 # build matrix: rows = cell types, cols = regions
 mat <- deg_total |>
@@ -73,10 +73,11 @@ mat <- deg_total |>
   column_to_rownames("cell_type") |>
   as.matrix()
 
+num_mat <- matrix(ifelse(is.na(mat), "", sprintf("%.0f", mat)), nrow = nrow(mat), dimnames = dimnames(mat))
+
 pheatmap(mat,
   color           = colorRampPalette(c("white", "#d73027"))(100),
-  display_numbers = TRUE,
-  number_format   = "%.0f",
+  display_numbers = num_mat,
   fontsize_number = 14,
   number_color    = "black",
   cluster_rows    = TRUE,
@@ -98,6 +99,7 @@ faceted by brain region. This allows comparison of directionality across cell ty
 region.
 
 ```{r bar-chart-direction}
+#| column: page
 #| fig.width: 12
 #| fig.height: 6
 
@@ -127,7 +129,7 @@ of directionality patterns across cell types and regions.
 
 ```{r heatmap-updown}
 #| fig.width: 14
-#| fig.height: 5
+#| fig.height: 12
 
 # build separate matrices for up and down
 mat_up <- deg_counts |>
@@ -196,7 +198,7 @@ For each brain region, identify DEGs shared across multiple cell types. Genes ap
 more than one cell type within the same region may indicate conserved responses to treatment.
 
 ```{r gene-overlap}
-#| fig.width: 10
+#| fig.width: 12
 #| fig.height: 8
 
 # parse gene lists into a tidy data frame
@@ -232,8 +234,8 @@ if (nrow(shared_genes) > 0) {
 
 ```{r upset-plot}
 #| fig.width: 10
-#| fig.height: 6
-
+#| fig.height: 10
+#| column: page
 # UpSet plot: for each region with shared genes, show cell-type overlaps
 # pool all genes across regions for global cell-type overlap view
 gene_by_ct <- gene_df |>
