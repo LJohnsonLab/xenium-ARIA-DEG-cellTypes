@@ -18,7 +18,7 @@ library(pheatmap)
 
 Gene Set Enrichment Analysis (GSEA) was applied to characterise the immunological pathways
 altered in microglia by aducanumab treatment, across individual brain regions. The analysis
-uses ranked gene lists derived from the pseudobulk DESeq2 results and tests them against the
+uses ranked gene lists derived from the pseudobulk DESeq2 results using the _clean Kai´s microglia seurat object_ and tests them against the
 [M7 Immunologic Signature](https://www.gsea-msigdb.org/gsea/msigdb/mouse/collection_details.jsp#M7)
 gene sets from MSigDB.
 

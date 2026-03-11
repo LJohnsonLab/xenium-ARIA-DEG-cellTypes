@@ -66,8 +66,8 @@ website:
         menu:
           - text: Cell-type Proportions
             href: 20260303-cellType_proportions_microglia.qmd
-      - text: GSEA
-        href: 20260223-MG_GSEA_brainRegions.qmd
+          - text: GSEA-Immune Signatures
+            href: 20260223-MG_GSEA_brainRegions.qmd
       - text: Astrocytes
         menu:
           - text: Reclustered from full object

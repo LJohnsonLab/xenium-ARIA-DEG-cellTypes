@@ -935,7 +935,7 @@
     "href": "20260223-MG_GSEA_brainRegions.html#thalamus",
     "title": "Microglia GSEA across brain",
     "section": "Thalamus",
-    "text": "Thalamus"
+    "text": "Thalamus\nNo significant pathways (padj &lt; 0.05)."
   },
   {
     "objectID": "20260223-MG_GSEA_brainRegions.html#wm",
