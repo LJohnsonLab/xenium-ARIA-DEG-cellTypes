@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-03-06">
+<meta name="dcterms.date" content="2026-03-11">
 
 <title>Astrocyte cluster characterization – ARIA Xenium Analysis</title>
 <style>
@@ -249,12 +249,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <a class="dropdown-item" href="./20260303-cellType_proportions_microglia.html">
  <span class="dropdown-text">Cell-type Proportions</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="./20260223-MG_GSEA_brainRegions.html">
+ <span class="dropdown-text">GSEA-Immune Signatures</span></a>
+  </li>  
     </ul>
   </li>
-  <li class="nav-item">
-    <a class="nav-link" href="./20260223-MG_GSEA_brainRegions.html"> 
-<span class="menu-text">GSEA</span></a>
-  </li>  
   <li class="nav-item dropdown ">
     <a class="nav-link dropdown-toggle" href="#" id="nav-menu-astrocytes" role="link" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">Astrocytes</span>
@@ -298,17 +298,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#canonical-marker-genes" id="toc-canonical-marker-genes" class="nav-link active" data-scroll-target="#canonical-marker-genes">Canonical marker genes</a>
   <ul class="collapse">
   <li><a href="#astrocyte-identity-and-reactive-markers" id="toc-astrocyte-identity-and-reactive-markers" class="nav-link" data-scroll-target="#astrocyte-identity-and-reactive-markers">Astrocyte identity and reactive markers</a></li>
-  <li><a href="#top-marker-genes-per-cluster" id="toc-top-marker-genes-per-cluster" class="nav-link" data-scroll-target="#top-marker-genes-per-cluster">Top marker genes per cluster</a></li>
+  <li><a href="#other-cell-type-markers" id="toc-other-cell-type-markers" class="nav-link" data-scroll-target="#other-cell-type-markers">Other cell-type markers</a></li>
   </ul></li>
   <li><a href="#proportions-and-brain-region-distribution" id="toc-proportions-and-brain-region-distribution" class="nav-link" data-scroll-target="#proportions-and-brain-region-distribution">Proportions and brain region distribution</a>
   <ul class="collapse">
   <li><a href="#cluster-proportions-per-sample" id="toc-cluster-proportions-per-sample" class="nav-link" data-scroll-target="#cluster-proportions-per-sample">Cluster proportions per sample</a></li>
   <li><a href="#cell-counts-by-brain-region" id="toc-cell-counts-by-brain-region" class="nav-link" data-scroll-target="#cell-counts-by-brain-region">Cell counts by brain region</a></li>
-  </ul></li>
-  <li><a href="#pairwise-de-between-clusters" id="toc-pairwise-de-between-clusters" class="nav-link" data-scroll-target="#pairwise-de-between-clusters">Pairwise DE between clusters</a>
-  <ul class="collapse">
-  <li><a href="#deg-counts-per-comparison" id="toc-deg-counts-per-comparison" class="nav-link" data-scroll-target="#deg-counts-per-comparison">DEG counts per comparison</a></li>
-  <li><a href="#top-deg-heatmap" id="toc-top-deg-heatmap" class="nav-link" data-scroll-target="#top-deg-heatmap">Top DEG heatmap</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -319,7 +314,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Astrocyte cluster characterization</h1>
-<p class="subtitle lead">Characterization of astrocyte clusters 0, 1, and 7 from reclustering at resolution 0.3</p>
+<p class="subtitle lead">Cell-type genem markers</p>
 </div>
 
 
@@ -330,7 +325,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">March 6, 2026</p>
+      <p class="date">March 11, 2026</p>
     </div>
   </div>
   
@@ -362,32 +357,46 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>astro <span class="ot">&lt;-</span> <span class="fu">qs_read</span>(<span class="st">"seurat_objects/20260305-astro_0.3.qs2"</span>)</span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Subset to clusters of interest: 0 and 1 (confirmed astrocytes), 7 (uncertain)</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>astro_sub <span class="ot">&lt;-</span> <span class="fu">subset</span>(astro, seurat_clusters <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">7</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co"># astro_sub &lt;- subset(astro, seurat_clusters %in% c(0, 1, 7))</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>astro_sub <span class="ot">&lt;-</span> astro</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="do">### Dotplot decorations</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>dp_deco <span class="ot">&lt;-</span> <span class="cf">function</span>() {<span class="fu">list</span> (</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() ,</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>),</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.y =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>, <span class="at">face =</span> <span class="st">"italic"</span>))</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>)}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <section id="canonical-marker-genes" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="canonical-marker-genes">Canonical marker genes</h2>
-<section id="astrocyte-identity-and-reactive-markers" class="level3">
+<section id="astrocyte-identity-and-reactive-markers" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="astrocyte-identity-and-reactive-markers">Astrocyte identity and reactive markers</h3>
-<div class="cell">
+<div class="cell page-columns page-full">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">DefaultAssay</span>(astro_sub) <span class="ot">&lt;-</span> <span class="st">"SCT"</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Astrocyte identity markers</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>astro_markers <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Gfap"</span>, <span class="st">"Aqp4"</span>, <span class="st">"Aldh1l1"</span>, <span class="st">"Slc1a3"</span>, <span class="st">"Slc1a2"</span>, <span class="st">"Gja1"</span>, <span class="st">"S100b"</span>, <span class="st">"Ckb"</span>, <span class="st">"Aldoc"</span>)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>astro_markers <span class="ot">&lt;-</span> <span class="fu">intersect</span>(astro_markers, <span class="fu">rownames</span>(astro_sub))</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">DotPlot</span>(astro_sub, <span class="at">features =</span> astro_markers, <span class="at">group.by =</span> <span class="st">"seurat_clusters"</span>) <span class="sc">+</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>astro_markers <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Gfap"</span>, <span class="st">"Aqp4"</span>, <span class="st">"Aldh1l1"</span>,   <span class="st">"Aldoc"</span> ,<span class="st">"Slc7a10"</span>) </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># LARA</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>lara_markers <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Gja1"</span>, <span class="st">"Cpe"</span>, <span class="st">"Ubc"</span>, <span class="st">"Tubb2b"</span>, <span class="st">"Atp1b2"</span>, <span class="st">"Ptgds"</span>,    <span class="st">"Ckb"</span>,  <span class="st">"Psap"</span>, <span class="st">"Scg3"</span>, <span class="st">"Htra1"</span>,    <span class="st">"Wif1"</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>astro <span class="ot">&lt;-</span> <span class="fu">DotPlot</span>(astro_sub, <span class="at">features =</span> astro_markers, <span class="at">group.by =</span> <span class="st">"seurat_clusters"</span>) <span class="sc">+</span></span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Astrocyte identity markers"</span>) <span class="sc">+</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>),</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.y =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>, <span class="at">face =</span> <span class="st">"italic"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dp_deco</span>()</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>lara <span class="ot">&lt;-</span> <span class="fu">DotPlot</span>(astro_sub, <span class="at">features =</span> lara_markers, <span class="at">group.by =</span> <span class="st">"seurat_clusters"</span>) <span class="sc">+</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"LARA identity markers"</span>) <span class="sc">+</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dp_deco</span>()</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>astro <span class="sc">+</span> lara</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="20260305-astrocytes_cluster_characterization_files/figure-html/dotplot-identity-1.svg" class="img-fluid figure-img" width="960"></p>
+<div class="cell-output-display page-columns page-full">
+<div class="page-columns page-full">
+<figure class="figure page-columns page-full">
+<p class="page-columns page-full"><img src="20260305-astrocytes_cluster_characterization_files/figure-html/dotplot-identity-1.svg" class="img-fluid figure-img column-page" width="1152"></p>
 </figure>
 </div>
 </div>
@@ -400,44 +409,92 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>reactive_markers <span class="ot">&lt;-</span> <span class="fu">intersect</span>(reactive_markers, <span class="fu">rownames</span>(astro_sub))</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">DotPlot</span>(astro_sub, <span class="at">features =</span> reactive_markers, <span class="at">group.by =</span> <span class="st">"seurat_clusters"</span>) <span class="sc">+</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Reactive / inflammatory markers"</span>) <span class="sc">+</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>),</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.y =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">12</span>, <span class="at">face =</span> <span class="st">"italic"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Reactive / inflammatory markers"</span>) <span class="sc">+</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dp_deco</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="20260305-astrocytes_cluster_characterization_files/figure-html/dotplot-reactive-1.svg" class="img-fluid figure-img" width="768"></p>
+<p><img src="20260305-astrocytes_cluster_characterization_files/figure-html/dotplot-reactive-1.svg" class="img-fluid figure-img" width="576"></p>
 </figure>
 </div>
 </div>
 </div>
 </section>
-<section id="top-marker-genes-per-cluster" class="level3 page-columns page-full">
-<h3 class="anchored" data-anchor-id="top-marker-genes-per-cluster">Top marker genes per cluster</h3>
+<section id="other-cell-type-markers" class="level3 page-columns page-full">
+<h3 class="anchored" data-anchor-id="other-cell-type-markers">Other cell-type markers</h3>
 <div class="cell page-columns page-full">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read precomputed markers, filter to clusters 0, 1, 7, pick top 5 per cluster</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>top_genes <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"results/20260305-astrocyte_all_markers_0.3.csv"</span>,</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">show_col_types =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(cluster <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">7</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cluster) <span class="sc">|&gt;</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(avg_log2FC), <span class="at">.by_group =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">5</span>) <span class="sc">|&gt;</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(gene) <span class="sc">|&gt;</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>()</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="fu">fiddle</span>(astro_sub,</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">genes_of_interest =</span> top_genes,</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">classification_col =</span> <span class="st">"seurat_clusters"</span>,</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">assay =</span> <span class="st">"SCT"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>panneuron_markers <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Snap25"</span>,<span class="st">"Grin2a"</span>,<span class="st">"Grin2b"</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>microglia_markers <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Tmem119"</span>,<span class="st">"Aif1"</span>, <span class="st">"Trem2"</span>, <span class="st">"P2ry12"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>macro_marker <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Mgl2"</span>    ,<span class="st">"Mrc1"</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>pericyte_markers <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Vtn"</span>,    <span class="st">"Kcnj8"</span>,    <span class="st">"Atp13a5"</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="do">## Dotplots of other markers</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>panneurons <span class="ot">&lt;-</span> <span class="fu">DotPlot</span>(astro_sub, <span class="at">features =</span> panneuron_markers, <span class="at">group.by =</span> <span class="st">"seurat_clusters"</span>) <span class="sc">+</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Pan-neuronal markers"</span>)<span class="sc">+</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dp_deco</span>()</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>microglia <span class="ot">&lt;-</span> <span class="fu">DotPlot</span>(astro_sub, <span class="at">features =</span> microglia_markers, <span class="at">group.by =</span> <span class="st">"seurat_clusters"</span>) <span class="sc">+</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Microglia markers"</span>) <span class="sc">+</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dp_deco</span>()</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>macrophages <span class="ot">&lt;-</span> <span class="fu">DotPlot</span>(astro_sub, <span class="at">features =</span> macro_marker, <span class="at">group.by =</span> <span class="st">"seurat_clusters"</span>) <span class="sc">+</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Macrophages markers"</span>) <span class="sc">+</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dp_deco</span>()</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>pericytes <span class="ot">&lt;-</span> <span class="fu">DotPlot</span>(astro_sub, <span class="at">features =</span> pericyte_markers, <span class="at">group.by =</span> <span class="st">"seurat_clusters"</span>) <span class="sc">+</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Pericytes markers"</span>) <span class="sc">+</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dp_deco</span>()</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>(panneurons <span class="sc">+</span> microglia) <span class="sc">/</span> (macrophages <span class="sc">+</span> pericytes)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display page-columns page-full">
 <div class="page-columns page-full">
 <figure class="figure page-columns page-full">
-<p class="page-columns page-full"><img src="20260305-astrocytes_cluster_characterization_files/figure-html/fiddle-top-markers-1.svg" class="img-fluid figure-img column-screen" width="1440"></p>
+<p class="page-columns page-full"><img src="20260305-astrocytes_cluster_characterization_files/figure-html/dotplot-other-1.svg" class="img-fluid figure-img column-page" width="1152"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell page-columns page-full">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>oligo_markers <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Ermn"</span>,  <span class="st">"Cldn11"</span>,   <span class="st">"Mog"</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>ependymal_markers <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Ccdc153"</span>,   <span class="st">"Dnah11"</span>,   <span class="st">"Tmem212"</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>endothelial_markers <span class="ot">&lt;-</span>  <span class="fu">c</span>(<span class="st">"Flt1"</span>,<span class="st">"Emcn"</span>,<span class="st">"Cldn5"</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>opc_markers <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Pdgfra"</span>,  <span class="st">"Tnr"</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="do">## Dotplots of other markers</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>oligo <span class="ot">&lt;-</span> <span class="fu">DotPlot</span>(astro_sub, <span class="at">features =</span> oligo_markers, <span class="at">group.by =</span> <span class="st">"seurat_clusters"</span>) <span class="sc">+</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Oligodendrocyte markers"</span>) <span class="sc">+</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dp_deco</span>()</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>ependymal <span class="ot">&lt;-</span> <span class="fu">DotPlot</span>(astro_sub, <span class="at">features =</span> ependymal_markers, <span class="at">group.by =</span> <span class="st">"seurat_clusters"</span>) <span class="sc">+</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Ependymal markers"</span>) <span class="sc">+</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dp_deco</span>()</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>endothelial <span class="ot">&lt;-</span> <span class="fu">DotPlot</span>(astro_sub, <span class="at">features =</span> endothelial_markers, <span class="at">group.by =</span> <span class="st">"seurat_clusters"</span>) <span class="sc">+</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Endothelial markers"</span>) <span class="sc">+</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dp_deco</span>()</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>opc <span class="ot">&lt;-</span> <span class="fu">DotPlot</span>(astro_sub, <span class="at">features =</span> opc_markers, <span class="at">group.by =</span> <span class="st">"seurat_clusters"</span>) <span class="sc">+</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"OPC markers"</span>) <span class="sc">+</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dp_deco</span>()</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>(oligo <span class="sc">+</span> ependymal) <span class="sc">/</span> (endothelial <span class="sc">+</span> opc)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output-display page-columns page-full">
+<div class="page-columns page-full">
+<figure class="figure page-columns page-full">
+<p class="page-columns page-full"><img src="20260305-astrocytes_cluster_characterization_files/figure-html/dotplot-other2-1.svg" class="img-fluid figure-img column-page" width="1152"></p>
 </figure>
 </div>
 </div>
@@ -451,24 +508,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>prop_res <span class="ot">&lt;-</span> <span class="fu">scProp</span>(astro_sub,</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">cluster_col   =</span> <span class="st">"seurat_clusters"</span>,</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">sample_col    =</span> <span class="st">"sample_ID"</span>,</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">treatment_col =</span> <span class="st">"Treatment.Group"</span>)</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>prop_res<span class="sc">$</span>counts_plot <span class="sc">/</span> prop_res<span class="sc">$</span>proportions_plot</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>prop_res <span class="ot">&lt;-</span> <span class="fu">scProp</span>(astro_sub,</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">cluster_col   =</span> <span class="st">"seurat_clusters"</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">sample_col    =</span> <span class="st">"sample_ID"</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">treatment_col =</span> <span class="st">"Treatment.Group"</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>prop_res<span class="sc">$</span>counts_plot <span class="sc">/</span> prop_res<span class="sc">$</span>proportions_plot</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="20260305-astrocytes_cluster_characterization_files/figure-html/proportions-1.svg" class="img-fluid figure-img" width="960"></p>
+<p><img src="20260305-astrocytes_cluster_characterization_files/figure-html/proportions-plot-1.svg" class="img-fluid figure-img" width="960"></p>
 </figure>
 </div>
 </div>
 </div>
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">export2md</span>(prop_res<span class="sc">$</span>summary_table)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">export2md</span>(prop_res<span class="sc">$</span>summary_table)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <table class="table table-striped table-condensed caption-top">
 <caption>Summary descriptives table by groups of `Treatment.Group'</caption>
@@ -489,21 +546,69 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 <tr class="even">
 <td style="text-align: left;">0</td>
-<td style="text-align: center;">50.8 [47.6;51.0]</td>
-<td style="text-align: center;">47.2 [46.5;54.5]</td>
-<td style="text-align: center;">0.827</td>
+<td style="text-align: center;">26.1 [25.7;27.6]</td>
+<td style="text-align: center;">23.6 [22.2;29.1]</td>
+<td style="text-align: center;">0.513</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">1</td>
-<td style="text-align: center;">44.0 [43.8;47.8]</td>
-<td style="text-align: center;">50.7 [41.9;50.7]</td>
-<td style="text-align: center;">0.825</td>
+<td style="text-align: center;">25.1 [23.6;27.2]</td>
+<td style="text-align: center;">23.0 [20.8;24.1]</td>
+<td style="text-align: center;">0.513</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">2</td>
+<td style="text-align: center;">13.8 [13.7;14.9]</td>
+<td style="text-align: center;">17.4 [15.9;17.8]</td>
+<td style="text-align: center;">0.127</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">3</td>
+<td style="text-align: center;">8.00 [7.10;8.30]</td>
+<td style="text-align: center;">8.90 [7.85;8.95]</td>
+<td style="text-align: center;">0.275</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">4</td>
+<td style="text-align: center;">6.90 [6.20;7.35]</td>
+<td style="text-align: center;">6.60 [5.80;8.05]</td>
+<td style="text-align: center;">0.827</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">5</td>
+<td style="text-align: center;">6.80 [6.40;7.25]</td>
+<td style="text-align: center;">5.60 [5.40;6.60]</td>
+<td style="text-align: center;">0.275</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">6</td>
+<td style="text-align: center;">5.40 [4.75;5.80]</td>
+<td style="text-align: center;">7.80 [6.50;8.05]</td>
+<td style="text-align: center;">0.275</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;">7</td>
-<td style="text-align: center;">5.20 [4.60;5.20]</td>
-<td style="text-align: center;">3.60 [2.85;4.45]</td>
+<td style="text-align: center;">2.70 [2.50;2.85]</td>
+<td style="text-align: center;">1.60 [1.30;2.30]</td>
+<td style="text-align: center;">0.376</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">8</td>
+<td style="text-align: center;">1.90 [1.85;1.90]</td>
+<td style="text-align: center;">2.50 [2.05;2.70]</td>
 <td style="text-align: center;">0.507</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">9</td>
+<td style="text-align: center;">0.90 [0.80;1.90]</td>
+<td style="text-align: center;">0.40 [0.40;1.60]</td>
+<td style="text-align: center;">0.268</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">10</td>
+<td style="text-align: center;">0.80 [0.70;1.00]</td>
+<td style="text-align: center;">0.90 [0.85;1.00]</td>
+<td style="text-align: center;">0.658</td>
 </tr>
 </tbody>
 </table>
@@ -513,179 +618,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell page-columns page-full">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Cell counts per Region, faceted by cluster, dodged by treatment</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>astro_sub<span class="sc">@</span>meta.data <span class="sc">|&gt;</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(Region)) <span class="sc">|&gt;</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">count</span>(seurat_clusters, Region, Treatment.Group) <span class="sc">|&gt;</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Region, <span class="at">y =</span> n, <span class="at">fill =</span> Treatment.Group)) <span class="sc">+</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">"dodge"</span>, <span class="at">alpha =</span> <span class="fl">0.85</span>) <span class="sc">+</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>seurat_clusters, <span class="at">scales =</span> <span class="st">"free_y"</span>, <span class="at">labeller =</span> label_both) <span class="sc">+</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Adu"</span> <span class="ot">=</span> <span class="st">"#d73027"</span>, <span class="st">"IgG"</span> <span class="ot">=</span> <span class="st">"#4575b4"</span>)) <span class="sc">+</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Cell counts per brain region"</span>,</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Number of cells"</span>, <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">fill =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">16</span>) <span class="sc">+</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>),</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.major.x =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">strip.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>, <span class="at">face =</span> <span class="st">"bold"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Cell counts per Region, faceted by cluster, dodged by treatment</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>astro_sub<span class="sc">@</span>meta.data <span class="sc">|&gt;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(Region)) <span class="sc">|&gt;</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">count</span>(seurat_clusters, Region, Treatment.Group) <span class="sc">|&gt;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Region, <span class="at">y =</span> n, <span class="at">fill =</span> Treatment.Group)) <span class="sc">+</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">"dodge"</span>, <span class="at">alpha =</span> <span class="fl">0.85</span>) <span class="sc">+</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>seurat_clusters, <span class="at">scales =</span> <span class="st">"free_y"</span>, <span class="at">labeller =</span> label_both, <span class="at">ncol =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Adu"</span> <span class="ot">=</span> <span class="st">"#d73027"</span>, <span class="st">"IgG"</span> <span class="ot">=</span> <span class="st">"#4575b4"</span>)) <span class="sc">+</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Cell counts per brain region"</span>,</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Number of cells"</span>, <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">fill =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">16</span>) <span class="sc">+</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>),</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.major.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">strip.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>, <span class="at">face =</span> <span class="st">"bold"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display page-columns page-full">
 <div class="page-columns page-full">
 <figure class="figure page-columns page-full">
 <p class="page-columns page-full"><img src="20260305-astrocytes_cluster_characterization_files/figure-html/region-bar-1.svg" class="img-fluid figure-img column-page" width="960"></p>
-</figure>
-</div>
-</div>
-</div>
-</section>
-</section>
-<section id="pairwise-de-between-clusters" class="level2">
-<h2 class="anchored" data-anchor-id="pairwise-de-between-clusters">Pairwise DE between clusters</h2>
-<p>Pseudobulk DESeq2 comparing cluster pairs. For each comparison, cells from both clusters are pooled across all samples, aggregated per sample-cluster combination, and tested with DESeq2.</p>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">DefaultAssay</span>(astro) <span class="ot">&lt;-</span> <span class="st">"Xenium"</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Define pairwise comparisons</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>pairs <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">"0"</span>, <span class="st">"1"</span>), <span class="fu">c</span>(<span class="st">"0"</span>, <span class="st">"7"</span>), <span class="fu">c</span>(<span class="st">"1"</span>, <span class="st">"7"</span>))</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>pairwise_de <span class="ot">&lt;-</span> <span class="fu">map</span>(pairs, \(pr) {</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Subset to the two clusters</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  sub_obj <span class="ot">&lt;-</span> <span class="fu">subset</span>(astro, seurat_clusters <span class="sc">%in%</span> pr)</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Create combined sample-cluster ID for pseudobulk</span></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  sub_obj<span class="sc">$</span>sample_cluster <span class="ot">&lt;-</span> <span class="fu">paste0</span>(sub_obj<span class="sc">$</span>sample_ID, <span class="st">"_cl"</span>, sub_obj<span class="sc">$</span>seurat_clusters)</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Pseudobulk aggregation per sample-cluster</span></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  bulk <span class="ot">&lt;-</span> <span class="fu">AggregateExpression</span>(sub_obj, <span class="at">group.by =</span> <span class="st">"sample_cluster"</span>, <span class="at">return.seurat =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Extract cluster label from column names (e.g., KK4-465-cl0 -&gt; 0)</span></span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>  bulk<span class="sc">$</span>cluster_label <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">".*cl"</span>, <span class="st">""</span>, <span class="fu">colnames</span>(bulk))</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Idents</span>(bulk) <span class="ot">&lt;-</span> <span class="st">"cluster_label"</span></span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># DESeq2 via anayet</span></span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">anayet</span>(bulk,</span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>         <span class="at">ident1          =</span> pr[<span class="dv">1</span>],</span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>         <span class="at">ident2          =</span> pr[<span class="dv">2</span>],</span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>         <span class="at">test_method     =</span> <span class="st">"DESeq2"</span>,</span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>         <span class="at">min_pct         =</span> <span class="dv">0</span>,</span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>         <span class="at">p_adj_threshold =</span> <span class="fl">0.1</span>,</span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>         <span class="at">plot_title      =</span> <span class="fu">paste</span>(<span class="st">"Cluster"</span>, pr[<span class="dv">1</span>], <span class="st">"vs"</span>, pr[<span class="dv">2</span>]),</span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>         <span class="at">print_plot      =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>}) <span class="sc">|&gt;</span> <span class="fu">set_names</span>(<span class="fu">paste0</span>(<span class="st">"cl"</span>, <span class="fu">map_chr</span>(pairs, <span class="dv">1</span>), <span class="st">"_vs_cl"</span>, <span class="fu">map_chr</span>(pairs, <span class="dv">2</span>)))</span>
-<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(pairwise_de, <span class="st">"results/20260305-pairwise_DE_astro_clusters.rds"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-</div>
-<section id="deg-counts-per-comparison" class="level3">
-<h3 class="anchored" data-anchor-id="deg-counts-per-comparison">DEG counts per comparison</h3>
-<p>The bar chart below tallies the number of significant DEGs (adjusted <em>p</em> &lt; 0.1) for each pairwise cluster comparison, stratified by direction of effect: genes with higher expression in the first cluster of the pair (red) versus genes with higher expression in the second (blue).</p>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pheatmap)</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>pairwise_de <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"results/20260305-pairwise_DE_astro_clusters.rds"</span>)</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Bar chart of up/down DEG counts per comparison</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>deg_counts <span class="ot">&lt;-</span> <span class="fu">imap</span>(pairwise_de, \(res, comp) {</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">nrow</span>(res<span class="sc">$</span>significant_results) <span class="sc">==</span> <span class="dv">0</span>) <span class="fu">return</span>(<span class="cn">NULL</span>)</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  label <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"cl(</span><span class="sc">\\</span><span class="st">d+)_vs_cl(</span><span class="sc">\\</span><span class="st">d+)"</span>, <span class="st">"</span><span class="sc">\\</span><span class="st">1 vs </span><span class="sc">\\</span><span class="st">2"</span>, comp)</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  res<span class="sc">$</span>significant_results <span class="sc">|&gt;</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rownames_to_column</span>(<span class="st">"gene"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">Comparison =</span> label,</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>           <span class="at">Direction  =</span> <span class="fu">ifelse</span>(avg_log2FC <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="st">"Up in first"</span>, <span class="st">"Down in first"</span>))</span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>}) <span class="sc">|&gt;</span></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">compact</span>() <span class="sc">|&gt;</span></span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list_rbind</span>() <span class="sc">|&gt;</span></span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">count</span>(Comparison, Direction)</span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(deg_counts, <span class="fu">aes</span>(<span class="at">x =</span> Comparison, <span class="at">y =</span> n, <span class="at">fill =</span> Direction)) <span class="sc">+</span></span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">"dodge"</span>, <span class="at">width =</span> <span class="fl">0.7</span>, <span class="at">alpha =</span> <span class="fl">0.9</span>) <span class="sc">+</span></span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Up in first"</span> <span class="ot">=</span> <span class="st">"#d73027"</span>, <span class="st">"Down in first"</span> <span class="ot">=</span> <span class="st">"#4575b4"</span>)) <span class="sc">+</span></span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Significant DEGs per pairwise comparison"</span>,</span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"padj &lt; 0.1"</span>,</span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"Number of DEGs"</span>, <span class="at">fill =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
-<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
-<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.grid.major.x =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="20260305-astrocytes_cluster_characterization_files/figure-html/pairwise-deg-counts-1.svg" class="img-fluid figure-img" width="480"></p>
-</figure>
-</div>
-</div>
-</div>
-</section>
-<section id="top-deg-heatmap" class="level3">
-<h3 class="anchored" data-anchor-id="top-deg-heatmap">Top DEG heatmap</h3>
-<p>To highlight genes that most strongly distinguish the three clusters, a heatmap displays the log<sub>2</sub> fold change for the top 20 most significant DEGs (by adjusted <em>p</em>-value) from each pairwise comparison. Each column represents a cluster pair (e.g., “0 vs 1”) and each row a gene. The colour scale is symmetric around zero, with red indicating higher expression in the first cluster and blue indicating higher expression in the second. Asterisks mark gene–comparison combinations that individually reach significance (adjusted <em>p</em> &lt; 0.1). Genes are hierarchically clustered by their fold-change profiles to reveal shared and comparison-specific expression patterns.</p>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Collect all results into a long table with log2FC and padj per comparison</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>all_de_long <span class="ot">&lt;-</span> <span class="fu">imap</span>(pairwise_de, \(res, comp) {</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  label <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"cl(</span><span class="sc">\\</span><span class="st">d+)_vs_cl(</span><span class="sc">\\</span><span class="st">d+)"</span>, <span class="st">"</span><span class="sc">\\</span><span class="st">1 vs </span><span class="sc">\\</span><span class="st">2"</span>, comp)</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  res<span class="sc">$</span>all_results <span class="sc">|&gt;</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rownames_to_column</span>(<span class="st">"gene"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">Comparison =</span> label)</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>}) <span class="sc">|&gt;</span> <span class="fu">list_rbind</span>()</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Select top 20 DEGs per comparison by padj</span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>top_genes <span class="ot">&lt;-</span> all_de_long <span class="sc">|&gt;</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(p_val_adj <span class="sc">&lt;</span> <span class="fl">0.1</span>) <span class="sc">|&gt;</span></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Comparison) <span class="sc">|&gt;</span></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(p_val_adj, <span class="at">.by_group =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">20</span>) <span class="sc">|&gt;</span></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(gene) <span class="sc">|&gt;</span></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>()</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">length</span>(top_genes) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Build log2FC matrix (genes x comparisons)</span></span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>  fc_matrix <span class="ot">&lt;-</span> all_de_long <span class="sc">|&gt;</span></span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(gene <span class="sc">%in%</span> top_genes) <span class="sc">|&gt;</span></span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_wider</span>(<span class="at">id_cols =</span> gene, <span class="at">names_from =</span> Comparison, <span class="at">values_from =</span> avg_log2FC) <span class="sc">|&gt;</span></span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">column_to_rownames</span>(<span class="st">"gene"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as.matrix</span>()</span>
-<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Build significance matrix for asterisk overlay</span></span>
-<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>  sig_matrix <span class="ot">&lt;-</span> all_de_long <span class="sc">|&gt;</span></span>
-<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(gene <span class="sc">%in%</span> top_genes) <span class="sc">|&gt;</span></span>
-<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_wider</span>(<span class="at">id_cols =</span> gene, <span class="at">names_from =</span> Comparison, <span class="at">values_from =</span> p_val_adj) <span class="sc">|&gt;</span></span>
-<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">column_to_rownames</span>(<span class="st">"gene"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as.matrix</span>()</span>
-<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>  display_matrix <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="sc">!</span><span class="fu">is.na</span>(sig_matrix) <span class="sc">&amp;</span> sig_matrix <span class="sc">&lt;</span> <span class="fl">0.1</span>, <span class="st">"*"</span>, <span class="st">""</span>)</span>
-<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>  clim <span class="ot">&lt;-</span> <span class="fu">ceiling</span>(<span class="fu">max</span>(<span class="fu">abs</span>(fc_matrix), <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pheatmap</span>(fc_matrix,</span>
-<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">color           =</span> <span class="fu">colorRampPalette</span>(<span class="fu">c</span>(<span class="st">"#4575b4"</span>, <span class="st">"white"</span>, <span class="st">"#d73027"</span>))(<span class="dv">100</span>),</span>
-<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">breaks          =</span> <span class="fu">seq</span>(<span class="sc">-</span>clim, clim, <span class="at">length.out =</span> <span class="dv">101</span>),</span>
-<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">na_col          =</span> <span class="st">"grey88"</span>,</span>
-<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">display_numbers =</span> display_matrix,</span>
-<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">fontsize_number =</span> <span class="dv">24</span>,</span>
-<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">number_color    =</span> <span class="st">"black"</span>,</span>
-<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">cluster_rows    =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">cluster_cols    =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">main            =</span> <span class="st">"Top DEGs — pairwise cluster comparisons</span><span class="sc">\n</span><span class="st">"</span>,</span>
-<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">fontsize        =</span> <span class="dv">18</span>,</span>
-<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">fontsize_row    =</span> <span class="dv">13</span>,</span>
-<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">angle_col       =</span> <span class="dv">45</span>,</span>
-<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">cellwidth       =</span> <span class="dv">30</span>,</span>
-<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">cellheight      =</span> <span class="dv">30</span></span>
-<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
-<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">message</span>(<span class="st">"No significant DEGs found across any comparison — heatmap skipped."</span>)</span>
-<span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="20260305-astrocytes_cluster_characterization_files/figure-html/pairwise-heatmap-1.svg" class="img-fluid figure-img" width="960"></p>
 </figure>
 </div>
 </div>
