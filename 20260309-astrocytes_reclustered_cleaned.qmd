@@ -19,7 +19,7 @@ library(DESeq2)
 library(gridExtra)
 
 
-astro <- qs2::qs_read("seurat_objects/20260309-astro_cleaned_0.3.qs2")
+astro <- qs2::qs_read("seurat_objects/20260312-astro_cleaned2_0.3.qs2")
 
 ```
 
@@ -37,7 +37,9 @@ all_features <- Features(astro_subset)
 keep_genes <- all_features[!all_features %in% genes_to_remove]
 
 
-astro_cleaned  <- subset(astro_subset, features = keep_genes)
+
+astro_cleaned  <- subset(astro_subset, subset = seurat_clusters!=6)
+astro_cleaned  <- subset(astro_cleaned, features = keep_genes)
 # Keep only the assay needed for fresh SCTransform
 DefaultAssay(astro_cleaned) <- "Xenium"
 astro0 <- DietSeurat(astro_cleaned, assays = "Xenium", dimreducs = NULL, graphs = NULL)
@@ -107,22 +109,31 @@ astro <- FindClusters(astro, graph.name = "astro_snn", resolution = 0.3)
 # Compute UMAP for visualization
 astro <- RunUMAP(astro, reduction = "pca", dims = 1:30, verbose = FALSE)
 
-# qs_save(astro, "seurat_objects/20260309-astro_cleaned_0.3.qs2")
+# qs_save(astro, "seurat_objects/20260312-astro_cleaned2_0.3.qs2")
 ```
 
-resolution = 0.3 
+resolution = 0.3
+
+::: {layout-ncol=3 .column-page}
+![Original reclustering](img/astrocyte_UMAP_reclusteredOriginal.svg){width=100% height=300px}
+
+![After removing cluster 6](img/astrocyte_UMAP_removedCluster6.png){width=100% height=300px}
+
+![After removing marker genes](img/astrocyte_UMAP_removedMarkerGenes.svg){width=100% height=300px}
+:::
 
 ```{r}
 #|fig-width: 5
 #|fig-height: 5
 #| label: plot UMAPs 1
-DimPlot(astro)
+DimPlot(astro, label =T, label.size = 6, pt.size =0.9)+ NoLegend() +
+  ggtitle("Removed cluster 6 and marker genes") 
 ```
 
 ```{r}
 #| fig-height: 5
 #| label: plot UMAPs 2
-DimPlot(astro, split.by = "Treatment.Group")
+DimPlot(astro, split.by = "Treatment.Group", label.size = 6, pt.size =0.9)+ NoLegend()
 ```
 
 ## Top marker genes per cluster
@@ -134,7 +145,12 @@ DimPlot(astro, split.by = "Treatment.Group")
 Idents(astro) <- astro$seurat_clusters
 DefaultAssay(astro) <- "SCT"
 all_markers <- FindAllMarkers(astro, only.pos = TRUE, densify = TRUE)
+
+# write_csv (only marker genes removed)
 # write_csv(all_markers, file = "results/20260309-astrocyte_cleaned_all_markers_0.3.csv")
+#################################################################
+# write_csv (cluster 6 from the original object &  marker genes removed)
+# write_csv(all_markers, file = "results/20260312-astrocyte_cleaned_all_markers_0.3.csv")
 ```
 
 ```{r}
@@ -145,7 +161,7 @@ all_markers <- FindAllMarkers(astro, only.pos = TRUE, densify = TRUE)
 source("20260217-helper_functions.R")
 
 # Top 5 markers per cluster by avg_log2FC
-top_genes <- read_csv("results/20260309-astrocyte_cleaned_all_markers_0.3.csv",
+top_genes <- read_csv("results/20260312-astrocyte_cleaned_all_markers_0.3.csv",
                       show_col_types = FALSE) |>
   group_by(cluster) |>
   arrange(desc(avg_log2FC), .by_group = TRUE) |>
@@ -186,6 +202,29 @@ FeaturePlot(astro,features = c("Aldh1l1",	"Aldoc",	"Gfap",	"Slc7a10",	"Aqp4"), n
 VlnPlot(astro,features = c("Aldh1l1",	"Aldoc",	"Gfap",	"Slc7a10",	"Aqp4"),alpha = 0, ncol=2)
 ```
 
+***
+
+## ChatGPTs opinion
+
+These markers suggest that the “new cleaned astrocyte subclusters” are not all astrocytes. What likely happened after removing the old cluster 6 is that re-clustering exposed residual contaminant or reactive populations that were previously blended into the manifold.
+
+**Cluster 0** looks like a bona fide astrocyte population, with Glul, Gja1, Slc7a10, Plpp3, Vegfa, Htra1 and cholesterol biosynthesis genes like Msmo1, Fdft1, Hmgcr, Hmgcs1. I would read this as a homeostatic / metabolically active astrocyte state with strong lipid-sterol metabolism.
+
+**Cluster 1** also looks astrocytic, but more specialized. Agt, Slc7a10, Folh1, Pcx, Me1, Abca1 and Srebf1 fit a mature astrocyte program with metabolic and lipid-handling features. The Apoc1 signal is a bit unusual for a pure astrocyte cluster, so I would keep an eye on possible mixed cells, but overall this still reads as astrocyte-like.
+
+**Cluster 3** is clearly a reactive astrocyte population. C3, Vim, Cd44, Serping1, Gfap, Aqp4, Icam1 and Ifitm3 are classic reactive / inflammatory astrocyte markers. This is probably the most convincing “activated astrocyte” cluster in your set.
+
+**Cluster 5** could be another astrocyte-like activated or vascular-interacting state, but it is less clean. Cxcl12, Egr1, Klf4, Ocln together with metabolic genes could reflect a stress-responsive astrocyte population, possibly perivascular or barrier-associated. Still, Ocln and Cxcl12 raise the possibility of admixture with vascular cells.
+
+**_clusters 2, 4 and 6 do not look like astrocytes._**
+
+**Cluster 4** is microglial / myeloid, very strongly. Hk3, Cst7, Nlrp3, Itgax, Cd14, C1qa, C1qc, Cx3cr1, Clec7a, Cd68, Lpl, Lyz2, Spp1 are a textbook activated phagocytic microglia / macrophage signature.
+
+**Cluster 6** is inflammatory immune contamination, not astrocytes. Cxcl10, Ccl2, Ccl12, Acod1, Tnf, Il1b, Ifit1, Ifit2, Ccl5, Cd3d, Itk, Nkg7 suggests a mixed inflammatory myeloid plus lymphoid signal, or doublets. The presence of both astrocyte-associated inflammatory chemokines and clear T/NK markers makes me suspicious of doublets or ambient RNA contamination.
+
+**Cluster 2** is also not clean astrocyte. Ptgds and Apod can show up in glia, but Cd209a, Mrc1, H2-Ab1, H2-Eb1, Clec10a, Cd74, Msr1 are antigen-presenting myeloid markers. This looks like macrophage / border-associated macrophage contamination, possibly with some glial overlap.
+
+***
 
 
 
