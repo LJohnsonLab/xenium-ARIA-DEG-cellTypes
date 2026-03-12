@@ -4,7 +4,15 @@ https://ljohnsonlab.github.io/xenium-ARIA-DEG-cellTypes/
 
 ### Overview
 
-This project contains a reproducible Quarto book documenting the analysis of Xenium spatial transcriptomics data from the ARIA study, investigating the effects of Aducanumab treatment on brain tissue at single-cell resolution with spatial context.
+This project contains a reproducible Quarto website documenting the analysis of Xenium spatial transcriptomics data from the ARIA study, investigating the differential brain effects of Aducanumab (anti-Aβ antibody) treatment in a mouse model of Amyloid-Related Imaging Abnormalities (ARIA) expressing human APOE4.
+
+The 480-gene targeted Xenium panel was applied to 6 mouse brains, enabling cell-type identification and spatially resolved gene expression across multiple brain regions. Analyses include:
+
+- **Cell-type characterisation** — UMAP clustering, spatial mapping, and cell-type proportion comparisons across treatment groups
+- **Pseudobulk differential expression** — DESeq2-based Adu vs IgG comparisons for 20+ cell types across brain regions, including major glia (microglia, astrocytes, oligodendrocytes, OPC), vascular cells (endothelial, pericyte, VSMC, VLMC), immune subsets (BAM, T-cells), neurons (GABAergic, glutamatergic), and other cell types (fibroblast, ependymal, choroid plexus)
+- **Microglia subpopulation analysis** — Reclustering and characterization of microglia subclusters
+- **Astrocyte subpopulation analysis** — Reclustering and characterization of astrocyte subclusters
+
 
 ### Study Design
 
