@@ -1,0 +1,676 @@
+{
+  "FUEL PATHWAYS": {
+    "GLYCOLYSIS": [
+      "Hk1",
+      "Hk2",
+      "Hk3",
+      "Hkdc1",
+      "Pfkl",
+      "Pfkm",
+      "Pfkp",
+      "Pkm",
+      "Ldhb",
+      "Ldha",
+      "Pgm1",
+      "Pdhb"
+    ],
+    "OXPHOS": [
+      "Ndufv2",
+      "Ndufs1",
+      "Sdha",
+      "Uqcrc1",
+      "Cox10",
+      "Sdhc",
+      "Sdhb",
+      "Cox14",
+      "Cox4i1"
+    ],
+    "TCA": [
+      "Cs",
+      "Acly",
+      "Idh2",
+      "Dlst",
+      "Pdha1"
+    ],
+    "PPP": [
+      "G6pd2",
+      "Tkt",
+      "Taldo1",
+      "Pgls",
+      "Prps2",
+      "Pgd",
+      "Pgm2"
+    ],
+    "PYRIMIDINE/PURINE": [
+      "Pnp",
+      "Dpyd",
+      "Ctps2",
+      "Polr1a",
+      "Impdh2",
+      "Adss",
+      "Ppat",
+      "Cad",
+      "Nt5c",
+      "Gmps",
+      "Adcy5"
+    ],
+    "KETONE BODY": [
+      "Hmgcs1",
+      "Hmgcl",
+      "Oxct1",
+      "Acat1"
+    ],
+    "PYRUVATE": [
+      "Acss2",
+      "Dlat",
+      "Acaca",
+      "Pcx",
+      "Mdh1",
+      "Mdh2",
+      "Me1",
+      "Aldh2"
+    ],
+    "FRUCTOSE/MANNOSE": [
+      "Pmm1",
+      "Pfkfb3",
+      "Khk",
+      "Aldob"
+    ],
+    "STARCH/SUCROSE": [
+      "Gaa",
+      "Ganc",
+      "Pygb",
+      "G6pc3",
+      "Gys2",
+      "Gck"
+    ],
+    "PANTOTHENATE/COA BIOSYNTHESIS": [
+      "Pank3",
+      "Coasy",
+      "Ppcdc"
+    ],
+    "FATTY ACID METABOLISM": [
+      "Acsl6",
+      "Acsl4",
+      "Hadhb",
+      "Ppt1",
+      "Hsd17b12",
+      "Hacd2",
+      "Tecr",
+      "Cpt1b",
+      "Fasn",
+      "Abhd17a",
+      "Acadl",
+      "Eci1",
+      "Elovl1"
+    ],
+    "GLUTATHIONE": [
+      "Gclc",
+      "Gclm",
+      "Lap3",
+      "Gstm1",
+      "Idh1"
+    ]
+  },
+  "AMINO ACIDS": {
+    "Alanine, Aspartate, Glutamate": [
+      "Got1",
+      "Gpt2",
+      "Glud1",
+      "Got2",
+      "Folh1",
+      "Aspa"
+    ],
+    "Glycine, Serine, Threonine": [
+      "Phgdh",
+      "Dld",
+      "Gatm",
+      "Shmt2",
+      "Pgam1",
+      "Bpgm"
+    ],
+    "Cysteine, Methionine": [
+      "Bckdha",
+      "Hibadh",
+      "Auh",
+      "Cbs",
+      "Acad8"
+    ],
+    "Lysine": [
+      "Ogdh",
+      "Hadha",
+      "Echs1"
+    ],
+    "Arginine, Proline": [
+      "Odc1",
+      "Sat1",
+      "Prodh",
+      "P4ha1",
+      "Pycr2"
+    ],
+    "Histidine": [
+      "Aldh7a1",
+      "Aldh9a1",
+      "Cndp2"
+    ],
+    "Tyrosine": [
+      "Adh1",
+      "Adh5"
+    ],
+    "Phenylalanine": [
+      "Maob",
+      "Aldh3b1",
+      "Pah"
+    ],
+    "Tryptophan": [
+      "Ogdhl",
+      "Cat",
+      "Tdo2",
+      "Ido1",
+      "Tph2"
+    ]
+  },
+  "LIPID RELATED": {
+    "GLYCEROPHOSPHOLIPID": [
+      "Gpat4",
+      "Lpgat1",
+      "Lpin1",
+      "Dgkd",
+      "Pla2g15",
+      "Pla2g7",
+      "Ptdss1",
+      "Lpcat2",
+      "Etnk1",
+      "Plpp3"
+    ],
+    "SPHINGOLIPID": [
+      "Sptlc2",
+      "Asah1",
+      "Acer3",
+      "Degs1",
+      "Sgms1",
+      "Kdsr",
+      "Cers2",
+      "Smpd1",
+      "Cerk",
+      "Sgpl1",
+      "Neu1",
+      "Sphk2"
+    ]
+  },
+  "GLYCANS": {
+    "MANNOSE TYPE O-GLYCAN": [
+      "Fut9",
+      "Pomgnt1",
+      "B4galt1"
+    ],
+    "N-GLYCAN": [
+      "Dpm1",
+      "Stt3a",
+      "Dad1",
+      "Ddost",
+      "Alg5",
+      "Rpn1",
+      "Man2a2"
+    ],
+    "STEROIDS": [
+      "Msmo1",
+      "Soat1",
+      "Comt",
+      "Fdft1",
+      "Ebp",
+      "Sc5d"
+    ],
+    "CHRONDROITIN SULFATE/DERMATAN SULFATE": [
+      "B3gat3",
+      "Chsy1",
+      "Csgalnact1",
+      "Chst11"
+    ],
+    "HEPARAN SULFTE/HEPARIN": [
+      "Extl3",
+      "Hs2st1",
+      "Ext2"
+    ],
+    "KERATAN SULFATE": [
+      "Fut8",
+      "Chst1"
+    ],
+    "GLYCOSAMINOGLYCAN DEGRADATION": [
+      "Arsb",
+      "Gns",
+      "Hexa",
+      "Hexb",
+      "Gusb",
+      "Ids"
+    ],
+    "LACTO/NEOLACTO SERIES": [
+      "B3galt5",
+      "St3gal6"
+    ],
+    "GLOBO/ISOGLOBO SERIES": [
+      "St3gal2",
+      "Naga"
+    ],
+    "GANGLIO SERIES": [
+      "Slc33a1",
+      "St6galnac3",
+      "St6galnac4"
+    ],
+    "ARACHIDONIC ACID METABOLISM": [
+      "Pla2g12a",
+      "Ptges3",
+      "Lta4h",
+      "Gpx1",
+      "Ptgs1",
+      "Cbr1",
+      "Ltc4s"
+    ],
+    "LINOLEIC ACID METABOLISM": [
+      "Fads2",
+      "Acaa1a"
+    ],
+    "D-GLUTAMINED-GLUTAMATE": [
+      "Gls"
+    ],
+    "MUCIN TYPE O-GLYCAN": [
+      "Galnt1",
+      "C1galt1c1"
+    ]
+  },
+  "OTHERS PT.2": {
+    "LIPID/AD RELATED": [
+      "Plin2",
+      "Plin5",
+      "Plin3",
+      "Plin4",
+      "Apoe",
+      "Lpl",
+      "Hif1a",
+      "Lipa",
+      "Dgat1",
+      "Dgat2",
+      "Acsl1",
+      "Plcb4",
+      "Lrp1",
+      "App",
+      "Ldlr",
+      "Vldlr",
+      "Reln",
+      "Fabp5",
+      "Clu",
+      "Hmgcr",
+      "Hspg2",
+      "Ppara",
+      "Pparg",
+      "Ppard",
+      "Hilpda",
+      "Rxra",
+      "Rxrb",
+      "Cd36",
+      "Pnpla2"
+    ]
+  },
+  "OTHERS PT.3": {
+    "IMMUNOLOGY/COMPLEMENT/BBB": [
+      "Abca1",
+      "Bace1",
+      "Adam10",
+      "Timp3",
+      "Abcg1",
+      "Mmp9",
+      "Serpina3a",
+      "Slc2a1",
+      "C3",
+      "C1qa",
+      "C1qb",
+      "C1qc",
+      "Bhlhe40",
+      "Bhlhe41",
+      "Vegfa",
+      "Agt",
+      "Chka",
+      "Tlr4",
+      "Akt1",
+      "Jun",
+      "Tjp1",
+      "Icam1",
+      "Vcam1",
+      "Mif",
+      "Ocln",
+      "Serping1",
+      "Serpina3n"
+    ]
+  },
+  "OTHERS PT.4": {
+    "DAM": [
+      "Cx3cr1",
+      "Spp1",
+      "Itgax",
+      "Cd68"
+    ]
+  },
+  "OTHERS PT.5": {
+    "Lance's List": [
+      "Glul",
+      "Abca7",
+      "Apoc2",
+      "Apoc4",
+      "Plcg2",
+      "Sorl1",
+      "Mt1",
+      "Mt2",
+      "Mt3",
+      "Ch25h",
+      "Apod",
+      "Bin1",
+      "Nr1h2",
+      "Cr2",
+      "Clec2d",
+      "Acod1",
+      "Mertk",
+      "Pla2g4a",
+      "Ctsb",
+      "Ctsd",
+      "Vim",
+      "Apoc1",
+      "Cd63",
+      "Grn",
+      "Fas"
+    ]
+  },
+  "OTHERS PT.6": {
+    "Extras If Space": [
+      "Cstb",
+      "Cxcl12",
+      "Lratd2",
+      "Opcml"
+    ]
+  },
+  "OTHERS PT.7": {
+    "LARA": [
+      "Gja1",
+      "Cpe",
+      "Ubc",
+      "Tubb2b",
+      "Atp1b2",
+      "Ptgds",
+      "Ckb",
+      "Psap",
+      "Scg3",
+      "Htra1",
+      "Wif1"
+    ]
+  },
+  "OTHERS PT.8": {
+    "Morganti DAM": [
+      "Gapdh",
+      "Ccl4",
+      "Ccl3",
+      "Il1a",
+      "Tnf",
+      "Ccl5",
+      "Lgals3",
+      "Lgals1",
+      "Lgals3bp",
+      "Ftl1",
+      "Prdx1",
+      "Cd74",
+      "Cxcl10",
+      "Ccl2",
+      "Ifit1",
+      "Ifit2",
+      "Siglech",
+      "Junb",
+      "Cst3",
+      "Cxcl2",
+      "Il1b",
+      "Clec7a",
+      "Ccl12",
+      "Ctsl",
+      "Csf1",
+      "Egr1",
+      "Nfkbia"
+    ]
+  },
+  "OTHERS PT.9": {
+    "Morganti DAM": [
+      "Lyz2",
+      "Cd14",
+      "Klf4",
+      "Tmx4",
+      "Rhob",
+      "Atf3",
+      "Gsr",
+      "Cd44",
+      "Tgfbr1",
+      "Elmo1",
+      "Cst7",
+      "Tgfbi",
+      "Uba52",
+      "Chil3",
+      "Myo1e",
+      "Bcl2a1b",
+      "Mapkapk2",
+      "Nlrp3",
+      "Fos",
+      "Fosb",
+      "Klf6",
+      "Il1r2",
+      "H2-Eb1",
+      "H2-Ab1",
+      "Ifitm1",
+      "Ifitm2",
+      "Ifitm3"
+    ]
+  },
+  "OTHERS PT.10": {
+    "Morganti DAM": [
+      "Gpnmb",
+      "Pf4",
+      "Hmox1",
+      "Tmsb4x",
+      "Hmgb2",
+      "H2az1",
+      "Jund",
+      "Maf",
+      "Selplg",
+      "Arhgap5",
+      "Gpr34",
+      "Ms4a4b",
+      "Numb",
+      "Fxyd5",
+      "Ly86",
+      "Ophn1",
+      "Cd81",
+      "Bcl2",
+      "Itk",
+      "Nkg7",
+      "Plpp4",
+      "Axl"
+    ]
+  },
+  "OTHERS PT.11": {
+    "APOE Variants": [
+      "rs429358_ALT_228:C",
+      "rs429358_WT_228",
+      "rs7412_ALT_226:T",
+      "rs7412_WT_226"
+    ]
+  },
+  "OTHERS PT.12": {
+    "Proliferating Marker": [
+      "Mki67"
+    ]
+  },
+  "OTHERS PT.13": {
+    "Oligo-related": [
+      "Mbp",
+      "Mag",
+      "Pllp"
+    ]
+  },
+  "OTHERS PT.14": {
+    "Lipid-related": [
+      "Srebf2",
+      "Srebf1"
+    ]
+  },
+  "OTHERS PT.15": {
+    "Red Blood Cell related": [
+      "Hbb-bs"
+    ]
+  },
+  "CELL SPECIFIC": {
+    "ASTROCYTE": [
+      "Aldh1l1",
+      "Aldoc",
+      "Gfap",
+      "Slc7a10",
+      "Aqp4"
+    ],
+    "MICROGLIA": [
+      "Tmem119",
+      "Aif1",
+      "Trem2",
+      "P2ry12"
+    ],
+    "OLIGODENDROCYTE": [
+      "Ermn",
+      "Cldn11",
+      "Mog"
+    ],
+    "EPENDYMAL": [
+      "Ccdc153",
+      "Dnah11",
+      "Tmem212"
+    ],
+    "OPC": [
+      "Pdgfra",
+      "Tnr"
+    ],
+    "VASCULAR LEPTOMENINGEAL": [
+      "Mgp",
+      "Bgn",
+      "Slc47a1"
+    ],
+    "VSMC'S": [
+      "Acta2",
+      "Tagln"
+    ],
+    "PERICYTES": [
+      "Vtn",
+      "Kcnj8",
+      "Atp13a5"
+    ],
+    "ENDOTHELIAL": [
+      "Flt1",
+      "Emcn",
+      "Cldn5"
+    ],
+    "CHOROID PLEXUS": [
+      "Car12",
+      "Ttr"
+    ],
+    "FIBROBLASTS": [
+      "Col1a2",
+      "Lum"
+    ],
+    "NEUROPROGENITOR": [
+      "Dcx",
+      "Pax6"
+    ],
+    "MACROPHAGE": [
+      "Mgl2",
+      "Mrc1"
+    ],
+    "T CELL": [
+      "Cd3d",
+      "Gzmb",
+      "Pdcd1"
+    ],
+    "NK CELL": [
+      "Klrb1c"
+    ],
+    "MAST CELL": [
+      "Tpsab1",
+      "Tpsb2",
+      "Fcer1a"
+    ],
+    "MONOCYTES": [
+      "Plac8",
+      "Msr1"
+    ],
+    "NEUTROPHILS": [
+      "Ly6g",
+      "Camp"
+    ],
+    "DENDRITIC CELL": [
+      "Cd209a",
+      "Clec10a"
+    ],
+    "PBMC": [
+      "Cd247"
+    ],
+    "PAN-NEURONAL": [
+      "Snap25",
+      "Grin2a",
+      "Grin2b"
+    ],
+    "EXCITATORY L2/3 IT": [
+      "Cux2",
+      "Otof",
+      "Stard8",
+      "Lypd1",
+      "Lrg1",
+      "Adamts2",
+      "Macc1"
+    ],
+    "EXCITATORY L5 PT": [
+      "Rapgef3"
+    ],
+    "EXCITATORY L5 IT": [
+      "Rorb",
+      "Tcap",
+      "Hsd11b1",
+      "Rspo1",
+      "Whrn"
+    ],
+    "EXCITATORY L6 IT": [
+      "Tunar",
+      "Osr1",
+      "Oprk1"
+    ],
+    "EXCITATORY L5 ET": [
+      "Pou3f1"
+    ],
+    "EXCITATORY L5/6 NP": [
+      "Tshz2",
+      "Tox2"
+    ],
+    "EXCITATORY L6 CT": [
+      "Syt6",
+      "Trh"
+    ],
+    "INHIBITORY": [
+      "Vip",
+      "Calb2",
+      "Pthlh",
+      "Crh"
+    ],
+    "Inhibitory": [
+      "Gad1",
+      "Serpinf1",
+      "Cnr1",
+      "Lhx6",
+      "Slc32a1"
+    ],
+    "Excitatory": [
+      "Slc17a7",
+      "Fezf2",
+      "Htr2c",
+      "Dpp4",
+      "Slc17a6"
+    ]
+  }
+}
