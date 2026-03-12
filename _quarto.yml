@@ -1,6 +1,7 @@
 project:
   type: website
   output-dir: docs
+  execute-dir: project
 
 website:
   title: "ARIA Xenium Analysis"
@@ -13,55 +14,55 @@ website:
       - text: DE Analysis
         menu:
           - text: All cell types
-            href: 20260304-DEG_allCellTypes_brainRegions.qmd
+            href: deg_analyses/20260304-DEG_allCellTypes_brainRegions.qmd
           - ---
           - text: Summary cell types x brain regions
-            href: 20260306-DEG_summary_allCellTypes.qmd
+            href: deg_analyses/20260306-DEG_summary_allCellTypes.qmd
           - ---
           - text: Microglia
-            href: 20260303-DEG_MG_brainRegions.qmd
+            href: deg_analyses/20260303-DEG_MG_brainRegions.qmd
           - text: Astrocytes
-            href: 20260303-DEG_astrocytes_brainRegions.qmd
+            href: deg_analyses/20260303-DEG_astrocytes_brainRegions.qmd
           - text: Endothelial
-            href: 20260303-DEG_ENDOTHELIAL_brainRegions.qmd
+            href: deg_analyses/20260303-DEG_ENDOTHELIAL_brainRegions.qmd
           - text: Oligodendrocytes
-            href: 20260303-DEG_oligo_brainRegions.qmd
+            href: deg_analyses/20260303-DEG_oligo_brainRegions.qmd
           - text: OPC
-            href: 20260303-DEG_OPC_brainRegions.qmd
+            href: deg_analyses/20260303-DEG_OPC_brainRegions.qmd
           - text: BAM
-            href: 20260309-DEG_BAM_brainRegions.qmd
+            href: deg_analyses/20260309-DEG_BAM_brainRegions.qmd
           - text: T-Cell
-            href: 20260309-DEG_TCell_brainRegions.qmd
+            href: deg_analyses/20260309-DEG_TCell_brainRegions.qmd
           - text: GABAergic Neuron 1
-            href: 20260310-DEG_GABAergicNeuron1_brainRegions.qmd
+            href: deg_analyses/20260310-DEG_GABAergicNeuron1_brainRegions.qmd
           - text: GABAergic Neuron 2
-            href: 20260310-DEG_GABAergicNeuron2_brainRegions.qmd
+            href: deg_analyses/20260310-DEG_GABAergicNeuron2_brainRegions.qmd
           - text: GABAergic Neuron 3
-            href: 20260310-DEG_GABAergicNeuron3_brainRegions.qmd
+            href: deg_analyses/20260310-DEG_GABAergicNeuron3_brainRegions.qmd
           - text: GABAergic Neuron 4
-            href: 20260310-DEG_GABAergicNeuron4_brainRegions.qmd
+            href: deg_analyses/20260310-DEG_GABAergicNeuron4_brainRegions.qmd
           - text: Glutamatergic Neuron 1
-            href: 20260310-DEG_GlutamatergicNeuron1_brainRegions.qmd
+            href: deg_analyses/20260310-DEG_GlutamatergicNeuron1_brainRegions.qmd
           - text: Glutamatergic Neuron 2
-            href: 20260310-DEG_GlutamatergicNeuron2_brainRegions.qmd
+            href: deg_analyses/20260310-DEG_GlutamatergicNeuron2_brainRegions.qmd
           - text: Glutamatergic Neuron 3
-            href: 20260310-DEG_GlutamatergicNeuron3_brainRegions.qmd
+            href: deg_analyses/20260310-DEG_GlutamatergicNeuron3_brainRegions.qmd
           - text: Glutamatergic Neuron 4
-            href: 20260310-DEG_GlutamatergicNeuron4_brainRegions.qmd
+            href: deg_analyses/20260310-DEG_GlutamatergicNeuron4_brainRegions.qmd
           - text: Glutamatergic Neuron 5
-            href: 20260310-DEG_GlutamatergicNeuron5_brainRegions.qmd
+            href: deg_analyses/20260310-DEG_GlutamatergicNeuron5_brainRegions.qmd
           - text: Pericyte
-            href: 20260310-DEG_Pericyte_brainRegions.qmd
+            href: deg_analyses/20260310-DEG_Pericyte_brainRegions.qmd
           - text: Fibroblast
-            href: 20260310-DEG_Fibroblast_brainRegions.qmd
+            href: deg_analyses/20260310-DEG_Fibroblast_brainRegions.qmd
           - text: VSMC
-            href: 20260310-DEG_VSMC_brainRegions.qmd
+            href: deg_analyses/20260310-DEG_VSMC_brainRegions.qmd
           - text: VLMC
-            href: 20260310-DEG_VLMC_brainRegions.qmd
+            href: deg_analyses/20260310-DEG_VLMC_brainRegions.qmd
           - text: Ependymal
-            href: 20260310-DEG_Ependymal_brainRegions.qmd
+            href: deg_analyses/20260310-DEG_Ependymal_brainRegions.qmd
           - text: CP
-            href: 20260310-DEG_CP_brainRegions.qmd
+            href: deg_analyses/20260310-DEG_CP_brainRegions.qmd
       - text: Microglia
         menu:
           - text: Cell-type Proportions
