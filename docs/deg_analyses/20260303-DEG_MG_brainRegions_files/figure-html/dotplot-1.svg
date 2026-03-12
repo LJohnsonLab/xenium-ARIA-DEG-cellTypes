@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='504.00pt' height='288.00pt' viewBox='0 0 504.00 288.00'>
+<g class='svglite'>
+<defs>
+  <style type='text/css'><![CDATA[
+    .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {
+      fill: none;
+      stroke: #000000;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-miterlimit: 10.00;
+    }
+    .svglite text {
+      white-space: pre;
+    }
+    .svglite g.glyphgroup path {
+      fill: inherit;
+      stroke: none;
+    }
+  ]]></style>
+</defs>
+<rect width='100%' height='100%' style='stroke: none; fill: #FFFFFF;'/>
+<defs>
+  <clipPath id='cpMC4wMHw1MDQuMDB8MC4wMHwyODguMDA='>
+    <rect x='0.00' y='0.00' width='504.00' height='288.00' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpMC4wMHw1MDQuMDB8MC4wMHwyODguMDA=)'>
+<rect x='0.00' y='0.00' width='504.00' height='288.00' style='stroke-width: 1.26; stroke: none; fill: #FFFFFF;' />
+</g>
+<defs>
+  <clipPath id='cpNzcuMzB8MzgxLjQxfDUzLjA4fDIzNi45Mw=='>
+    <rect x='77.30' y='53.08' width='304.11' height='183.85' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpNzcuMzB8MzgxLjQxfDUzLjA4fDIzNi45Mw==)'>
+<polyline points='129.97,236.93 129.97,53.08 ' style='stroke-width: 0.63; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='196.62,236.93 196.62,53.08 ' style='stroke-width: 0.63; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='263.27,236.93 263.27,53.08 ' style='stroke-width: 0.63; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='329.92,236.93 329.92,53.08 ' style='stroke-width: 0.63; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='77.30,221.61 381.41,221.61 ' style='stroke-width: 1.26; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='77.30,196.08 381.41,196.08 ' style='stroke-width: 1.26; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='77.30,170.54 381.41,170.54 ' style='stroke-width: 1.26; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='77.30,145.01 381.41,145.01 ' style='stroke-width: 1.26; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='77.30,119.47 381.41,119.47 ' style='stroke-width: 1.26; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='77.30,93.94 381.41,93.94 ' style='stroke-width: 1.26; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='77.30,68.41 381.41,68.41 ' style='stroke-width: 1.26; stroke: #EBEBEB; stroke-linecap: butt;' />
+<line x1='163.29' y1='236.93' x2='163.29' y2='53.08' style='stroke-width: 1.26; stroke: #999999; stroke-dasharray: 6.73,6.73; stroke-linecap: butt;' />
+<circle cx='236.68' cy='119.47' r='8.95' style='stroke-width: 0.84; stroke: #66C2A5; stroke-opacity: 0.85; fill: #66C2A5; fill-opacity: 0.85;' />
+<circle cx='234.00' cy='145.01' r='4.94' style='stroke-width: 0.84; stroke: #66C2A5; stroke-opacity: 0.85; fill: #66C2A5; fill-opacity: 0.85;' />
+<circle cx='323.12' cy='68.41' r='5.03' style='stroke-width: 0.84; stroke: #FC8D62; stroke-opacity: 0.85; fill: #FC8D62; fill-opacity: 0.85;' />
+<circle cx='240.44' cy='93.94' r='3.36' style='stroke-width: 0.84; stroke: #8DA0CB; stroke-opacity: 0.85; fill: #8DA0CB; fill-opacity: 0.85;' />
+<circle cx='91.13' cy='221.61' r='2.55' style='stroke-width: 0.84; stroke: #8DA0CB; stroke-opacity: 0.85; fill: #8DA0CB; fill-opacity: 0.85;' />
+<circle cx='367.59' cy='68.41' r='4.54' style='stroke-width: 0.84; stroke: #E78AC3; stroke-opacity: 0.85; fill: #E78AC3; fill-opacity: 0.85;' />
+<circle cx='91.66' cy='196.08' r='3.82' style='stroke-width: 0.84; stroke: #E78AC3; stroke-opacity: 0.85; fill: #E78AC3; fill-opacity: 0.85;' />
+<circle cx='98.80' cy='170.54' r='3.00' style='stroke-width: 0.84; stroke: #E78AC3; stroke-opacity: 0.85; fill: #E78AC3; fill-opacity: 0.85;' />
+</g>
+<g clip-path='url(#cpMC4wMHw1MDQuMDB8MC4wMHwyODguMDA=)'>
+<text x='71.48' y='227.34' text-anchor='end' style='font-size: 16.00px; font-style: italic;fill: #4D4D4D; font-family: "Arial";' textLength='40.05px' lengthAdjust='spacingAndGlyphs'>Mdh2</text>
+<text x='71.48' y='201.81' text-anchor='end' style='font-size: 16.00px; font-style: italic;fill: #4D4D4D; font-family: "Arial";' textLength='28.48px' lengthAdjust='spacingAndGlyphs'>App</text>
+<text x='71.48' y='176.27' text-anchor='end' style='font-size: 16.00px; font-style: italic;fill: #4D4D4D; font-family: "Arial";' textLength='40.05px' lengthAdjust='spacingAndGlyphs'>Mdh1</text>
+<text x='71.48' y='150.74' text-anchor='end' style='font-size: 16.00px; font-style: italic;fill: #4D4D4D; font-family: "Arial";' textLength='54.28px' lengthAdjust='spacingAndGlyphs'>H2-Eb1</text>
+<text x='71.48' y='125.20' text-anchor='end' style='font-size: 16.00px; font-style: italic;fill: #4D4D4D; font-family: "Arial";' textLength='38.28px' lengthAdjust='spacingAndGlyphs'>Cd74</text>
+<text x='71.48' y='99.67' text-anchor='end' style='font-size: 16.00px; font-style: italic;fill: #4D4D4D; font-family: "Arial";' textLength='65.00px' lengthAdjust='spacingAndGlyphs'>Lgals3bp</text>
+<text x='71.48' y='74.13' text-anchor='end' style='font-size: 16.00px; font-style: italic;fill: #4D4D4D; font-family: "Arial";' textLength='40.94px' lengthAdjust='spacingAndGlyphs'>Ccl12</text>
+<text x='96.65' y='254.22' text-anchor='middle' style='font-size: 16.00px; font-style: italic;fill: #4D4D4D; font-family: "Arial";' textLength='27.59px' lengthAdjust='spacingAndGlyphs'>-0.5</text>
+<text x='163.29' y='254.22' text-anchor='middle' style='font-size: 16.00px; font-style: italic;fill: #4D4D4D; font-family: "Arial";' textLength='22.27px' lengthAdjust='spacingAndGlyphs'>0.0</text>
+<text x='229.94' y='254.22' text-anchor='middle' style='font-size: 16.00px; font-style: italic;fill: #4D4D4D; font-family: "Arial";' textLength='22.27px' lengthAdjust='spacingAndGlyphs'>0.5</text>
+<text x='296.59' y='254.22' text-anchor='middle' style='font-size: 16.00px; font-style: italic;fill: #4D4D4D; font-family: "Arial";' textLength='22.27px' lengthAdjust='spacingAndGlyphs'>1.0</text>
+<text x='363.24' y='254.22' text-anchor='middle' style='font-size: 16.00px; font-style: italic;fill: #4D4D4D; font-family: "Arial";' textLength='22.27px' lengthAdjust='spacingAndGlyphs'>1.5</text>
+<text x='152.83' y='273.94' style='font-size: 18.00px; font-family: "Arial";' textLength='4.00px' lengthAdjust='spacingAndGlyphs'>l</text>
+<text x='156.82' y='273.94' style='font-size: 18.00px; font-family: "Arial";' textLength='10.02px' lengthAdjust='spacingAndGlyphs'>o</text>
+<text x='166.83' y='273.94' style='font-size: 18.00px; font-family: "Arial";' textLength='10.02px' lengthAdjust='spacingAndGlyphs'>g</text>
+<text x='176.84' y='277.20' style='font-size: 12.60px; font-family: "Arial";' textLength='7.00px' lengthAdjust='spacingAndGlyphs'>2</text>
+<text x='183.84' y='273.94' style='font-size: 18.00px; font-family: "Arial";' textLength='122.05px' lengthAdjust='spacingAndGlyphs'>FC  (Adu / IgG)</text>
+<text x='400.84' y='48.39' style='font-size: 13.00px; font-family: "Arial";' textLength='41.22px' lengthAdjust='spacingAndGlyphs'>Region</text>
+<circle cx='409.48' cy='64.88' r='2.31' style='stroke-width: 0.84; stroke: #66C2A5; stroke-opacity: 0.85; fill: #66C2A5; fill-opacity: 0.85;' />
+<circle cx='409.48' cy='82.16' r='2.31' style='stroke-width: 0.84; stroke: #FC8D62; stroke-opacity: 0.85; fill: #FC8D62; fill-opacity: 0.85;' />
+<circle cx='409.48' cy='99.44' r='2.31' style='stroke-width: 0.84; stroke: #8DA0CB; stroke-opacity: 0.85; fill: #8DA0CB; fill-opacity: 0.85;' />
+<circle cx='409.48' cy='116.72' r='2.31' style='stroke-width: 0.84; stroke: #E78AC3; stroke-opacity: 0.85; fill: #E78AC3; fill-opacity: 0.85;' />
+<text x='424.60' y='68.60' style='font-size: 10.40px; font-family: "Arial";' textLength='30.61px' lengthAdjust='spacingAndGlyphs'>Cortex</text>
+<text x='424.60' y='85.88' style='font-size: 10.40px; font-family: "Arial";' textLength='63.56px' lengthAdjust='spacingAndGlyphs'>Hippocampus</text>
+<text x='424.60' y='103.16' style='font-size: 10.40px; font-family: "Arial";' textLength='66.45px' lengthAdjust='spacingAndGlyphs'>Hypothalamus</text>
+<text x='424.60' y='120.44' style='font-size: 10.40px; font-family: "Arial";' textLength='18.47px' lengthAdjust='spacingAndGlyphs'>WM</text>
+<text x='400.84' y='164.39' style='font-size: 13.00px; font-family: "Symbol";' textLength='7.14px' lengthAdjust='spacingAndGlyphs'>−</text>
+<text x='409.78' y='164.39' style='font-size: 13.00px; font-family: "Arial";' textLength='2.89px' lengthAdjust='spacingAndGlyphs'>l</text>
+<text x='412.67' y='164.39' style='font-size: 13.00px; font-family: "Arial";' textLength='7.23px' lengthAdjust='spacingAndGlyphs'>o</text>
+<text x='419.90' y='164.39' style='font-size: 13.00px; font-family: "Arial";' textLength='7.23px' lengthAdjust='spacingAndGlyphs'>g</text>
+<text x='427.12' y='166.75' style='font-size: 9.10px; font-family: "Arial";' textLength='10.12px' lengthAdjust='spacingAndGlyphs'>10</text>
+<text x='437.25' y='164.39' style='font-size: 16.25px; font-family: "Symbol";' textLength='5.41px' lengthAdjust='spacingAndGlyphs'>(</text>
+<text x='442.66' y='164.39' style='font-size: 13.00px; font-family: "Arial";' textLength='7.23px' lengthAdjust='spacingAndGlyphs'>p</text>
+<text x='449.89' y='166.75' style='font-size: 9.10px; font-family: "Arial";' textLength='5.06px' lengthAdjust='spacingAndGlyphs'>a</text>
+<text x='454.95' y='166.75' style='font-size: 9.10px; font-family: "Arial";' textLength='5.06px' lengthAdjust='spacingAndGlyphs'>d</text>
+<text x='460.00' y='166.75' style='font-size: 9.10px; font-family: "Arial";' textLength='2.02px' lengthAdjust='spacingAndGlyphs'>j</text>
+<text x='462.02' y='164.39' style='font-size: 16.25px; font-family: "Symbol";' textLength='5.41px' lengthAdjust='spacingAndGlyphs'>)</text>
+<circle cx='411.72' cy='185.15' r='5.32' style='stroke-width: 0.84; stroke: #000000; stroke-opacity: 0.85; fill: #000000; fill-opacity: 0.85;' />
+<circle cx='411.72' cy='202.43' r='6.72' style='stroke-width: 0.84; stroke: #000000; stroke-opacity: 0.85; fill: #000000; fill-opacity: 0.85;' />
+<circle cx='411.72' cy='220.81' r='7.75' style='stroke-width: 0.84; stroke: #000000; stroke-opacity: 0.85; fill: #000000; fill-opacity: 0.85;' />
+<circle cx='411.72' cy='241.42' r='8.61' style='stroke-width: 0.84; stroke: #000000; stroke-opacity: 0.85; fill: #000000; fill-opacity: 0.85;' />
+<text x='429.07' y='188.87' style='font-size: 10.40px; font-family: "Arial";' textLength='5.78px' lengthAdjust='spacingAndGlyphs'>5</text>
+<text x='429.07' y='206.15' style='font-size: 10.40px; font-family: "Arial";' textLength='11.56px' lengthAdjust='spacingAndGlyphs'>10</text>
+<text x='429.07' y='224.53' style='font-size: 10.40px; font-family: "Arial";' textLength='11.56px' lengthAdjust='spacingAndGlyphs'>15</text>
+<text x='429.07' y='245.14' style='font-size: 10.40px; font-family: "Arial";' textLength='11.56px' lengthAdjust='spacingAndGlyphs'>20</text>
+<text x='77.30' y='20.80' style='font-size: 20.00px; font-family: "Arial";' textLength='311.22px' lengthAdjust='spacingAndGlyphs'>Microglia DEGs — all brain regions</text>
+<text x='77.30' y='42.40' style='font-size: 20.00px; font-family: "Arial";' textLength='0.00px' lengthAdjust='spacingAndGlyphs'></text>
+</g>
+</g>
+</svg>

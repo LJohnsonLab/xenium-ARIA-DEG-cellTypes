@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='288.00pt' height='360.00pt' viewBox='0 0 288.00 360.00'>
+<g class='svglite'>
+<defs>
+  <style type='text/css'><![CDATA[
+    .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {
+      fill: none;
+      stroke: #000000;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-miterlimit: 10.00;
+    }
+    .svglite text {
+      white-space: pre;
+    }
+    .svglite g.glyphgroup path {
+      fill: inherit;
+      stroke: none;
+    }
+  ]]></style>
+</defs>
+<rect width='100%' height='100%' style='stroke: none; fill: #FFFFFF;'/>
+<defs>
+  <clipPath id='cpMC4wMHwyODguMDB8MC4wMHwzNjAuMDA='>
+    <rect x='0.00' y='0.00' width='288.00' height='360.00' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpMC4wMHwyODguMDB8MC4wMHwzNjAuMDA=)'>
+<rect x='-0.000000000000032' y='0.00' width='288.00' height='360.00' style='stroke-width: 1.36; stroke: none; fill: #FFFFFF;' />
+</g>
+<defs>
+  <clipPath id='cpNTEuNDd8MTgwLjM4fDQ5LjQ2fDI2Ny4wNQ=='>
+    <rect x='51.47' y='49.46' width='128.91' height='217.59' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpNTEuNDd8MTgwLjM4fDQ5LjQ2fDI2Ny4wNQ==)'>
+<polyline points='51.47,232.43 180.38,232.43 ' style='stroke-width: 0.68; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='51.47,182.98 180.38,182.98 ' style='stroke-width: 0.68; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='51.47,133.53 180.38,133.53 ' style='stroke-width: 0.68; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='51.47,84.07 180.38,84.07 ' style='stroke-width: 0.68; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='51.47,257.16 180.38,257.16 ' style='stroke-width: 1.36; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='51.47,207.70 180.38,207.70 ' style='stroke-width: 1.36; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='51.47,158.25 180.38,158.25 ' style='stroke-width: 1.36; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='51.47,108.80 180.38,108.80 ' style='stroke-width: 1.36; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='51.47,59.35 180.38,59.35 ' style='stroke-width: 1.36; stroke: #EBEBEB; stroke-linecap: butt;' />
+<rect x='78.33' y='59.35' width='75.20' height='197.81' style='stroke-width: 1.36; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #D73027; fill-opacity: 0.90;' />
+</g>
+<g clip-path='url(#cpMC4wMHwyODguMDB8MC4wMHwzNjAuMDA=)'>
+<text x='45.19' y='261.16' text-anchor='end' style='font-size: 11.20px;fill: #4D4D4D; font-family: "Arial";' textLength='21.77px' lengthAdjust='spacingAndGlyphs'>0.00</text>
+<text x='45.19' y='211.71' text-anchor='end' style='font-size: 11.20px;fill: #4D4D4D; font-family: "Arial";' textLength='21.77px' lengthAdjust='spacingAndGlyphs'>0.25</text>
+<text x='45.19' y='162.26' text-anchor='end' style='font-size: 11.20px;fill: #4D4D4D; font-family: "Arial";' textLength='21.77px' lengthAdjust='spacingAndGlyphs'>0.50</text>
+<text x='45.19' y='112.81' text-anchor='end' style='font-size: 11.20px;fill: #4D4D4D; font-family: "Arial";' textLength='21.77px' lengthAdjust='spacingAndGlyphs'>0.75</text>
+<text x='45.19' y='63.35' text-anchor='end' style='font-size: 11.20px;fill: #4D4D4D; font-family: "Arial";' textLength='21.77px' lengthAdjust='spacingAndGlyphs'>1.00</text>
+<text transform='translate(124.02,281.42) rotate(-45)' text-anchor='end' style='font-size: 16.00px;fill: #4D4D4D; font-family: "Arial";' textLength='97.89px' lengthAdjust='spacingAndGlyphs'>Hippocampus</text>
+<text transform='translate(17.00,158.25) rotate(-90)' text-anchor='middle' style='font-size: 14.00px; font-family: "Arial";' textLength='106.56px' lengthAdjust='spacingAndGlyphs'>Number of DEGs</text>
+<rect x='202.20' y='150.51' width='15.48' height='15.48' style='stroke-width: 1.36; stroke: none; stroke-linecap: butt; stroke-linejoin: miter; fill: #D73027; fill-opacity: 0.90;' />
+<text x='225.55' y='162.26' style='font-size: 11.20px; font-family: "Arial";' textLength='48.50px' lengthAdjust='spacingAndGlyphs'>Up in Adu</text>
+<text x='51.47' y='39.54' style='font-size: 14.00px; font-family: "Arial";' textLength='61.86px' lengthAdjust='spacingAndGlyphs'>padj &lt; 0.1</text>
+<text x='51.47' y='19.01' style='font-size: 16.80px; font-family: "Arial";' textLength='249.36px' lengthAdjust='spacingAndGlyphs'>Significant DEGs per brain region</text>
+</g>
+</g>
+</svg>
