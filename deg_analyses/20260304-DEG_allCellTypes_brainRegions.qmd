@@ -10,7 +10,6 @@ format:
 #| message: false
 library(qs2)
 library(Seurat)
-library(purrr)
 library(DESeq2)
 library(patchwork)
 library(gridExtra)
@@ -36,12 +35,87 @@ of the full-object subset. Each cell type gets a volcano plot, a table of signif
 and a per-sample expression heatmap. A cross-cell-type summary is shown at the end.
 
 ```{r run-ct-de-function}
-# Per-cell-type DE pipeline: pseudobulk DESeq2, Adu vs IgG (all regions pooled)
-run_ct_de <- function(obj, ct_label) {
+# Returns a pseudobulk Seurat object with Treatment.Group set, or NULL if
+# replication is insufficient (DESeq2 requires ≥2 biological replicates per group)
+build_pseudobulk <- function(obj) {
+  n_per_group <- table(
+    distinct(obj@meta.data, sample_ID, Treatment.Group)$Treatment.Group
+  )
+  if (any(n_per_group < 2)) return(NULL)
 
+  bulk <- AggregateExpression(obj, group.by = "sample_ID", return.seurat = TRUE)
+
+  # AggregateExpression converts _ to - in colnames (e.g. KK4_465 → KK4-465)
+  sample_meta <- distinct(obj@meta.data, sample_ID, Treatment.Group) |>
+    mutate(bulk_id = gsub("_", "-", sample_ID))
+  bulk$Treatment.Group <- sample_meta$Treatment.Group[
+    match(colnames(bulk), sample_meta$bulk_id)
+  ]
+  Idents(bulk) <- "Treatment.Group"
+  bulk
+}
+
+# Runs pseudobulk DESeq2 (Adu vs IgG) on pre-aggregated Seurat object
+run_deseq2 <- function(bulk, ct_label) {
+  anayet(bulk,
+         ident1          = "Adu",
+         ident2          = "IgG",
+         test_method     = "DESeq2",
+         min_pct         = 0.1,
+         p_adj_threshold = 0.1,
+         plot_title      = ct_label,
+         print_plot      = FALSE)
+}
+
+# Renders per-sample heatmap of significant DEGs (z-scored pseudobulk expression)
+plot_deg_heatmap <- function(bulk, sig_genes, ct_label) {
+  # log-normalised pseudobulk expression; data layer created by AggregateExpression
+  expr_mat    <- as.matrix(GetAssayData(bulk, layer = "data")[sig_genes, , drop = FALSE])
+  expr_scaled <- t(scale(t(expr_mat)))  # z-score per gene
+
+  pheatmap(expr_scaled,
+    color             = colorRampPalette(c("#4575b4", "white", "#d73027"))(100),
+    annotation_col    = data.frame(Treatment = bulk$Treatment.Group,
+                                   row.names = colnames(bulk)),
+    annotation_colors = list(Treatment = c(Adu = "#d73027", IgG = "#4575b4")),
+    cluster_cols      = TRUE,
+    cluster_rows      = length(sig_genes) > 1,
+    main              = paste(ct_label, "— significant DEGs per sample (z-score)\n"),
+    fontsize          = 14,
+    fontsize_row      = 12,
+    fontsize_col      = 12,
+    angle_col         = 45,
+    cellwidth         = 40,
+    cellheight        = 20
+  )
+}
+
+# Renders volcano + sig-gene table and (if DEGs exist) the per-sample heatmap
+display_ct_results <- function(res, bulk, ct_label) {
+  cat("\n\n<h3>Volcano plot</h3>\n\n")
+
+  sig_tbl <- if (nrow(res$significant_results) > 0) {
+    res$significant_results |>
+      select(p_val, avg_log2FC, p_val_adj) |>
+      mutate(across(where(is.numeric), \(x) signif(x, 3))) |>
+      arrange(p_val_adj) |>
+      tableGrob(theme = ttheme_minimal(base_size = 18))
+  } else {
+    tableGrob(data.frame(Result = "No significant DEGs"),
+              theme = ttheme_minimal(base_size = 20))
+  }
+  print(res$volcano_plot + wrap_elements(sig_tbl) + plot_layout(widths = c(2, 1)))
+
+  sig_genes <- rownames(res$significant_results)
+  if (length(sig_genes) > 0) plot_deg_heatmap(bulk, sig_genes, ct_label)
+}
+
+# Per-cell-type DE pipeline: prints cell counts, runs pseudobulk DESeq2, renders output
+run_ct_de <- function(obj, ct_label) {
+  stopifnot(inherits(obj, "Seurat"), length(ct_label) == 1, !is.na(ct_label))
   DefaultAssay(obj) <- "Xenium"
 
-  # Cell counts table
+  # Show replication balance before pseudobulk aggregation
   cat("\n\n<h3>Cell counts</h3>\n\n")
   tbl <- obj@meta.data |>
     summarise(
@@ -53,86 +127,14 @@ run_ct_de <- function(obj, ct_label) {
     kable_styling("striped")
   cat(tbl)
 
-  # Replication guard: DESeq2 needs >=2 samples per treatment group
-  n_per_group <- table(
-    distinct(obj@meta.data, sample_ID, Treatment.Group)$Treatment.Group
-  )
-  if (any(n_per_group < 2)) {
+  bulk <- build_pseudobulk(obj)
+  if (is.null(bulk)) {
     cat("\n\n_Skipped: fewer than 2 samples per treatment group._\n\n")
     return(NULL)
   }
 
-  # Pseudobulk aggregation
-  bulk <- AggregateExpression(obj, group.by = "sample_ID", return.seurat = TRUE)
-
-  # AggregateExpression converts _ to - (e.g. KK4_465 -> KK4-465)
-  sample_meta <- distinct(obj@meta.data, sample_ID, Treatment.Group) |>
-    mutate(bulk_id = gsub("_", "-", sample_ID))
-  bulk$Treatment.Group <- sample_meta$Treatment.Group[
-    match(colnames(bulk), sample_meta$bulk_id)
-  ]
-  Idents(bulk) <- "Treatment.Group"
-
-  # DESeq2 via anayet
-  res <- anayet(bulk,
-                ident1          = "Adu",
-                ident2          = "IgG",
-                test_method     = "DESeq2",
-                min_pct         = 0.1,
-                p_adj_threshold = 0.1,
-                plot_title      = ct_label,
-                print_plot      = FALSE)
-
-  cat("\n\n<h3>Volcano plot</h3>\n\n")
-
-  sig_tbl <- if (nrow(res$significant_results) > 0) {
-    res$significant_results |>
-      select(p_val, avg_log2FC, p_val_adj) |>
-      mutate(across(where(is.numeric), \(x) signif(x, 3))) |>
-      arrange(p_val_adj) |>
-      tableGrob(theme = ttheme_minimal(base_size = 18))
-  } else {
-    tableGrob(
-      data.frame(Result = "No significant DEGs"),
-      theme = ttheme_minimal(base_size = 20)
-    )
-  }
-
-  print(res$volcano_plot + wrap_elements(sig_tbl) + plot_layout(widths = c(2, 1)))
-
-  # Per-sample heatmap of significant DEGs
-  sig_genes <- rownames(res$significant_results)
-  if (length(sig_genes) > 0) {
-    
-    # Extract normalised pseudobulk expression (data layer created by AggregateExpression)
-    expr_mat <- as.matrix(GetAssayData(bulk, layer = "data")[sig_genes, , drop = FALSE])
-
-    # Z-score per gene for visualisation
-    expr_scaled <- t(scale(t(expr_mat)))
-
-    # Sample annotation: treatment group
-    sample_annot <- data.frame(
-      Treatment = bulk$Treatment.Group,
-      row.names = colnames(bulk)
-    )
-    annot_colors <- list(Treatment = c(Adu = "#d73027", IgG = "#4575b4"))
-
-    pheatmap(expr_scaled,
-      color             = colorRampPalette(c("#4575b4", "white", "#d73027"))(100),
-      annotation_col    = sample_annot,
-      annotation_colors = annot_colors,
-      cluster_cols      = TRUE,
-      cluster_rows      = ifelse(length(sig_genes) > 1, TRUE, FALSE),
-      main              = paste(ct_label, "— significant DEGs per sample (z-score)\n"),
-      fontsize          = 14,
-      fontsize_row      = 12,
-      fontsize_col      = 12,
-      angle_col         = 45,
-      cellwidth         = 40,
-      cellheight        = 20
-    )
-  }
-
+  res <- run_deseq2(bulk, ct_label)
+  display_ct_results(res, bulk, ct_label)
   res
 }
 ```
@@ -176,7 +178,7 @@ deg_counts <- imap(all_ct_results, \(res, ct) {
 }) |>
   compact() |>
   list_rbind() |>
-  dplyr::count(CellType, Direction)
+  count(CellType, Direction)
 
 if (nrow(deg_counts) > 0) {
   ggplot(deg_counts, aes(x = reorder(CellType, n, sum), y = n, fill = Direction)) +
