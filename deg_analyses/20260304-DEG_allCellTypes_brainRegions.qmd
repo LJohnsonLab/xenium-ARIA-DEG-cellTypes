@@ -35,8 +35,10 @@ of the full-object subset. Each cell type gets a volcano plot, a table of signif
 and a per-sample expression heatmap. A cross-cell-type summary is shown at the end.
 
 ```{r run-ct-de-function}
+###################################################################################
 # Returns a pseudobulk Seurat object with Treatment.Group set, or NULL if
 # replication is insufficient (DESeq2 requires ≥2 biological replicates per group)
+###################################################################################
 build_pseudobulk <- function(obj) {
   n_per_group <- table(
     distinct(obj@meta.data, sample_ID, Treatment.Group)$Treatment.Group
@@ -54,8 +56,9 @@ build_pseudobulk <- function(obj) {
   Idents(bulk) <- "Treatment.Group"
   bulk
 }
-
+#####################################################################
 # Runs pseudobulk DESeq2 (Adu vs IgG) on pre-aggregated Seurat object
+#####################################################################
 run_deseq2 <- function(bulk, ct_label) {
   anayet(bulk,
          ident1          = "Adu",
@@ -67,7 +70,9 @@ run_deseq2 <- function(bulk, ct_label) {
          print_plot      = FALSE)
 }
 
+###################################################################################
 # Renders per-sample heatmap of significant DEGs (z-scored pseudobulk expression)
+###################################################################################
 plot_deg_heatmap <- function(bulk, sig_genes, ct_label) {
   # log-normalised pseudobulk expression; data layer created by AggregateExpression
   expr_mat    <- as.matrix(GetAssayData(bulk, layer = "data")[sig_genes, , drop = FALSE])
@@ -90,7 +95,9 @@ plot_deg_heatmap <- function(bulk, sig_genes, ct_label) {
   )
 }
 
+###############################################################################
 # Renders volcano + sig-gene table and (if DEGs exist) the per-sample heatmap
+##############################################################################
 display_ct_results <- function(res, bulk, ct_label) {
   cat("\n\n<h3>Volcano plot</h3>\n\n")
 

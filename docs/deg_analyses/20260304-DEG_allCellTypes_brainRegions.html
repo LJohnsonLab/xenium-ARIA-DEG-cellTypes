@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-03-13">
+<meta name="dcterms.date" content="2026-03-14">
 
 <title>Differentially expressed genes across all cell types (Adu vs IgG) – ARIA Xenium Analysis</title>
 <style>
@@ -319,7 +319,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">March 13, 2026</p>
+      <p class="date">March 14, 2026</p>
     </div>
   </div>
   
@@ -359,108 +359,115 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Returns a pseudobulk Seurat object with Treatment.Group set, or NULL if</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># replication is insufficient (DESeq2 requires ≥2 biological replicates per group)</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>build_pseudobulk <span class="ot">&lt;-</span> <span class="cf">function</span>(obj) {</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  n_per_group <span class="ot">&lt;-</span> <span class="fu">table</span>(</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">distinct</span>(obj<span class="sc">@</span>meta.data, sample_ID, Treatment.Group)<span class="sc">$</span>Treatment.Group</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">any</span>(n_per_group <span class="sc">&lt;</span> <span class="dv">2</span>)) <span class="fu">return</span>(<span class="cn">NULL</span>)</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  bulk <span class="ot">&lt;-</span> <span class="fu">AggregateExpression</span>(obj, <span class="at">group.by =</span> <span class="st">"sample_ID"</span>, <span class="at">return.seurat =</span> <span class="cn">TRUE</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="do">###################################################################################</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Returns a pseudobulk Seurat object with Treatment.Group set, or NULL if</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># replication is insufficient (DESeq2 requires ≥2 biological replicates per group)</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="do">###################################################################################</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>build_pseudobulk <span class="ot">&lt;-</span> <span class="cf">function</span>(obj) {</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  n_per_group <span class="ot">&lt;-</span> <span class="fu">table</span>(</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">distinct</span>(obj<span class="sc">@</span>meta.data, sample_ID, Treatment.Group)<span class="sc">$</span>Treatment.Group</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">any</span>(n_per_group <span class="sc">&lt;</span> <span class="dv">2</span>)) <span class="fu">return</span>(<span class="cn">NULL</span>)</span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># AggregateExpression converts _ to - in colnames (e.g. KK4_465 → KK4-465)</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  sample_meta <span class="ot">&lt;-</span> <span class="fu">distinct</span>(obj<span class="sc">@</span>meta.data, sample_ID, Treatment.Group) <span class="sc">|&gt;</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">bulk_id =</span> <span class="fu">gsub</span>(<span class="st">"_"</span>, <span class="st">"-"</span>, sample_ID))</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  bulk<span class="sc">$</span>Treatment.Group <span class="ot">&lt;-</span> sample_meta<span class="sc">$</span>Treatment.Group[</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">match</span>(<span class="fu">colnames</span>(bulk), sample_meta<span class="sc">$</span>bulk_id)</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  ]</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Idents</span>(bulk) <span class="ot">&lt;-</span> <span class="st">"Treatment.Group"</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  bulk</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Runs pseudobulk DESeq2 (Adu vs IgG) on pre-aggregated Seurat object</span></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>run_deseq2 <span class="ot">&lt;-</span> <span class="cf">function</span>(bulk, ct_label) {</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">anayet</span>(bulk,</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>         <span class="at">ident1          =</span> <span class="st">"Adu"</span>,</span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>         <span class="at">ident2          =</span> <span class="st">"IgG"</span>,</span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>         <span class="at">test_method     =</span> <span class="st">"DESeq2"</span>,</span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>         <span class="at">min_pct         =</span> <span class="fl">0.1</span>,</span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>         <span class="at">p_adj_threshold =</span> <span class="fl">0.1</span>,</span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>         <span class="at">plot_title      =</span> ct_label,</span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>         <span class="at">print_plot      =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Renders per-sample heatmap of significant DEGs (z-scored pseudobulk expression)</span></span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>plot_deg_heatmap <span class="ot">&lt;-</span> <span class="cf">function</span>(bulk, sig_genes, ct_label) {</span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>  <span class="co"># log-normalised pseudobulk expression; data layer created by AggregateExpression</span></span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>  expr_mat    <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(<span class="fu">GetAssayData</span>(bulk, <span class="at">layer =</span> <span class="st">"data"</span>)[sig_genes, , <span class="at">drop =</span> <span class="cn">FALSE</span>])</span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>  expr_scaled <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">scale</span>(<span class="fu">t</span>(expr_mat)))  <span class="co"># z-score per gene</span></span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pheatmap</span>(expr_scaled,</span>
-<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">color             =</span> <span class="fu">colorRampPalette</span>(<span class="fu">c</span>(<span class="st">"#4575b4"</span>, <span class="st">"white"</span>, <span class="st">"#d73027"</span>))(<span class="dv">100</span>),</span>
-<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">annotation_col    =</span> <span class="fu">data.frame</span>(<span class="at">Treatment =</span> bulk<span class="sc">$</span>Treatment.Group,</span>
-<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">row.names =</span> <span class="fu">colnames</span>(bulk)),</span>
-<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">annotation_colors =</span> <span class="fu">list</span>(<span class="at">Treatment =</span> <span class="fu">c</span>(<span class="at">Adu =</span> <span class="st">"#d73027"</span>, <span class="at">IgG =</span> <span class="st">"#4575b4"</span>)),</span>
-<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">cluster_cols      =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">cluster_rows      =</span> <span class="fu">length</span>(sig_genes) <span class="sc">&gt;</span> <span class="dv">1</span>,</span>
-<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">main              =</span> <span class="fu">paste</span>(ct_label, <span class="st">"— significant DEGs per sample (z-score)</span><span class="sc">\n</span><span class="st">"</span>),</span>
-<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">fontsize          =</span> <span class="dv">14</span>,</span>
-<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">fontsize_row      =</span> <span class="dv">12</span>,</span>
-<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">fontsize_col      =</span> <span class="dv">12</span>,</span>
-<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">angle_col         =</span> <span class="dv">45</span>,</span>
-<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">cellwidth         =</span> <span class="dv">40</span>,</span>
-<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>    <span class="at">cellheight        =</span> <span class="dv">20</span></span>
-<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a><span class="co"># Renders volcano + sig-gene table and (if DEGs exist) the per-sample heatmap</span></span>
-<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>display_ct_results <span class="ot">&lt;-</span> <span class="cf">function</span>(res, bulk, ct_label) {</span>
-<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n\n</span><span class="st">&lt;h3&gt;Volcano plot&lt;/h3&gt;</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
-<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>  sig_tbl <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="fu">nrow</span>(res<span class="sc">$</span>significant_results) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
-<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>    res<span class="sc">$</span>significant_results <span class="sc">|&gt;</span></span>
-<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>      <span class="fu">select</span>(p_val, avg_log2FC, p_val_adj) <span class="sc">|&gt;</span></span>
-<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), \(x) <span class="fu">signif</span>(x, <span class="dv">3</span>))) <span class="sc">|&gt;</span></span>
-<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>      <span class="fu">arrange</span>(p_val_adj) <span class="sc">|&gt;</span></span>
-<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>      <span class="fu">tableGrob</span>(<span class="at">theme =</span> <span class="fu">ttheme_minimal</span>(<span class="at">base_size =</span> <span class="dv">18</span>))</span>
-<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
-<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tableGrob</span>(<span class="fu">data.frame</span>(<span class="at">Result =</span> <span class="st">"No significant DEGs"</span>),</span>
-<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>              <span class="at">theme =</span> <span class="fu">ttheme_minimal</span>(<span class="at">base_size =</span> <span class="dv">20</span>))</span>
-<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(res<span class="sc">$</span>volcano_plot <span class="sc">+</span> <span class="fu">wrap_elements</span>(sig_tbl) <span class="sc">+</span> <span class="fu">plot_layout</span>(<span class="at">widths =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>)))</span>
-<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>  sig_genes <span class="ot">&lt;-</span> <span class="fu">rownames</span>(res<span class="sc">$</span>significant_results)</span>
-<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">length</span>(sig_genes) <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="fu">plot_deg_heatmap</span>(bulk, sig_genes, ct_label)</span>
-<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a><span class="co"># Per-cell-type DE pipeline: prints cell counts, runs pseudobulk DESeq2, renders output</span></span>
-<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>run_ct_de <span class="ot">&lt;-</span> <span class="cf">function</span>(obj, ct_label) {</span>
-<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">inherits</span>(obj, <span class="st">"Seurat"</span>), <span class="fu">length</span>(ct_label) <span class="sc">==</span> <span class="dv">1</span>, <span class="sc">!</span><span class="fu">is.na</span>(ct_label))</span>
-<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>  <span class="fu">DefaultAssay</span>(obj) <span class="ot">&lt;-</span> <span class="st">"Xenium"</span></span>
-<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Show replication balance before pseudobulk aggregation</span></span>
-<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n\n</span><span class="st">&lt;h3&gt;Cell counts&lt;/h3&gt;</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
-<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>  tbl <span class="ot">&lt;-</span> obj<span class="sc">@</span>meta.data <span class="sc">|&gt;</span></span>
-<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(</span>
-<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>      <span class="at">n_cells =</span> <span class="fu">n</span>(),</span>
-<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>      <span class="at">n_Adu   =</span> <span class="fu">sum</span>(Treatment.Group <span class="sc">==</span> <span class="st">"Adu"</span>),</span>
-<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>      <span class="at">n_IgG   =</span> <span class="fu">sum</span>(Treatment.Group <span class="sc">==</span> <span class="st">"IgG"</span>)</span>
-<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
-<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kbl</span>(<span class="at">caption =</span> <span class="fu">paste</span>(ct_label, <span class="st">"— cells per treatment"</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable_styling</span>(<span class="st">"striped"</span>)</span>
-<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(tbl)</span>
-<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>  bulk <span class="ot">&lt;-</span> <span class="fu">build_pseudobulk</span>(obj)</span>
-<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.null</span>(bulk)) {</span>
-<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n\n</span><span class="st">_Skipped: fewer than 2 samples per treatment group._</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
-<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="cn">NULL</span>)</span>
-<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a>  res <span class="ot">&lt;-</span> <span class="fu">run_deseq2</span>(bulk, ct_label)</span>
-<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a>  <span class="fu">display_ct_results</span>(res, bulk, ct_label)</span>
-<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a>  res</span>
-<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  bulk <span class="ot">&lt;-</span> <span class="fu">AggregateExpression</span>(obj, <span class="at">group.by =</span> <span class="st">"sample_ID"</span>, <span class="at">return.seurat =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># AggregateExpression converts _ to - in colnames (e.g. KK4_465 → KK4-465)</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  sample_meta <span class="ot">&lt;-</span> <span class="fu">distinct</span>(obj<span class="sc">@</span>meta.data, sample_ID, Treatment.Group) <span class="sc">|&gt;</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">bulk_id =</span> <span class="fu">gsub</span>(<span class="st">"_"</span>, <span class="st">"-"</span>, sample_ID))</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  bulk<span class="sc">$</span>Treatment.Group <span class="ot">&lt;-</span> sample_meta<span class="sc">$</span>Treatment.Group[</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">match</span>(<span class="fu">colnames</span>(bulk), sample_meta<span class="sc">$</span>bulk_id)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  ]</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Idents</span>(bulk) <span class="ot">&lt;-</span> <span class="st">"Treatment.Group"</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  bulk</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="do">#####################################################################</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Runs pseudobulk DESeq2 (Adu vs IgG) on pre-aggregated Seurat object</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="do">#####################################################################</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>run_deseq2 <span class="ot">&lt;-</span> <span class="cf">function</span>(bulk, ct_label) {</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">anayet</span>(bulk,</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>         <span class="at">ident1          =</span> <span class="st">"Adu"</span>,</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>         <span class="at">ident2          =</span> <span class="st">"IgG"</span>,</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>         <span class="at">test_method     =</span> <span class="st">"DESeq2"</span>,</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>         <span class="at">min_pct         =</span> <span class="fl">0.1</span>,</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>         <span class="at">p_adj_threshold =</span> <span class="fl">0.1</span>,</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>         <span class="at">plot_title      =</span> ct_label,</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>         <span class="at">print_plot      =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="do">###################################################################################</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="co"># Renders per-sample heatmap of significant DEGs (z-scored pseudobulk expression)</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a><span class="do">###################################################################################</span></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>plot_deg_heatmap <span class="ot">&lt;-</span> <span class="cf">function</span>(bulk, sig_genes, ct_label) {</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>  <span class="co"># log-normalised pseudobulk expression; data layer created by AggregateExpression</span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>  expr_mat    <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(<span class="fu">GetAssayData</span>(bulk, <span class="at">layer =</span> <span class="st">"data"</span>)[sig_genes, , <span class="at">drop =</span> <span class="cn">FALSE</span>])</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>  expr_scaled <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">scale</span>(<span class="fu">t</span>(expr_mat)))  <span class="co"># z-score per gene</span></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pheatmap</span>(expr_scaled,</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">color             =</span> <span class="fu">colorRampPalette</span>(<span class="fu">c</span>(<span class="st">"#4575b4"</span>, <span class="st">"white"</span>, <span class="st">"#d73027"</span>))(<span class="dv">100</span>),</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">annotation_col    =</span> <span class="fu">data.frame</span>(<span class="at">Treatment =</span> bulk<span class="sc">$</span>Treatment.Group,</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">row.names =</span> <span class="fu">colnames</span>(bulk)),</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">annotation_colors =</span> <span class="fu">list</span>(<span class="at">Treatment =</span> <span class="fu">c</span>(<span class="at">Adu =</span> <span class="st">"#d73027"</span>, <span class="at">IgG =</span> <span class="st">"#4575b4"</span>)),</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">cluster_cols      =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">cluster_rows      =</span> <span class="fu">length</span>(sig_genes) <span class="sc">&gt;</span> <span class="dv">1</span>,</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">main              =</span> <span class="fu">paste</span>(ct_label, <span class="st">"— significant DEGs per sample (z-score)</span><span class="sc">\n</span><span class="st">"</span>),</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>    <span class="at">fontsize          =</span> <span class="dv">14</span>,</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>    <span class="at">fontsize_row      =</span> <span class="dv">12</span>,</span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>    <span class="at">fontsize_col      =</span> <span class="dv">12</span>,</span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>    <span class="at">angle_col         =</span> <span class="dv">45</span>,</span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>    <span class="at">cellwidth         =</span> <span class="dv">40</span>,</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>    <span class="at">cellheight        =</span> <span class="dv">20</span></span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a><span class="do">###############################################################################</span></span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a><span class="co"># Renders volcano + sig-gene table and (if DEGs exist) the per-sample heatmap</span></span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a><span class="do">##############################################################################</span></span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>display_ct_results <span class="ot">&lt;-</span> <span class="cf">function</span>(res, bulk, ct_label) {</span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n\n</span><span class="st">&lt;h3&gt;Volcano plot&lt;/h3&gt;</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>  sig_tbl <span class="ot">&lt;-</span> <span class="cf">if</span> (<span class="fu">nrow</span>(res<span class="sc">$</span>significant_results) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>    res<span class="sc">$</span>significant_results <span class="sc">|&gt;</span></span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>      <span class="fu">select</span>(p_val, avg_log2FC, p_val_adj) <span class="sc">|&gt;</span></span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), \(x) <span class="fu">signif</span>(x, <span class="dv">3</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>      <span class="fu">arrange</span>(p_val_adj) <span class="sc">|&gt;</span></span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>      <span class="fu">tableGrob</span>(<span class="at">theme =</span> <span class="fu">ttheme_minimal</span>(<span class="at">base_size =</span> <span class="dv">18</span>))</span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tableGrob</span>(<span class="fu">data.frame</span>(<span class="at">Result =</span> <span class="st">"No significant DEGs"</span>),</span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>              <span class="at">theme =</span> <span class="fu">ttheme_minimal</span>(<span class="at">base_size =</span> <span class="dv">20</span>))</span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(res<span class="sc">$</span>volcano_plot <span class="sc">+</span> <span class="fu">wrap_elements</span>(sig_tbl) <span class="sc">+</span> <span class="fu">plot_layout</span>(<span class="at">widths =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>)))</span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>  sig_genes <span class="ot">&lt;-</span> <span class="fu">rownames</span>(res<span class="sc">$</span>significant_results)</span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">length</span>(sig_genes) <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="fu">plot_deg_heatmap</span>(bulk, sig_genes, ct_label)</span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a><span class="co"># Per-cell-type DE pipeline: prints cell counts, runs pseudobulk DESeq2, renders output</span></span>
+<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a>run_ct_de <span class="ot">&lt;-</span> <span class="cf">function</span>(obj, ct_label) {</span>
+<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">inherits</span>(obj, <span class="st">"Seurat"</span>), <span class="fu">length</span>(ct_label) <span class="sc">==</span> <span class="dv">1</span>, <span class="sc">!</span><span class="fu">is.na</span>(ct_label))</span>
+<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>  <span class="fu">DefaultAssay</span>(obj) <span class="ot">&lt;-</span> <span class="st">"Xenium"</span></span>
+<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Show replication balance before pseudobulk aggregation</span></span>
+<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n\n</span><span class="st">&lt;h3&gt;Cell counts&lt;/h3&gt;</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
+<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a>  tbl <span class="ot">&lt;-</span> obj<span class="sc">@</span>meta.data <span class="sc">|&gt;</span></span>
+<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(</span>
+<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a>      <span class="at">n_cells =</span> <span class="fu">n</span>(),</span>
+<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>      <span class="at">n_Adu   =</span> <span class="fu">sum</span>(Treatment.Group <span class="sc">==</span> <span class="st">"Adu"</span>),</span>
+<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a>      <span class="at">n_IgG   =</span> <span class="fu">sum</span>(Treatment.Group <span class="sc">==</span> <span class="st">"IgG"</span>)</span>
+<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kbl</span>(<span class="at">caption =</span> <span class="fu">paste</span>(ct_label, <span class="st">"— cells per treatment"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable_styling</span>(<span class="st">"striped"</span>)</span>
+<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(tbl)</span>
+<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a>  bulk <span class="ot">&lt;-</span> <span class="fu">build_pseudobulk</span>(obj)</span>
+<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.null</span>(bulk)) {</span>
+<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n\n</span><span class="st">_Skipped: fewer than 2 samples per treatment group._</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
+<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="cn">NULL</span>)</span>
+<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a>  res <span class="ot">&lt;-</span> <span class="fu">run_deseq2</span>(bulk, ct_label)</span>
+<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a>  <span class="fu">display_ct_results</span>(res, bulk, ct_label)</span>
+<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a>  res</span>
+<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div class="cell column-page">
