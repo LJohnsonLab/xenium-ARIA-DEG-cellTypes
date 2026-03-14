@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-03-10">
+<meta name="dcterms.date" content="2026-03-14">
 
 <title>Astrocyte subcluster proportions – ARIA Xenium Analysis</title>
 <style>
@@ -348,7 +348,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">March 10, 2026</p>
+      <p class="date">March 14, 2026</p>
     </div>
   </div>
   
@@ -368,7 +368,7 @@ window.Quarto = {
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(speckle)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>astro <span class="ot">&lt;-</span> <span class="fu">UpdateSeuratObject</span>(qs2<span class="sc">::</span><span class="fu">qs_read</span>(<span class="st">"seurat_objects/20260309-astro_cleaned_0.3.qs2"</span>))</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>astro <span class="ot">&lt;-</span> <span class="fu">UpdateSeuratObject</span>(qs2<span class="sc">::</span><span class="fu">qs_read</span>(<span class="st">"seurat_objects/20260312-astro_cleaned2_0.3.qs2"</span>))</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">Idents</span>(astro) <span class="ot">&lt;-</span> <span class="st">"seurat_clusters"</span></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Order samples by Treatment.Group so groups are adjacent</span></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>astro<span class="sc">$</span>sample_ID <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
@@ -491,84 +491,74 @@ window.Quarto = {
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">3</td>
-<td style="text-align: right;">0.124</td>
-<td style="text-align: right;">0.105</td>
-<td style="text-align: right;">0.143</td>
-<td style="text-align: right;">0.735</td>
-<td style="text-align: right;">-2.112</td>
-<td style="text-align: right;">0.052</td>
-<td style="text-align: right;">0.364</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;">6</td>
-<td style="text-align: right;">0.022</td>
-<td style="text-align: right;">0.026</td>
-<td style="text-align: right;">0.019</td>
-<td style="text-align: right;">1.350</td>
-<td style="text-align: right;">1.675</td>
-<td style="text-align: right;">0.114</td>
-<td style="text-align: right;">0.364</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">2</td>
-<td style="text-align: right;">0.150</td>
-<td style="text-align: right;">0.165</td>
-<td style="text-align: right;">0.133</td>
-<td style="text-align: right;">1.242</td>
-<td style="text-align: right;">1.571</td>
-<td style="text-align: right;">0.137</td>
-<td style="text-align: right;">0.364</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">7</td>
-<td style="text-align: right;">0.018</td>
-<td style="text-align: right;">0.016</td>
-<td style="text-align: right;">0.020</td>
-<td style="text-align: right;">0.842</td>
-<td style="text-align: right;">-0.839</td>
-<td style="text-align: right;">0.414</td>
-<td style="text-align: right;">0.808</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">0</td>
-<td style="text-align: right;">0.276</td>
-<td style="text-align: right;">0.283</td>
-<td style="text-align: right;">0.268</td>
-<td style="text-align: right;">1.055</td>
-<td style="text-align: right;">0.485</td>
-<td style="text-align: right;">0.635</td>
-<td style="text-align: right;">0.808</td>
+<td style="text-align: right;">0.024</td>
+<td style="text-align: right;">0.028</td>
+<td style="text-align: right;">0.021</td>
+<td style="text-align: right;">1.385</td>
+<td style="text-align: right;">2.031</td>
+<td style="text-align: right;">0.052</td>
+<td style="text-align: right;">0.363</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">5</td>
-<td style="text-align: right;">0.073</td>
-<td style="text-align: right;">0.071</td>
+<td style="text-align: right;">0.077</td>
+<td style="text-align: right;">0.068</td>
+<td style="text-align: right;">0.087</td>
+<td style="text-align: right;">0.779</td>
+<td style="text-align: right;">-1.428</td>
+<td style="text-align: right;">0.164</td>
+<td style="text-align: right;">0.575</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">3</td>
+<td style="text-align: right;">0.079</td>
 <td style="text-align: right;">0.076</td>
-<td style="text-align: right;">0.940</td>
-<td style="text-align: right;">-0.410</td>
-<td style="text-align: right;">0.687</td>
-<td style="text-align: right;">0.808</td>
+<td style="text-align: right;">0.083</td>
+<td style="text-align: right;">0.917</td>
+<td style="text-align: right;">-0.479</td>
+<td style="text-align: right;">0.636</td>
+<td style="text-align: right;">0.868</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2</td>
+<td style="text-align: right;">0.164</td>
+<td style="text-align: right;">0.168</td>
+<td style="text-align: right;">0.159</td>
+<td style="text-align: right;">1.058</td>
+<td style="text-align: right;">0.459</td>
+<td style="text-align: right;">0.650</td>
+<td style="text-align: right;">0.868</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">4</td>
-<td style="text-align: right;">0.082</td>
-<td style="text-align: right;">0.079</td>
-<td style="text-align: right;">0.086</td>
-<td style="text-align: right;">0.919</td>
-<td style="text-align: right;">-0.383</td>
-<td style="text-align: right;">0.707</td>
-<td style="text-align: right;">0.808</td>
+<td style="text-align: right;">0.077</td>
+<td style="text-align: right;">0.074</td>
+<td style="text-align: right;">0.081</td>
+<td style="text-align: right;">0.916</td>
+<td style="text-align: right;">-0.375</td>
+<td style="text-align: right;">0.710</td>
+<td style="text-align: right;">0.868</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">0</td>
+<td style="text-align: right;">0.303</td>
+<td style="text-align: right;">0.308</td>
+<td style="text-align: right;">0.294</td>
+<td style="text-align: right;">1.047</td>
+<td style="text-align: right;">0.329</td>
+<td style="text-align: right;">0.744</td>
+<td style="text-align: right;">0.868</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;">1</td>
-<td style="text-align: right;">0.254</td>
-<td style="text-align: right;">0.255</td>
-<td style="text-align: right;">0.256</td>
-<td style="text-align: right;">0.995</td>
-<td style="text-align: right;">0.062</td>
-<td style="text-align: right;">0.951</td>
-<td style="text-align: right;">0.951</td>
+<td style="text-align: right;">0.275</td>
+<td style="text-align: right;">0.277</td>
+<td style="text-align: right;">0.275</td>
+<td style="text-align: right;">1.007</td>
+<td style="text-align: right;">0.125</td>
+<td style="text-align: right;">0.902</td>
+<td style="text-align: right;">0.902</td>
 </tr>
 </tbody>
 </table>
@@ -655,75 +645,66 @@ window.Quarto = {
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">0</td>
-<td style="text-align: right;">6156</td>
-<td style="text-align: right;">2295</td>
-<td style="text-align: right;">205</td>
-<td style="text-align: right;">48</td>
-<td style="text-align: right;">545</td>
-<td style="text-align: right;">4136</td>
+<td style="text-align: right;">5828</td>
+<td style="text-align: right;">2672</td>
+<td style="text-align: right;">210</td>
+<td style="text-align: right;">34</td>
+<td style="text-align: right;">641</td>
+<td style="text-align: right;">4418</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">1</td>
-<td style="text-align: right;">31</td>
-<td style="text-align: right;">127</td>
-<td style="text-align: right;">4102</td>
-<td style="text-align: right;">6189</td>
-<td style="text-align: right;">20</td>
-<td style="text-align: right;">1847</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">241</td>
+<td style="text-align: right;">4031</td>
+<td style="text-align: right;">6311</td>
+<td style="text-align: right;">51</td>
+<td style="text-align: right;">1809</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">2</td>
-<td style="text-align: right;">1012</td>
-<td style="text-align: right;">1467</td>
-<td style="text-align: right;">647</td>
-<td style="text-align: right;">1185</td>
-<td style="text-align: right;">1600</td>
-<td style="text-align: right;">1363</td>
+<td style="text-align: right;">1068</td>
+<td style="text-align: right;">1129</td>
+<td style="text-align: right;">740</td>
+<td style="text-align: right;">1698</td>
+<td style="text-align: right;">1508</td>
+<td style="text-align: right;">1341</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">3</td>
-<td style="text-align: right;">2080</td>
-<td style="text-align: right;">523</td>
-<td style="text-align: right;">676</td>
-<td style="text-align: right;">1032</td>
-<td style="text-align: right;">225</td>
-<td style="text-align: right;">1470</td>
+<td style="text-align: right;">724</td>
+<td style="text-align: right;">570</td>
+<td style="text-align: right;">644</td>
+<td style="text-align: right;">333</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">1312</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">4</td>
-<td style="text-align: right;">794</td>
-<td style="text-align: right;">491</td>
-<td style="text-align: right;">351</td>
-<td style="text-align: right;">1474</td>
-<td style="text-align: right;">178</td>
-<td style="text-align: right;">709</td>
+<td style="text-align: right;">718</td>
+<td style="text-align: right;">424</td>
+<td style="text-align: right;">280</td>
+<td style="text-align: right;">1286</td>
+<td style="text-align: right;">168</td>
+<td style="text-align: right;">625</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">5</td>
-<td style="text-align: right;">725</td>
-<td style="text-align: right;">549</td>
-<td style="text-align: right;">620</td>
-<td style="text-align: right;">314</td>
-<td style="text-align: right;">28</td>
-<td style="text-align: right;">1300</td>
+<td style="text-align: right;">2422</td>
+<td style="text-align: right;">401</td>
+<td style="text-align: right;">41</td>
+<td style="text-align: right;">57</td>
+<td style="text-align: right;">51</td>
+<td style="text-align: right;">525</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">6</td>
-<td style="text-align: right;">197</td>
-<td style="text-align: right;">160</td>
-<td style="text-align: right;">157</td>
-<td style="text-align: right;">264</td>
-<td style="text-align: right;">61</td>
-<td style="text-align: right;">250</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">7</td>
-<td style="text-align: right;">235</td>
-<td style="text-align: right;">63</td>
-<td style="text-align: right;">76</td>
-<td style="text-align: right;">337</td>
-<td style="text-align: right;">30</td>
-<td style="text-align: right;">145</td>
+<td style="text-align: right;">210</td>
+<td style="text-align: right;">159</td>
+<td style="text-align: right;">170</td>
+<td style="text-align: right;">236</td>
+<td style="text-align: right;">72</td>
+<td style="text-align: right;">255</td>
 </tr>
 </tbody>
 </table>
@@ -900,54 +881,54 @@ FDR
 <tbody>
 <tr>
 <td style="text-align:left;">
-0
-</td>
-<td style="text-align:right;">
-0.004
-</td>
-<td style="text-align:right;">
-0.003
+5
 </td>
 <td style="text-align:right;">
 0.006
 </td>
 <td style="text-align:right;">
-0.431
+0.002
 </td>
 <td style="text-align:right;">
--2.164
+0.010
 </td>
 <td style="text-align:right;">
-0.038
+0.227
 </td>
 <td style="text-align:right;">
-0.304
+-2.721
+</td>
+<td style="text-align:right;">
+0.011
+</td>
+<td style="text-align:right;">
+0.056
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-5
+0
 </td>
 <td style="text-align:right;">
-0.029
+0.003
 </td>
 <td style="text-align:right;">
-0.021
+0.002
 </td>
 <td style="text-align:right;">
-0.034
+0.005
 </td>
 <td style="text-align:right;">
-0.613
+0.310
 </td>
 <td style="text-align:right;">
--1.049
+-2.564
 </td>
 <td style="text-align:right;">
-0.302
+0.016
 </td>
 <td style="text-align:right;">
-0.980
+0.056
 </td>
 </tr>
 <tr>
@@ -955,25 +936,25 @@ FDR
 3
 </td>
 <td style="text-align:right;">
-0.095
+0.033
 </td>
 <td style="text-align:right;">
-0.086
+0.025
 </td>
 <td style="text-align:right;">
-0.107
+0.039
 </td>
 <td style="text-align:right;">
-0.802
+0.639
 </td>
 <td style="text-align:right;">
--0.551
+-0.893
 </td>
 <td style="text-align:right;">
-0.585
+0.379
 </td>
 <td style="text-align:right;">
-0.980
+0.868
 </td>
 </tr>
 <tr>
@@ -984,100 +965,22 @@ FDR
 0.024
 </td>
 <td style="text-align:right;">
-0.028
+0.027
 </td>
 <td style="text-align:right;">
-0.023
+0.022
 </td>
 <td style="text-align:right;">
-1.183
+1.243
 </td>
 <td style="text-align:right;">
-0.338
+0.537
 </td>
 <td style="text-align:right;">
-0.737
+0.596
 </td>
 <td style="text-align:right;">
-0.980
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-1
-</td>
-<td style="text-align:right;">
-0.571
-</td>
-<td style="text-align:right;">
-0.581
-</td>
-<td style="text-align:right;">
-0.556
-</td>
-<td style="text-align:right;">
-1.043
-</td>
-<td style="text-align:right;">
-0.278
-</td>
-<td style="text-align:right;">
-0.783
-</td>
-<td style="text-align:right;">
-0.980
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-4
-</td>
-<td style="text-align:right;">
-0.136
-</td>
-<td style="text-align:right;">
-0.140
-</td>
-<td style="text-align:right;">
-0.133
-</td>
-<td style="text-align:right;">
-1.054
-</td>
-<td style="text-align:right;">
-0.126
-</td>
-<td style="text-align:right;">
-0.900
-</td>
-<td style="text-align:right;">
-0.980
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-7
-</td>
-<td style="text-align:right;">
-0.031
-</td>
-<td style="text-align:right;">
-0.030
-</td>
-<td style="text-align:right;">
-0.032
-</td>
-<td style="text-align:right;">
-0.933
-</td>
-<td style="text-align:right;">
--0.100
-</td>
-<td style="text-align:right;">
-0.921
-</td>
-<td style="text-align:right;">
-0.980
+0.868
 </td>
 </tr>
 <tr>
@@ -1085,25 +988,77 @@ FDR
 2
 </td>
 <td style="text-align:right;">
-0.109
+0.171
 </td>
 <td style="text-align:right;">
-0.112
+0.160
 </td>
 <td style="text-align:right;">
-0.108
+0.180
 </td>
 <td style="text-align:right;">
-1.041
+0.885
 </td>
 <td style="text-align:right;">
-0.026
+-0.330
 </td>
 <td style="text-align:right;">
-0.980
+0.744
 </td>
 <td style="text-align:right;">
-0.980
+0.868
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:right;">
+0.634
+</td>
+<td style="text-align:right;">
+0.650
+</td>
+<td style="text-align:right;">
+0.618
+</td>
+<td style="text-align:right;">
+1.052
+</td>
+<td style="text-align:right;">
+0.329
+</td>
+<td style="text-align:right;">
+0.744
+</td>
+<td style="text-align:right;">
+0.868
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:right;">
+0.129
+</td>
+<td style="text-align:right;">
+0.134
+</td>
+<td style="text-align:right;">
+0.126
+</td>
+<td style="text-align:right;">
+1.067
+</td>
+<td style="text-align:right;">
+0.110
+</td>
+<td style="text-align:right;">
+0.914
+</td>
+<td style="text-align:right;">
+0.914
 </td>
 </tr>
 </tbody>
@@ -1148,80 +1103,28 @@ FDR
 <tbody>
 <tr>
 <td style="text-align:left;">
-3
-</td>
-<td style="text-align:right;">
-0.099
-</td>
-<td style="text-align:right;">
-0.061
-</td>
-<td style="text-align:right;">
-0.133
-</td>
-<td style="text-align:right;">
-0.457
-</td>
-<td style="text-align:right;">
--2.623
-</td>
-<td style="text-align:right;">
-0.032
-</td>
-<td style="text-align:right;">
-0.254
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-2
-</td>
-<td style="text-align:right;">
-0.095
-</td>
-<td style="text-align:right;">
-0.125
-</td>
-<td style="text-align:right;">
-0.072
-</td>
-<td style="text-align:right;">
-1.745
-</td>
-<td style="text-align:right;">
-1.595
-</td>
-<td style="text-align:right;">
-0.151
-</td>
-<td style="text-align:right;">
-0.458
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 6
 </td>
 <td style="text-align:right;">
-0.023
+0.028
 </td>
 <td style="text-align:right;">
-0.024
+0.030
 </td>
 <td style="text-align:right;">
-0.016
+0.018
 </td>
 <td style="text-align:right;">
-1.547
+1.659
 </td>
 <td style="text-align:right;">
-1.438
+1.336
 </td>
 <td style="text-align:right;">
-0.190
+0.228
 </td>
 <td style="text-align:right;">
-0.458
+0.563
 </td>
 </tr>
 <tr>
@@ -1229,77 +1132,77 @@ FDR
 0
 </td>
 <td style="text-align:right;">
-0.030
+0.034
 </td>
 <td style="text-align:right;">
-0.021
+0.022
 </td>
 <td style="text-align:right;">
-0.042
+0.050
 </td>
 <td style="text-align:right;">
-0.488
+0.434
 </td>
 <td style="text-align:right;">
--1.276
+-1.293
 </td>
 <td style="text-align:right;">
-0.239
+0.242
 </td>
 <td style="text-align:right;">
-0.458
+0.563
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-5
+3
 </td>
 <td style="text-align:right;">
-0.091
+0.105
 </td>
 <td style="text-align:right;">
-0.119
+0.129
 </td>
 <td style="text-align:right;">
-0.065
+0.079
 </td>
 <td style="text-align:right;">
-1.829
+1.635
 </td>
 <td style="text-align:right;">
-1.146
+0.874
 </td>
 <td style="text-align:right;">
-0.286
+0.414
 </td>
 <td style="text-align:right;">
-0.458
+0.563
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-4
+2
 </td>
 <td style="text-align:right;">
-0.051
+0.121
 </td>
 <td style="text-align:right;">
-0.055
+0.139
 </td>
 <td style="text-align:right;">
-0.048
+0.110
 </td>
 <td style="text-align:right;">
-1.135
+1.264
 </td>
 <td style="text-align:right;">
-0.536
+0.851
 </td>
 <td style="text-align:right;">
-0.607
+0.426
 </td>
 <td style="text-align:right;">
-0.810
+0.563
 </td>
 </tr>
 <tr>
@@ -1307,51 +1210,77 @@ FDR
 1
 </td>
 <td style="text-align:right;">
-0.600
+0.659
 </td>
 <td style="text-align:right;">
-0.586
+0.628
 </td>
 <td style="text-align:right;">
-0.614
+0.694
 </td>
 <td style="text-align:right;">
-0.954
+0.904
 </td>
 <td style="text-align:right;">
--0.325
+-0.784
 </td>
 <td style="text-align:right;">
-0.754
+0.462
 </td>
 <td style="text-align:right;">
-0.862
+0.563
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-7
+4
 </td>
 <td style="text-align:right;">
-0.011
+0.046
 </td>
 <td style="text-align:right;">
-0.010
+0.050
 </td>
 <td style="text-align:right;">
-0.011
+0.042
 </td>
 <td style="text-align:right;">
-0.989
+1.187
 </td>
 <td style="text-align:right;">
--0.040
+0.617
 </td>
 <td style="text-align:right;">
-0.969
+0.559
 </td>
 <td style="text-align:right;">
-0.969
+0.563
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:right;">
+0.007
+</td>
+<td style="text-align:right;">
+0.003
+</td>
+<td style="text-align:right;">
+0.007
+</td>
+<td style="text-align:right;">
+0.436
+</td>
+<td style="text-align:right;">
+-0.611
+</td>
+<td style="text-align:right;">
+0.563
+</td>
+<td style="text-align:right;">
+0.563
 </td>
 </tr>
 </tbody>
@@ -1396,54 +1325,54 @@ FDR
 <tbody>
 <tr>
 <td style="text-align:left;">
-1
-</td>
-<td style="text-align:right;">
-0.022
-</td>
-<td style="text-align:right;">
-0.032
-</td>
-<td style="text-align:right;">
-0.011
-</td>
-<td style="text-align:right;">
-2.931
-</td>
-<td style="text-align:right;">
-1.927
-</td>
-<td style="text-align:right;">
-0.093
-</td>
-<td style="text-align:right;">
-0.320
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 6
 </td>
 <td style="text-align:right;">
 0.028
 </td>
 <td style="text-align:right;">
-0.042
+0.043
 </td>
 <td style="text-align:right;">
-0.013
+0.012
 </td>
 <td style="text-align:right;">
-3.293
+3.648
 </td>
 <td style="text-align:right;">
-1.822
+2.133
 </td>
 <td style="text-align:right;">
-0.109
+0.070
 </td>
 <td style="text-align:right;">
-0.320
+0.487
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:right;">
+0.043
+</td>
+<td style="text-align:right;">
+0.057
+</td>
+<td style="text-align:right;">
+0.028
+</td>
+<td style="text-align:right;">
+2.034
+</td>
+<td style="text-align:right;">
+1.543
+</td>
+<td style="text-align:right;">
+0.166
+</td>
+<td style="text-align:right;">
+0.500
 </td>
 </tr>
 <tr>
@@ -1451,77 +1380,25 @@ FDR
 0
 </td>
 <td style="text-align:right;">
-0.404
+0.477
 </td>
 <td style="text-align:right;">
-0.356
+0.439
 </td>
 <td style="text-align:right;">
-0.454
+0.517
 </td>
 <td style="text-align:right;">
-0.784
+0.848
 </td>
 <td style="text-align:right;">
--1.759
+-1.363
 </td>
 <td style="text-align:right;">
-0.120
+0.214
 </td>
 <td style="text-align:right;">
-0.320
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-2
-</td>
-<td style="text-align:right;">
-0.259
-</td>
-<td style="text-align:right;">
-0.286
-</td>
-<td style="text-align:right;">
-0.235
-</td>
-<td style="text-align:right;">
-1.217
-</td>
-<td style="text-align:right;">
-1.102
-</td>
-<td style="text-align:right;">
-0.305
-</td>
-<td style="text-align:right;">
-0.593
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-3
-</td>
-<td style="text-align:right;">
-0.092
-</td>
-<td style="text-align:right;">
-0.086
-</td>
-<td style="text-align:right;">
-0.100
-</td>
-<td style="text-align:right;">
-0.854
-</td>
-<td style="text-align:right;">
--0.872
-</td>
-<td style="text-align:right;">
-0.411
-</td>
-<td style="text-align:right;">
-0.593
+0.500
 </td>
 </tr>
 <tr>
@@ -1529,25 +1406,77 @@ FDR
 5
 </td>
 <td style="text-align:right;">
-0.097
+0.072
 </td>
 <td style="text-align:right;">
-0.103
+0.068
 </td>
 <td style="text-align:right;">
-0.087
+0.077
 </td>
 <td style="text-align:right;">
-1.181
+0.880
 </td>
 <td style="text-align:right;">
-0.807
+-0.722
 </td>
 <td style="text-align:right;">
-0.445
+0.493
 </td>
 <td style="text-align:right;">
-0.593
+0.638
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:right;">
+0.102
+</td>
+<td style="text-align:right;">
+0.106
+</td>
+<td style="text-align:right;">
+0.094
+</td>
+<td style="text-align:right;">
+1.123
+</td>
+<td style="text-align:right;">
+0.645
+</td>
+<td style="text-align:right;">
+0.539
+</td>
+<td style="text-align:right;">
+0.638
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:right;">
+0.202
+</td>
+<td style="text-align:right;">
+0.213
+</td>
+<td style="text-align:right;">
+0.193
+</td>
+<td style="text-align:right;">
+1.106
+</td>
+<td style="text-align:right;">
+0.632
+</td>
+<td style="text-align:right;">
+0.547
+</td>
+<td style="text-align:right;">
+0.638
 </td>
 </tr>
 <tr>
@@ -1555,51 +1484,25 @@ FDR
 4
 </td>
 <td style="text-align:right;">
-0.087
+0.076
 </td>
 <td style="text-align:right;">
-0.084
+0.074
 </td>
 <td style="text-align:right;">
-0.090
+0.079
 </td>
 <td style="text-align:right;">
-0.927
+0.940
 </td>
 <td style="text-align:right;">
--0.328
+-0.307
 </td>
 <td style="text-align:right;">
-0.752
+0.767
 </td>
 <td style="text-align:right;">
-0.859
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-7
-</td>
-<td style="text-align:right;">
-0.011
-</td>
-<td style="text-align:right;">
-0.012
-</td>
-<td style="text-align:right;">
-0.010
-</td>
-<td style="text-align:right;">
-1.217
-</td>
-<td style="text-align:right;">
-0.175
-</td>
-<td style="text-align:right;">
-0.866
-</td>
-<td style="text-align:right;">
-0.866
+0.767
 </td>
 </tr>
 </tbody>
@@ -1647,77 +1550,25 @@ FDR
 6
 </td>
 <td style="text-align:right;">
-0.018
+0.019
 </td>
 <td style="text-align:right;">
-0.020
+0.023
 </td>
 <td style="text-align:right;">
 0.013
 </td>
 <td style="text-align:right;">
-1.567
+1.723
 </td>
 <td style="text-align:right;">
-1.672
+2.010
 </td>
 <td style="text-align:right;">
-0.124
+0.054
 </td>
 <td style="text-align:right;">
-0.794
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-3
-</td>
-<td style="text-align:right;">
-0.185
-</td>
-<td style="text-align:right;">
-0.167
-</td>
-<td style="text-align:right;">
-0.207
-</td>
-<td style="text-align:right;">
-0.804
-</td>
-<td style="text-align:right;">
--1.055
-</td>
-<td style="text-align:right;">
-0.315
-</td>
-<td style="text-align:right;">
-0.794
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-5
-</td>
-<td style="text-align:right;">
-0.065
-</td>
-<td style="text-align:right;">
-0.059
-</td>
-<td style="text-align:right;">
-0.073
-</td>
-<td style="text-align:right;">
-0.812
-</td>
-<td style="text-align:right;">
--0.909
-</td>
-<td style="text-align:right;">
-0.384
-</td>
-<td style="text-align:right;">
-0.794
+0.379
 </td>
 </tr>
 <tr>
@@ -1725,59 +1576,59 @@ FDR
 0
 </td>
 <td style="text-align:right;">
-0.548
+0.529
 </td>
 <td style="text-align:right;">
-0.585
+0.570
 </td>
 <td style="text-align:right;">
-0.525
+0.493
 </td>
 <td style="text-align:right;">
-1.115
+1.155
 </td>
 <td style="text-align:right;">
-0.883
+0.961
 </td>
 <td style="text-align:right;">
-0.397
+0.345
 </td>
 <td style="text-align:right;">
-0.794
+0.821
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-1
+5
 </td>
 <td style="text-align:right;">
-0.003
+0.220
 </td>
 <td style="text-align:right;">
-0.003
+0.200
 </td>
 <td style="text-align:right;">
-0.002
+0.249
 </td>
 <td style="text-align:right;">
-1.368
+0.803
 </td>
 <td style="text-align:right;">
-0.403
+-0.937
 </td>
 <td style="text-align:right;">
-0.695
+0.357
 </td>
 <td style="text-align:right;">
-0.925
+0.821
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-4
+3
 </td>
 <td style="text-align:right;">
-0.071
+0.066
 </td>
 <td style="text-align:right;">
 0.061
@@ -1786,42 +1637,16 @@ FDR
 0.073
 </td>
 <td style="text-align:right;">
-0.829
+0.840
 </td>
 <td style="text-align:right;">
--0.324
+-0.734
 </td>
 <td style="text-align:right;">
-0.753
+0.469
 </td>
 <td style="text-align:right;">
-0.925
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-7
-</td>
-<td style="text-align:right;">
-0.021
-</td>
-<td style="text-align:right;">
-0.019
-</td>
-<td style="text-align:right;">
-0.020
-</td>
-<td style="text-align:right;">
-0.936
-</td>
-<td style="text-align:right;">
--0.153
-</td>
-<td style="text-align:right;">
-0.881
-</td>
-<td style="text-align:right;">
-0.925
+0.821
 </td>
 </tr>
 <tr>
@@ -1829,25 +1654,77 @@ FDR
 2
 </td>
 <td style="text-align:right;">
-0.090
+0.097
 </td>
 <td style="text-align:right;">
-0.086
+0.085
 </td>
 <td style="text-align:right;">
-0.086
+0.100
 </td>
 <td style="text-align:right;">
-0.997
+0.844
 </td>
 <td style="text-align:right;">
-0.096
+-0.384
 </td>
 <td style="text-align:right;">
-0.925
+0.704
 </td>
 <td style="text-align:right;">
-0.925
+0.845
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:right;">
+0.065
+</td>
+<td style="text-align:right;">
+0.056
+</td>
+<td style="text-align:right;">
+0.066
+</td>
+<td style="text-align:right;">
+0.849
+</td>
+<td style="text-align:right;">
+-0.218
+</td>
+<td style="text-align:right;">
+0.829
+</td>
+<td style="text-align:right;">
+0.845
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:right;">
+0.005
+</td>
+<td style="text-align:right;">
+0.005
+</td>
+<td style="text-align:right;">
+0.005
+</td>
+<td style="text-align:right;">
+1.024
+</td>
+<td style="text-align:right;">
+0.198
+</td>
+<td style="text-align:right;">
+0.845
+</td>
+<td style="text-align:right;">
+0.845
 </td>
 </tr>
 </tbody>
@@ -1895,129 +1772,25 @@ FDR
 1
 </td>
 <td style="text-align:right;">
-0.007
+0.020
+</td>
+<td style="text-align:right;">
+0.027
 </td>
 <td style="text-align:right;">
 0.012
 </td>
 <td style="text-align:right;">
-0.004
+2.235
 </td>
 <td style="text-align:right;">
-2.932
+2.489
 </td>
 <td style="text-align:right;">
-1.483
+0.042
 </td>
 <td style="text-align:right;">
-0.175
-</td>
-<td style="text-align:right;">
-0.609
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-2
-</td>
-<td style="text-align:right;">
-0.595
-</td>
-<td style="text-align:right;">
-0.640
-</td>
-<td style="text-align:right;">
-0.517
-</td>
-<td style="text-align:right;">
-1.238
-</td>
-<td style="text-align:right;">
-1.304
-</td>
-<td style="text-align:right;">
-0.227
-</td>
-<td style="text-align:right;">
-0.609
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-3
-</td>
-<td style="text-align:right;">
-0.084
-</td>
-<td style="text-align:right;">
-0.050
-</td>
-<td style="text-align:right;">
-0.101
-</td>
-<td style="text-align:right;">
-0.498
-</td>
-<td style="text-align:right;">
--1.301
-</td>
-<td style="text-align:right;">
-0.228
-</td>
-<td style="text-align:right;">
-0.609
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-4
-</td>
-<td style="text-align:right;">
-0.066
-</td>
-<td style="text-align:right;">
-0.055
-</td>
-<td style="text-align:right;">
-0.074
-</td>
-<td style="text-align:right;">
-0.734
-</td>
-<td style="text-align:right;">
--0.907
-</td>
-<td style="text-align:right;">
-0.390
-</td>
-<td style="text-align:right;">
-0.667
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-0
-</td>
-<td style="text-align:right;">
-0.203
-</td>
-<td style="text-align:right;">
-0.202
-</td>
-<td style="text-align:right;">
-0.251
-</td>
-<td style="text-align:right;">
-0.806
-</td>
-<td style="text-align:right;">
--0.732
-</td>
-<td style="text-align:right;">
-0.484
-</td>
-<td style="text-align:right;">
-0.667
+0.294
 </td>
 </tr>
 <tr>
@@ -2025,51 +1798,103 @@ FDR
 5
 </td>
 <td style="text-align:right;">
-0.010
+0.020
 </td>
 <td style="text-align:right;">
-0.009
+0.017
 </td>
 <td style="text-align:right;">
-0.024
+0.027
 </td>
 <td style="text-align:right;">
-0.356
+0.610
 </td>
 <td style="text-align:right;">
--0.590
+-1.259
 </td>
 <td style="text-align:right;">
-0.571
+0.249
 </td>
 <td style="text-align:right;">
-0.667
+0.518
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-7
+4
 </td>
 <td style="text-align:right;">
-0.011
+0.067
 </td>
 <td style="text-align:right;">
-0.007
+0.055
 </td>
 <td style="text-align:right;">
-0.010
+0.076
 </td>
 <td style="text-align:right;">
-0.716
+0.723
 </td>
 <td style="text-align:right;">
--0.571
+-1.226
 </td>
 <td style="text-align:right;">
-0.583
+0.260
 </td>
 <td style="text-align:right;">
-0.667
+0.518
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:right;">
+0.598
+</td>
+<td style="text-align:right;">
+0.620
+</td>
+<td style="text-align:right;">
+0.528
+</td>
+<td style="text-align:right;">
+1.174
+</td>
+<td style="text-align:right;">
+1.101
+</td>
+<td style="text-align:right;">
+0.307
+</td>
+<td style="text-align:right;">
+0.518
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+0
+</td>
+<td style="text-align:right;">
+0.254
+</td>
+<td style="text-align:right;">
+0.244
+</td>
+<td style="text-align:right;">
+0.307
+</td>
+<td style="text-align:right;">
+0.795
+</td>
+<td style="text-align:right;">
+-0.958
+</td>
+<td style="text-align:right;">
+0.370
+</td>
+<td style="text-align:right;">
+0.518
 </td>
 </tr>
 <tr>
@@ -2077,25 +1902,51 @@ FDR
 6
 </td>
 <td style="text-align:right;">
-0.023
+0.029
+</td>
+<td style="text-align:right;">
+0.028
 </td>
 <td style="text-align:right;">
 0.025
 </td>
 <td style="text-align:right;">
-0.018
+1.091
 </td>
 <td style="text-align:right;">
-1.393
+-0.033
 </td>
 <td style="text-align:right;">
-0.245
+0.974
 </td>
 <td style="text-align:right;">
-0.812
+0.990
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3
 </td>
 <td style="text-align:right;">
-0.812
+0.013
+</td>
+<td style="text-align:right;">
+0.010
+</td>
+<td style="text-align:right;">
+0.025
+</td>
+<td style="text-align:right;">
+0.418
+</td>
+<td style="text-align:right;">
+0.014
+</td>
+<td style="text-align:right;">
+0.990
+</td>
+<td style="text-align:right;">
+0.990
 </td>
 </tr>
 </tbody>
