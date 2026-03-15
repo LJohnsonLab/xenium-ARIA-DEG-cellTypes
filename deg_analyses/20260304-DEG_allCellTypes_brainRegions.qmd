@@ -162,10 +162,16 @@ all_ct_results <- map(cell_types, \(ct) {
 ```
 
 ```{r save-results}
-saveRDS(
-  map(all_ct_results, \(res) res$all_results),
-  "results/20260304-DEG_allCellTypes.rds"
-)
+de_tables <- map(all_ct_results, \(res) res$all_results)
+
+# RDS for downstream R analysis
+saveRDS(de_tables, "results/20260304-DEG_allCellTypes.rds")
+
+# JSON for interoperability (row names → gene column)
+de_tables |>
+  map(\(df) rownames_to_column(df, var = "gene")) |>
+  jsonlite::toJSON(pretty = TRUE) |>
+  writeLines("results/20260304-DEG_allCellTypes.json")
 ```
 
 # Summary
