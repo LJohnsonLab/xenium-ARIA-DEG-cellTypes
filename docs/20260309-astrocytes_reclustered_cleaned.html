@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-03-12">
+<meta name="dcterms.date" content="2026-03-17">
 
 <title>Astrocyte subpopulations after cleaning – ARIA Xenium Analysis</title>
 <style>
@@ -319,7 +319,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">March 12, 2026</p>
+      <p class="date">March 17, 2026</p>
     </div>
   </div>
   
@@ -357,32 +357,42 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>cell_specific[[<span class="st">"ASTROCYTE"</span>]] <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># One row per gene with cell_type label</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>genes_to_remove <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(<span class="fu">names</span>(cell_specific), <span class="cf">function</span>(ct) {</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>markers <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(<span class="fu">names</span>(cell_specific), <span class="cf">function</span>(ct) {</span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">cell_type =</span> ct, <span class="at">gene =</span> <span class="fu">unlist</span>(cell_specific[[ct]]))</span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>}) <span class="sc">|&gt;</span> </span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(gene)</span>
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>all_features <span class="ot">&lt;-</span> <span class="fu">Features</span>(astro_subset)</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>keep_genes <span class="ot">&lt;-</span> all_features[<span class="sc">!</span>all_features <span class="sc">%in%</span> genes_to_remove]</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="do">############################################################################</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>astro_cleaned  <span class="ot">&lt;-</span> <span class="fu">subset</span>(astro_subset, <span class="at">subset =</span> seurat_clusters<span class="sc">!=</span><span class="dv">6</span>)</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>astro_cleaned  <span class="ot">&lt;-</span> <span class="fu">subset</span>(astro_cleaned, <span class="at">features =</span> keep_genes)</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Keep only the assay needed for fresh SCTransform</span></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="fu">DefaultAssay</span>(astro_cleaned) <span class="ot">&lt;-</span> <span class="st">"Xenium"</span></span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>astro0 <span class="ot">&lt;-</span> <span class="fu">DietSeurat</span>(astro_cleaned, <span class="at">assays =</span> <span class="st">"Xenium"</span>, <span class="at">dimreducs =</span> <span class="cn">NULL</span>, <span class="at">graphs =</span> <span class="cn">NULL</span>)</span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Drop Xenium image/FOV segmentation data; otherwise merge triggers huge future globals</span></span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>astro0<span class="sc">@</span>images <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="co"># SCTransform on all astrocytes together (no split/merge, no integration)</span></span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>astro <span class="ot">&lt;-</span> <span class="fu">SCTransform</span>(</span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>  astro0,</span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">assay =</span> <span class="st">"Xenium"</span>,</span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">new.assay.name =</span> <span class="st">"SCT"</span>,</span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">FALSE</span></span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="do">### genes manually selected by Akhil </span><span class="al">###</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>akhil <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Cx3cr1"</span>, <span class="st">"Itgax"</span>, <span class="st">"Cd68"</span>,</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="st">"C1qa"</span>, <span class="st">"C1qb"</span>, <span class="st">"C1qc"</span>, <span class="st">"Icam1"</span>, <span class="st">"Vcam1"</span>,</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Lyz2"</span>, <span class="st">"Cd14"</span>, <span class="st">"Cst7"</span>, <span class="st">"Siglech"</span>, <span class="st">"Clec7a"</span>, <span class="st">"Cst3"</span>,</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Gpnmb"</span>, <span class="st">"Pf4"</span>, <span class="st">"Chil3"</span>, <span class="st">"Ly86"</span>, <span class="st">"Cd81"</span>, <span class="st">"Nkg7"</span>,</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Mki67"</span>,<span class="st">"Mbp"</span>, <span class="st">"Mag"</span>, <span class="st">"Plp"</span>)</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>genes_to_remove <span class="ot">&lt;-</span> <span class="fu">c</span>(markers, akhil)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>all_features <span class="ot">&lt;-</span> <span class="fu">Features</span>(astro_subset)</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>keep_genes <span class="ot">&lt;-</span> all_features[<span class="sc">!</span>all_features <span class="sc">%in%</span> genes_to_remove]</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="do">############################################################################</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>astro_cleaned  <span class="ot">&lt;-</span> <span class="fu">subset</span>(astro_subset, <span class="at">subset =</span> seurat_clusters<span class="sc">!=</span><span class="dv">6</span>)</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>astro_cleaned  <span class="ot">&lt;-</span> <span class="fu">subset</span>(astro_cleaned, <span class="at">features =</span> keep_genes)</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Keep only the assay needed for fresh SCTransform</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="fu">DefaultAssay</span>(astro_cleaned) <span class="ot">&lt;-</span> <span class="st">"Xenium"</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>astro0 <span class="ot">&lt;-</span> <span class="fu">DietSeurat</span>(astro_cleaned, <span class="at">assays =</span> <span class="st">"Xenium"</span>, <span class="at">dimreducs =</span> <span class="cn">NULL</span>, <span class="at">graphs =</span> <span class="cn">NULL</span>)</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="co"># Drop Xenium image/FOV segmentation data; otherwise merge triggers huge future globals</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>astro0<span class="sc">@</span>images <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a><span class="co"># SCTransform on all astrocytes together (no split/merge, no integration)</span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>astro <span class="ot">&lt;-</span> <span class="fu">SCTransform</span>(</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>  astro0,</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>  <span class="at">assay =</span> <span class="st">"Xenium"</span>,</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>  <span class="at">new.assay.name =</span> <span class="st">"SCT"</span>,</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">FALSE</span></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <section id="pca-and-dimensionality-selection" class="level2 page-columns page-full">
@@ -414,14 +424,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>astro <span class="ot">&lt;-</span> <span class="fu">RunUMAP</span>(astro, <span class="at">reduction =</span> <span class="st">"pca"</span>, <span class="at">dims =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">30</span>, <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="do">## save cleaned object</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co"># qs_save(astro, "seurat_objects/20260312-astro_cleaned2_0.3.qs2")</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co"># qs_save(astro, "seurat_objects/20260317-astro_cleaned2_0.3.qs2")</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="do">## load cleaned object</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>astro <span class="ot">&lt;-</span> qs2<span class="sc">::</span><span class="fu">qs_read</span>(<span class="st">"seurat_objects/20260312-astro_cleaned2_0.3.qs2"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>astro <span class="ot">&lt;-</span> qs2<span class="sc">::</span><span class="fu">qs_read</span>(<span class="st">"seurat_objects/20260317-astro_cleaned2_0.3.qs2"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div class="cell">
@@ -465,7 +475,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: flex-start;">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/astrocyte_UMAP_reclusteredOriginal.svg" style="width:100.0%" height="300" class="figure-img"></p>
+<p><img src="img/astrocyte_UMAP_reclusteredOriginal.svg" style="width:100.0%" height="500" class="figure-img"></p>
 <figcaption>Original reclustering</figcaption>
 </figure>
 </div>
@@ -473,16 +483,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: flex-start;">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="img/astrocyte_UMAP_removedCluster6.png" style="width:100.0%" height="300" class="figure-img"></p>
+<p><img src="img/astrocyte_UMAP_removedCluster6.png" style="width:100.0%" height="500" class="figure-img"></p>
 <figcaption>After removing cluster 6</figcaption>
-</figure>
-</div>
-</div>
-<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: flex-start;">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="img/astrocyte_UMAP_removedMarkerGenes.svg" style="width:100.0%" height="300" class="figure-img"></p>
-<figcaption>After removing marker genes</figcaption>
 </figure>
 </div>
 </div>
@@ -495,7 +497,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">#|fig-height: 5</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: plot UMAPs 1</span></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">DimPlot</span>(astro, <span class="at">label =</span>T, <span class="at">label.size =</span> <span class="dv">6</span>, <span class="at">pt.size =</span><span class="fl">0.9</span>)<span class="sc">+</span> <span class="fu">NoLegend</span>() <span class="sc">+</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Removed cluster 6 and marker genes"</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Removed cluster 6 and 106 marker genes"</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -533,7 +535,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># write_csv(all_markers, file = "results/20260309-astrocyte_cleaned_all_markers_0.3.csv")</span></span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="do">#################################################################</span></span>
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co"># write_csv (cluster 6 from the original object &amp;  marker genes removed)</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co"># write_csv(all_markers, file = "results/20260312-astrocyte_cleaned_all_markers_0.3.csv")</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co"># write_csv(all_markers, file = "results/20260312-astrocyte_cleaned_all_markers_0.3.csv")</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="do">#################################################################</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co"># write_csv (cluster 6 from the original object &amp;  marker genes + Akhil genes removed)</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co"># write_csv(all_markers, file = "results/20260317-astrocyte_cleaned_all_markers_0.3.csv")</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div class="cell page-columns page-full">
@@ -542,7 +547,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"20260217-helper_functions.R"</span>)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Top 5 markers per cluster by avg_log2FC</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>top_genes <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"results/20260312-astrocyte_cleaned_all_markers_0.3.csv"</span>,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>top_genes <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"results/20260317-astrocyte_cleaned_all_markers_0.3.csv"</span>,</span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                      <span class="at">show_col_types =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
 <span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(cluster) <span class="sc">|&gt;</span></span>
 <span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(avg_log2FC), <span class="at">.by_group =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>

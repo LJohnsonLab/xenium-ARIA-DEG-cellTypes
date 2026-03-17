@@ -36,10 +36,20 @@ cell_specific <- gene_list[["CELL SPECIFIC"]]
 cell_specific[["ASTROCYTE"]] <- NULL
 
 # One row per gene with cell_type label
-genes_to_remove <- map_dfr(names(cell_specific), function(ct) {
+markers <- map_dfr(names(cell_specific), function(ct) {
   tibble(cell_type = ct, gene = unlist(cell_specific[[ct]]))
 }) |> 
   pull(gene)
+
+
+### genes manually selected by Akhil ###
+akhil <- c("Cx3cr1", "Itgax", "Cd68",
+  "C1qa", "C1qb", "C1qc", "Icam1", "Vcam1",
+  "Lyz2", "Cd14", "Cst7", "Siglech", "Clec7a", "Cst3",
+  "Gpnmb", "Pf4", "Chil3", "Ly86", "Cd81", "Nkg7",
+  "Mki67","Mbp", "Mag", "Plp")
+
+genes_to_remove <- c(markers, akhil)
 
 all_features <- Features(astro_subset)
 
@@ -99,12 +109,12 @@ astro <- FindClusters(astro, graph.name = "astro_snn", resolution = 0.3)
 astro <- RunUMAP(astro, reduction = "pca", dims = 1:30, verbose = FALSE)
 
 ## save cleaned object
-# qs_save(astro, "seurat_objects/20260312-astro_cleaned2_0.3.qs2")
+# qs_save(astro, "seurat_objects/20260317-astro_cleaned2_0.3.qs2")
 ```
 ```{r}
 
 ## load cleaned object
-astro <- qs2::qs_read("seurat_objects/20260312-astro_cleaned2_0.3.qs2")
+astro <- qs2::qs_read("seurat_objects/20260317-astro_cleaned2_0.3.qs2")
 ```
 
 ```{r}
@@ -135,11 +145,10 @@ p1 + p2
 resolution = 0.3
 
 ::: {layout-ncol=3 .column-page}
-![Original reclustering](img/astrocyte_UMAP_reclusteredOriginal.svg){width=100% height=300px}
+![Original reclustering](img/astrocyte_UMAP_reclusteredOriginal.svg){width=100% height=500px}
 
-![After removing cluster 6](img/astrocyte_UMAP_removedCluster6.png){width=100% height=300px}
+![After removing cluster 6](img/astrocyte_UMAP_removedCluster6.png){width=100% height=500px}
 
-![After removing marker genes](img/astrocyte_UMAP_removedMarkerGenes.svg){width=100% height=300px}
 :::
 
 ```{r}
@@ -147,7 +156,7 @@ resolution = 0.3
 #|fig-height: 5
 #| label: plot UMAPs 1
 DimPlot(astro, label =T, label.size = 6, pt.size =0.9)+ NoLegend() +
-  ggtitle("Removed cluster 6 and marker genes") 
+  ggtitle("Removed cluster 6 and 106 marker genes") 
 ```
 
 ```{r}
@@ -171,6 +180,9 @@ all_markers <- FindAllMarkers(astro, only.pos = TRUE, densify = TRUE)
 #################################################################
 # write_csv (cluster 6 from the original object &  marker genes removed)
 # write_csv(all_markers, file = "results/20260312-astrocyte_cleaned_all_markers_0.3.csv")
+#################################################################
+# write_csv (cluster 6 from the original object &  marker genes + Akhil genes removed)
+# write_csv(all_markers, file = "results/20260317-astrocyte_cleaned_all_markers_0.3.csv")
 ```
 
 ```{r}
@@ -181,7 +193,7 @@ all_markers <- FindAllMarkers(astro, only.pos = TRUE, densify = TRUE)
 source("20260217-helper_functions.R")
 
 # Top 5 markers per cluster by avg_log2FC
-top_genes <- read_csv("results/20260312-astrocyte_cleaned_all_markers_0.3.csv",
+top_genes <- read_csv("results/20260317-astrocyte_cleaned_all_markers_0.3.csv",
                       show_col_types = FALSE) |>
   group_by(cluster) |>
   arrange(desc(avg_log2FC), .by_group = TRUE) |>
