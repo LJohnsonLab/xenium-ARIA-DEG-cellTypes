@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-03-11">
+<meta name="dcterms.date" content="2026-03-18">
 
 <title>Microglia GSEA across brain – ARIA Xenium Analysis</title>
 <style>
@@ -332,7 +332,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">March 11, 2026</p>
+      <p class="date">March 18, 2026</p>
     </div>
   </div>
   
@@ -388,7 +388,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>de_by_region <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"results/20260303-DEG_MG_byRegion.rds"</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Panel genes = union of all genes tested across regions</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>panel_genes <span class="ot">&lt;-</span> de_by_region <span class="sc">|&gt;</span> <span class="fu">map</span>(\(df) <span class="fu">rownames</span>(df)) <span class="sc">|&gt;</span> purrr<span class="sc">::</span><span class="fu">reduce</span>(union)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>panel_genes <span class="ot">&lt;-</span> de_by_region <span class="sc">|&gt;</span> <span class="fu">map</span>(\(df) <span class="fu">rownames</span>(df)) <span class="sc">|&gt;</span> <span class="fu">reduce</span>(union)</span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Regions available:"</span>, <span class="fu">paste</span>(<span class="fu">names</span>(de_by_region), <span class="at">collapse =</span> <span class="st">", "</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
@@ -531,23 +531,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </details>
 <section id="cortex" class="level2">
 <h2 class="anchored" data-anchor-id="cortex">Cortex</h2>
-<p><em>No significant pathways (padj &lt; 0.05).</em></p>
+<p><img src="20260223-MG_GSEA_brainRegions_files/figure-html/per-region-gsea-1.svg" class="img-fluid" width="960"></p>
 </section>
 <section id="hippocampus" class="level2">
 <h2 class="anchored" data-anchor-id="hippocampus">Hippocampus</h2>
-<p><img src="20260223-MG_GSEA_brainRegions_files/figure-html/per-region-gsea-1.svg" class="img-fluid" width="960"></p>
+<p><img src="20260223-MG_GSEA_brainRegions_files/figure-html/per-region-gsea-2.svg" class="img-fluid" width="960"></p>
 </section>
 <section id="hypothalamus" class="level2">
 <h2 class="anchored" data-anchor-id="hypothalamus">Hypothalamus</h2>
-<p><img src="20260223-MG_GSEA_brainRegions_files/figure-html/per-region-gsea-2.svg" class="img-fluid" width="960"></p>
+<p><img src="20260223-MG_GSEA_brainRegions_files/figure-html/per-region-gsea-3.svg" class="img-fluid" width="960"></p>
 </section>
 <section id="thalamus" class="level2">
 <h2 class="anchored" data-anchor-id="thalamus">Thalamus</h2>
-<p><em>No significant pathways (padj &lt; 0.05).</em></p>
+<p><img src="20260223-MG_GSEA_brainRegions_files/figure-html/per-region-gsea-4.svg" class="img-fluid" width="960"></p>
 </section>
 <section id="wm" class="level2">
 <h2 class="anchored" data-anchor-id="wm">WM</h2>
-<p><img src="20260223-MG_GSEA_brainRegions_files/figure-html/per-region-gsea-3.svg" class="img-fluid" width="960"></p>
+<p><img src="20260223-MG_GSEA_brainRegions_files/figure-html/per-region-gsea-5.svg" class="img-fluid" width="960"></p>
 <hr>
 </section>
 </section>
@@ -565,7 +565,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Union of collapsed (non-redundant) main pathways across all regions</span></span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>sig_pathways <span class="ot">&lt;-</span> gsea_by_region <span class="sc">|&gt;</span></span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(\(res) res<span class="sc">$</span>significant<span class="sc">$</span>pathway) <span class="sc">|&gt;</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  purrr<span class="sc">::</span><span class="fu">reduce</span>(union)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">reduce</span>(union)</span>
 <span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">length</span>(sig_pathways) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
 <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  clean_label <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
@@ -656,7 +656,66 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <summary>
 ** Cortex ** significant pathways
 </summary>
-<p>No significant pathways.</p>
+<table class="table table-striped" style="margin-left: auto; margin-right: auto;">
+<caption>
+M7 GSEA — Cortex
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+pathway
+</th>
+<th style="text-align:right;">
+NES
+</th>
+<th style="text-align:right;">
+padj
+</th>
+<th style="text-align:right;">
+size
+</th>
+<th style="text-align:left;">
+leadingEdge
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Cdc2 ifna1 response up
+</td>
+<td style="text-align:right;">
+1.96
+</td>
+<td style="text-align:right;">
+0.0251
+</td>
+<td style="text-align:right;">
+39
+</td>
+<td style="text-align:left;">
+C3, Ccl5, Ifitm3, Cxcl10, Lgals3bp, Ifit2, Ccl12, Ifit1, Axl, C1qb, Hif1a, Selplg, Ldlr, Bcl2a1b, Pgd, Hk3, Etnk1, Ly86, Aif1, Grn, Acer3, Clec2d, Sat1, Pnp
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Langerhans ifna1 response up
+</td>
+<td style="text-align:right;">
+1.85
+</td>
+<td style="text-align:right;">
+0.0251
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:left;">
+Ifitm3, Cxcl10, Lgals3bp, Ifit2, Ifit1
+</td>
+</tr>
+</tbody>
+</table>
 </details>
 <details>
 <summary>
@@ -688,47 +747,13 @@ leadingEdge
 <tbody>
 <tr>
 <td style="text-align:left;">
-Monocyte il15 response up
-</td>
-<td style="text-align:right;">
-2.17
-</td>
-<td style="text-align:right;">
-7.10e-06
-</td>
-<td style="text-align:right;">
-23
-</td>
-<td style="text-align:left;">
-Ccl12, Msr1, Cxcl10, Ifit2, Ccl2, Ifit1, Acod1, Vim, C3, Ccl4, Clec2d
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-Cdc2 il15 response up
-</td>
-<td style="text-align:right;">
-2.00
-</td>
-<td style="text-align:right;">
-3.49e-04
-</td>
-<td style="text-align:right;">
-39
-</td>
-<td style="text-align:left;">
-Ccl12, Cxcl10, Ifit2, Ccl2, Ifit1, Ifitm3, Tnf, Vim, C3, Myo1e, Axl, Clec2d, Lgals3bp, Bcl2a1b, Ldlr, Mapkapk2, Ifitm1, Fas
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 Macrophage il15 response up
 </td>
 <td style="text-align:right;">
-2.02
+2.04
 </td>
 <td style="text-align:right;">
-3.50e-04
+0.000101
 </td>
 <td style="text-align:right;">
 35
@@ -739,13 +764,30 @@ Ccl12, Msr1, Cxcl10, Ifit2, Ccl2, Il1b, Ifit1, Ifitm3, Ccl5, Acod1, Ccl4, Clec2d
 </tr>
 <tr>
 <td style="text-align:left;">
+Cdc2 il15 response up
+</td>
+<td style="text-align:right;">
+2.01
+</td>
+<td style="text-align:right;">
+0.000334
+</td>
+<td style="text-align:right;">
+39
+</td>
+<td style="text-align:left;">
+Ccl12, Cxcl10, Ifit2, Ccl2, Ifit1, Ifitm3, Tnf, Vim, C3, Myo1e, Axl, Clec2d, Lgals3bp, Bcl2a1b, Ldlr, Mapkapk2, Ifitm1, Fas
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 Macrophage il12 response up
 </td>
 <td style="text-align:right;">
-1.82
+1.76
 </td>
 <td style="text-align:right;">
-1.24e-03
+0.001440
 </td>
 <td style="text-align:right;">
 6
@@ -759,16 +801,33 @@ Ccl12, Cxcl10, Ifit2, Ccl2, Ifit1
 Macrophage il1a response up
 </td>
 <td style="text-align:right;">
-1.81
+1.79
 </td>
 <td style="text-align:right;">
-1.18e-02
+0.008880
 </td>
 <td style="text-align:right;">
 17
 </td>
 <td style="text-align:left;">
 Ccl12, Msr1, Ccl2, Il1b, Nlrp3, Hmox1, Plin2, Bcl2a1b
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+T cell cd8 il4 response dn
+</td>
+<td style="text-align:right;">
+1.62
+</td>
+<td style="text-align:right;">
+0.033500
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:left;">
+Cd3d, Ccl5, Nkg7, Vim
 </td>
 </tr>
 </tbody>
@@ -807,10 +866,10 @@ leadingEdge
 Cdc2 ifna1 response up
 </td>
 <td style="text-align:right;">
-2.23
+2.22
 </td>
 <td style="text-align:right;">
-0.00262
+0.00326
 </td>
 <td style="text-align:right;">
 39
@@ -827,7 +886,7 @@ Macrophage il15 response up
 2.18
 </td>
 <td style="text-align:right;">
-0.00262
+0.00326
 </td>
 <td style="text-align:right;">
 35
@@ -841,10 +900,10 @@ Ifitm3, Ccl5, Il1b, Cxcl10, Msr1, Cd74, Ccl4, Ccl2, Bcl2a1b, Ifit1, Ifit2, Hk3, 
 Cdc2 il18 response up
 </td>
 <td style="text-align:right;">
-2.08
+2.09
 </td>
 <td style="text-align:right;">
-0.00340
+0.00326
 </td>
 <td style="text-align:right;">
 43
@@ -855,30 +914,13 @@ C3, Cxcl10, Tnf, Lgals3bp, Vim, Plac8, Myo1e, Ccl2, Bcl2a1b, Lpl, Ifit1, Mgl2, I
 </tr>
 <tr>
 <td style="text-align:left;">
-T cell gd ifna1 response dn
-</td>
-<td style="text-align:right;">
-1.89
-</td>
-<td style="text-align:right;">
-0.02250
-</td>
-<td style="text-align:right;">
-8
-</td>
-<td style="text-align:left;">
-Ccl5, Cd3d, Fxyd5
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 Pdc tnfa response up
 </td>
 <td style="text-align:right;">
-1.84
+1.82
 </td>
 <td style="text-align:right;">
-0.04610
+0.03020
 </td>
 <td style="text-align:right;">
 13
@@ -894,7 +936,49 @@ H2-Ab1, H2-Eb1, Lgals3bp, Cd74
 <summary>
 ** Thalamus ** significant pathways
 </summary>
-<p>No significant pathways.</p>
+<table class="table table-striped" style="margin-left: auto; margin-right: auto;">
+<caption>
+M7 GSEA — Thalamus
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+pathway
+</th>
+<th style="text-align:right;">
+NES
+</th>
+<th style="text-align:right;">
+padj
+</th>
+<th style="text-align:right;">
+size
+</th>
+<th style="text-align:left;">
+leadingEdge
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Cdc2 il15 response up
+</td>
+<td style="text-align:right;">
+1.83
+</td>
+<td style="text-align:right;">
+0.0446
+</td>
+<td style="text-align:right;">
+39
+</td>
+<td style="text-align:left;">
+Ccl12, Ifit2, Ifitm3, Tnf, Ldlr, Ccl2, Mapkapk2, Ifitm1, Cxcl10, Ifit1, Lgals3bp, Clec2d, C3, Axl, Myo1e
+</td>
+</tr>
+</tbody>
+</table>
 </details>
 <details>
 <summary>
@@ -932,7 +1016,7 @@ Treg ifnb response up
 2.00
 </td>
 <td style="text-align:right;">
-0.0311
+0.0269
 </td>
 <td style="text-align:right;">
 10
@@ -943,30 +1027,13 @@ Ifitm3, Ifit2, Ms4a4b, St6galnac4, Cxcl10, Lgals3bp, Clec2d, Ifit1
 </tr>
 <tr>
 <td style="text-align:left;">
-Macrophage tnfa response up
-</td>
-<td style="text-align:right;">
-1.94
-</td>
-<td style="text-align:right;">
-0.0311
-</td>
-<td style="text-align:right;">
-14
-</td>
-<td style="text-align:left;">
-Ccl12, Msr1, Ccl5, Cxcl10, Nlrp3, Il1b
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 Cdc2 il18 response up
 </td>
 <td style="text-align:right;">
-1.81
+1.82
 </td>
 <td style="text-align:right;">
-0.0328
+0.0305
 </td>
 <td style="text-align:right;">
 43

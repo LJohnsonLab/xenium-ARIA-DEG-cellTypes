@@ -24,3 +24,6 @@ seurat_objects/*
 
 # Text and image drafts
 text_pics/
+
+# Ignore all reports and PDFs
+reports/*
