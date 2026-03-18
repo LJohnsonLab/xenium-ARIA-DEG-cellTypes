@@ -10,7 +10,7 @@ library(tidyverse)
 library(speckle)
 library(kableExtra)
 
-astro <- UpdateSeuratObject(qs2::qs_read("seurat_objects/20260317-astro_cleaned2_0.3.qs2"))
+astro <- UpdateSeuratObject(qs2::qs_read("seurat_objects/20260318-astro_cleaned2_0.3.qs2"))
 Idents(astro) <- "seurat_clusters"
 # Order samples by Treatment.Group so groups are adjacent
 astro$sample_ID <- factor(
