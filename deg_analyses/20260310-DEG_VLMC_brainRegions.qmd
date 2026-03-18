@@ -7,7 +7,6 @@ date: last-modified
 #| message: false
 library(qs2)
 library(Seurat)
-library(purrr)
 library(DESeq2)
 library(patchwork)
 library(gridExtra)
@@ -15,12 +14,6 @@ library(pheatmap)
 library(tidyverse)
 library(kableExtra)
 
-
-# fgsea: Fast Gene Set Enrichment Analysis
-# https://bioconductor.org/packages/release/bioc/vignettes/fgsea/inst/doc/fgsea-tutorial.html
-library(fgsea)
-# msigdbr: Access to MSigDB gene sets for multiple species
-library(msigdbr)
 
 source("20260217-helper_functions.R")
 
@@ -208,7 +201,7 @@ deg_counts <- imap(de_by_region, \(res, reg) {
 if (nrow(deg_counts) == 0) {
   message("No significant DEGs in any region — bar chart skipped.")
 } else {
-deg_counts <- dplyr::count(deg_counts, Region, Direction)
+deg_counts <- count(deg_counts, Region, Direction)
 ggplot(deg_counts, aes(x = Region, y = n, fill = Direction)) +
   geom_col(position = "dodge", width = 0.7, alpha = 0.9) +
   scale_fill_manual(values = c("Up in Adu" = "#d73027", "Down in Adu" = "#4575b4")) +

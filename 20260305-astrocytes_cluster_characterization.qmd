@@ -13,12 +13,8 @@ library(qs2)
 library(Seurat)
 library(patchwork)
 library(tidyverse)
-library(kableExtra)
-library(DESeq2)
-library(gridExtra)
 library(grid)
 library(compareGroups)
-library(pheatmap)
 
 source("20260217-helper_functions.R")
 
@@ -186,7 +182,7 @@ export2md(prop_res$summary_table)
 # Cell counts per Region, faceted by cluster, dodged by treatment
 astro_sub@meta.data |>
   filter(!is.na(Region)) |>
-  dplyr::count(seurat_clusters, Region, Treatment.Group) |>
+  count(seurat_clusters, Region, Treatment.Group) |>
   ggplot(aes(x = Region, y = n, fill = Treatment.Group)) +
   geom_col(position = "dodge", alpha = 0.85) +
   facet_wrap(~seurat_clusters, scales = "free_y", labeller = label_both, ncol = 3) +

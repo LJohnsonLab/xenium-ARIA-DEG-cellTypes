@@ -61,7 +61,7 @@ cat("M7 gene sets loaded:", length(gene_sets_list), "\n")
 de_by_region <- readRDS("results/20260303-DEG_MG_byRegion.rds")
 
 # Panel genes = union of all genes tested across regions
-panel_genes <- de_by_region |> map(\(df) rownames(df)) |> purrr::reduce(union)
+panel_genes <- de_by_region |> map(\(df) rownames(df)) |> reduce(union)
 
 cat("Regions available:", paste(names(de_by_region), collapse = ", "), "\n")
 cat("Panel genes:", length(panel_genes), "\n")
@@ -208,7 +208,7 @@ all_gsea_long <- imap(gsea_by_region, \(res, reg) {
 # Union of collapsed (non-redundant) main pathways across all regions
 sig_pathways <- gsea_by_region |>
   map(\(res) res$significant$pathway) |>
-  purrr::reduce(union)
+  reduce(union)
 
 if (length(sig_pathways) > 0) {
   clean_label <- function(x) {

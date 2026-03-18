@@ -7,7 +7,6 @@ date: last-modified
 #| message: false
 library(qs2)
 library(Seurat)
-library(purrr)
 library(DESeq2)
 library(patchwork)
 library(gridExtra)
@@ -188,7 +187,7 @@ deg_counts <- imap(de_by_region, \(res, reg) {
 }) |>
   compact() |>
   list_rbind() |>
-  dplyr::count(Region, Direction)
+  count(Region, Direction)
 
 ggplot(deg_counts, aes(x = Region, y = n, fill = Direction)) +
   geom_col(position = "dodge", width = 0.7, alpha = 0.9) +

@@ -14,9 +14,7 @@ library(qs2)
 library(Seurat)
 library(patchwork)
 library(tidyverse)
-library(kableExtra)
-library(DESeq2)
-library(gridExtra)
+library(DESeq2)         # needed by FindAllMarkers(test.use = "DESeq2") in eval:false chunks
 library(jsonlite)
 
 ```
@@ -69,14 +67,23 @@ akhil <- c(
 #| label: clean-seurat
 
 # Load seurat with subsetted astrocytes object 
-astro_subset <- qs2::qs_read("seurat_objects/20260305-astro_0.3.qs2")
-astro_keep <- WhichCells( # astrocyte markers
-  astro_subset, expression = (Aldh1l1 > 0 | Aldoc > 0 | Slc7a10 > 0 | Gfap > 0 | Aqp4 > 0))
-astro.obj <- subset(obj, cells = astro.keep)
+astro_subset <- qs_read("seurat_objects/20260305-astro_0.3.qs2")
+
+## NOT USED ####################################################
+###### cells in cluster 0 expressing Cxcl10 ######
+cxcl10_high_c0_cells <- WhichCells(
+  astro_subset,
+  idents = "0",
+  expression = Cxcl10 >= 0)
+
+astro_subset <- subset(astro_subset, cells = setdiff(Cells(astro_subset),
+  astro0_Cxcl10))
+############################################################
+
 genes_to_remove <- akhil
 all_features <- Features(astro_subset)
 keep_genes <- all_features[!all_features %in% genes_to_remove]
-############################################################################
+
 
 
 astro_cleaned  <- subset(astro_subset, subset = seurat_clusters!=6)
@@ -121,7 +128,7 @@ astro_log <- RunUMAP(astro_log, reduction = "pca", dims = 1:15, verbose = FALSE)
 DimPlot(astro_log, label =T, label.size = 6, pt.size =0.9)+ NoLegend() +
   ggtitle("Removed cluster 6 and 103 marker genes\nLog-normalized") 
 
-# qs2::qs_save(astro_log, "seurat_objects/20260318-astro_lognorm_0.3.qs2")
+# qs_save(astro_log, "seurat_objects/20260318-astro_lognorm_0.3.qs2")
 ```
 
 
@@ -138,18 +145,11 @@ astro <- RunPCA(
   verbose = FALSE)
 
 
-# find nearest neighbours
-
-# Set seed for reproducibility
 set.seed(1234)
 
-# Compute nearest neighbors using first 30 PCs
+# graph.name keeps the SNN graph separate from any pre-existing graphs
 astro <- FindNeighbors(astro, reduction = "pca", dims = 1:30, graph.name = "astro_snn")
-
-# Perform clustering at multiple resolutions for later comparison
 astro <- FindClusters(astro, graph.name = "astro_snn", resolution = 0.3)
-
-# Compute UMAP for visualization
 astro <- RunUMAP(astro, reduction = "pca", dims = 1:30, verbose = FALSE)
 
 ## save cleaned object
@@ -160,10 +160,10 @@ astro <- RunUMAP(astro, reduction = "pca", dims = 1:30, verbose = FALSE)
 
 ```{r}
 ## load cleaned object
-astro <- qs2::qs_read("seurat_objects/20260318-astro_cleaned2_0.3.qs2")
+astro <- qs_read("seurat_objects/20260318-astro_cleaned2_0.3.qs2")
 
 # swap to log-normalised version when ready:
-# astro <- qs2::qs_read("seurat_objects/20260318-astro_lognorm_0.3.qs2")
+# astro <- qs_read("seurat_objects/20260318-astro_lognorm_0.3.qs2")
 ```
 
 ```{r}

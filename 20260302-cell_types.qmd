@@ -8,16 +8,11 @@ date: last-modified
 library(qs2)
 library(Seurat)
 library(tidyverse)
-library(kableExtra)
-
-
 source("20260217-helper_functions.R")
 
 
 full <- qs_read("seurat_objects/20260217_Part2_fullobj.qs2")
-md <- 
-
-md <- full@meta.data 
+md <- full@meta.data
 ```
 
 # Cell type composition across brain regions and treatment groups

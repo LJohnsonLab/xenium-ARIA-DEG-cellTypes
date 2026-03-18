@@ -14,12 +14,11 @@ library(qs2)
 library(Seurat)
 library(patchwork)
 library(tidyverse)
-library(kableExtra)
-library(DESeq2)
 library(gridExtra)
+library(DESeq2)         # needed by FindAllMarkers(test.use = "DESeq2") in eval:false chunks
 
 
-astro <- qs2::qs_read("seurat_objects/20260305-astro_0.3.qs2")
+astro <- qs_read("seurat_objects/20260305-astro_0.3.qs2")
 
 ```
 
@@ -65,7 +64,6 @@ astro <- RunPCA(
 #| fig-width: 5
 #| fig-height: 3
 #| label: Elbow plot
-# Elbow plot to visualise variance explained per PC
 ElbowPlot(astro, ndims = 50) +
   geom_vline(xintercept = 30, linetype = "dashed", color = "red") +
   labs(title = "Elbow plot") +
@@ -88,16 +86,11 @@ p1 + p2
 #| label: neighbors & UMAP
 #| eval: false
 
-# Set seed for reproducibility
 set.seed(1234)
 
-# Compute nearest neighbors using first 30 PCs
+# graph.name keeps the SNN graph separate from any pre-existing graphs
 astro <- FindNeighbors(astro, reduction = "pca", dims = 1:30, graph.name = "astro_snn")
-
-# Perform clustering at multiple resolutions for later comparison
 astro <- FindClusters(astro, graph.name = "astro_snn", resolution = 0.3)
-
-# Compute UMAP for visualization
 astro <- RunUMAP(astro, reduction = "pca", dims = 1:30, verbose = FALSE)
 
 # qs_save(astro, "seurat_objects/20260305-astro_0.3.qs2")
