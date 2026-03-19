@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-03-18">
+<meta name="dcterms.date" content="2026-03-19">
 
 <title>Differentially expressed genes in astrocytes across brain regions – ARIA Xenium Analysis</title>
 <style>
@@ -332,7 +332,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">March 18, 2026</p>
+      <p class="date">March 19, 2026</p>
     </div>
   </div>
   
@@ -360,13 +360,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"20260217-helper_functions.R"</span>)</span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>full <span class="ot">&lt;-</span> <span class="fu">qs_read</span>(<span class="st">"seurat_objects/20260217_Part2_fullobj.qs2"</span>)</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>mg   <span class="ot">&lt;-</span> <span class="fu">subset</span>(full, annotatedclusters <span class="sc">==</span> <span class="st">"Astrocyte"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>mg   <span class="ot">&lt;-</span> <span class="fu">qs_read</span>(<span class="st">"seurat_objects/20260318-astro_cleaned2_0.3.qs2"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <section id="de" class="level1">
 <h1>DE</h1>
-<p>To characterise region-specific transcriptional responses of astrocytes to aducanumab treatment, astrocytes cells were isolated from the full spatial transcriptomics object on the basis of the <code>annotatedclusters</code> annotation.</p>
+<p>To characterise region-specific transcriptional responses of astrocytes to aducanumab treatment, astrocytes cells were isolated from the clean astrocyte object <code>20260318-astro_cleaned2_0.3.qs2</code>.</p>
 <p>The Xenium raw counts assay was set as the default to ensure that downstream pseudobulk aggregation and DESeq2 normalization operated on unmodified integer counts. Cells lacking a brain-region assignment were excluded prior to differential expression analysis to avoid confounding by spatially unassigned transcriptomes.</p>
 <section id="cell-counts-per-region" class="level2">
 <h2 class="anchored" data-anchor-id="cell-counts-per-region">Cell counts per region</h2>
@@ -399,39 +399,39 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">Cortex</td>
-<td style="text-align: right;">11230</td>
-<td style="text-align: right;">5485</td>
-<td style="text-align: right;">5745</td>
+<td style="text-align: right;">11026</td>
+<td style="text-align: right;">5348</td>
+<td style="text-align: right;">5678</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">NA</td>
-<td style="text-align: right;">11220</td>
-<td style="text-align: right;">5921</td>
-<td style="text-align: right;">5299</td>
+<td style="text-align: right;">10285</td>
+<td style="text-align: right;">5512</td>
+<td style="text-align: right;">4773</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Thalamus</td>
-<td style="text-align: right;">10843</td>
-<td style="text-align: right;">5273</td>
-<td style="text-align: right;">5570</td>
+<td style="text-align: right;">9955</td>
+<td style="text-align: right;">4856</td>
+<td style="text-align: right;">5099</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Hypothalamus</td>
-<td style="text-align: right;">6834</td>
-<td style="text-align: right;">2974</td>
-<td style="text-align: right;">3860</td>
+<td style="text-align: right;">6116</td>
+<td style="text-align: right;">2784</td>
+<td style="text-align: right;">3332</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Hippocampus</td>
-<td style="text-align: right;">5675</td>
-<td style="text-align: right;">2936</td>
-<td style="text-align: right;">2739</td>
+<td style="text-align: right;">5596</td>
+<td style="text-align: right;">2900</td>
+<td style="text-align: right;">2696</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">WM</td>
-<td style="text-align: right;">2687</td>
-<td style="text-align: right;">1526</td>
-<td style="text-align: right;">1161</td>
+<td style="text-align: right;">2523</td>
+<td style="text-align: right;">1469</td>
+<td style="text-align: right;">1054</td>
 </tr>
 </tbody>
 </table>
@@ -529,8 +529,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(de_by_region, \(res) res<span class="sc">$</span>all_results),</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"results/20260223-DEG_astrocytes_byRegion.rds"</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"results/20260223-DEG_astrocytes_byRegion.rds"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div class="cell">

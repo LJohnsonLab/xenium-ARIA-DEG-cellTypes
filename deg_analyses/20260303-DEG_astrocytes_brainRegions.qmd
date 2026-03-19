@@ -18,15 +18,14 @@ library(kableExtra)
 source("20260217-helper_functions.R")
 
 
-full <- qs_read("seurat_objects/20260217_Part2_fullobj.qs2")
-mg   <- subset(full, annotatedclusters == "Astrocyte")
+
+mg   <- qs_read("seurat_objects/20260318-astro_cleaned2_0.3.qs2")
 ```
 
 # DE 
 
 To characterise region-specific transcriptional responses of astrocytes to aducanumab treatment,
-astrocytes cells were isolated from the full spatial transcriptomics object on the basis of the
-`annotatedclusters` annotation.  
+astrocytes cells were isolated from the clean astrocyte object `20260318-astro_cleaned2_0.3.qs2`.  
 
 The Xenium raw counts assay was set as the default to ensure
 that downstream pseudobulk aggregation and DESeq2 normalization operated on unmodified integer
@@ -135,8 +134,7 @@ de_by_region <- map(regions, \(reg) {
 
 saveRDS(
   map(de_by_region, \(res) res$all_results),
-  "results/20260223-DEG_astrocytes_byRegion.rds"
-)
+  "results/20260223-DEG_astrocytes_byRegion.rds")
 ```
 
 ```{r save-degs}

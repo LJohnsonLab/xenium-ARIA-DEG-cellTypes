@@ -18,7 +18,8 @@ normalisation). Differential expression was then tested with DESeq2 via Seurat's
 biological replicates per group were excluded. Genes with adjusted *p*-value < 0.1 were
 considered significant.
 
-```{r setup}
+```{r}
+#| label: setup
 #| message: false
 
 library(tidyverse)
@@ -63,15 +64,18 @@ Hierarchically clustered heatmap of total DEG counts (**padj < 0.1**) across all
 and brain regions. Rows and columns are clustered to highlight similarities. Numbers inside
 cells indicate the count of significant DEGs.
 
-```{r heatmap-total}
+```{r}
+#| label: heatmap-total
 #| fig.width: 8
+#| column: page
 #| fig.height: 12
 
-# build matrix: rows = cell types, cols = regions
+# build matrix: rows = cell types, cols = regions; sort rows alphabetically
 mat <- deg_total |>
   pivot_wider(names_from = region, values_from = total) |>
   column_to_rownames("cell_type") |>
   as.matrix()
+mat <- mat[sort(rownames(mat)), ]
 
 num_mat <- matrix(ifelse(is.na(mat), "", sprintf("%.0f", mat)), nrow = nrow(mat), dimnames = dimnames(mat))
 
@@ -80,7 +84,7 @@ pheatmap(mat,
   display_numbers = num_mat,
   fontsize_number = 14,
   number_color    = "black",
-  cluster_rows    = TRUE,
+  cluster_rows    = F,
   cluster_cols    = TRUE,
   main            = "Total DEGs by cell type and brain region\n",
   fontsize        = 14,
@@ -98,7 +102,8 @@ Dodged bar chart showing the number of upregulated and downregulated DEGs for ea
 faceted by brain region. This allows comparison of directionality across cell types within each
 region.
 
-```{r bar-chart-direction}
+```{r}
+#| label: bar-chart-direction
 #| column: page
 #| fig.width: 12
 #| fig.height: 6
@@ -127,22 +132,26 @@ deg_counts |>
 Side-by-side heatmaps of upregulated and downregulated DEG counts, allowing comparison
 of directionality patterns across cell types and regions.
 
-```{r heatmap-updown}
+```{r}
+#| label: heatmap-updown
 #| fig.width: 14
 #| fig.height: 12
 
-# build separate matrices for up and down
+
+# build separate matrices for up and down; sort rows alphabetically
 mat_up <- deg_counts |>
   filter(direction == "Up") |>
   pivot_wider(names_from = region, values_from = count, id_cols = cell_type) |>
   column_to_rownames("cell_type") |>
   as.matrix()
+mat_up <- mat_up[sort(rownames(mat_up)), ]
 
 mat_down <- deg_counts |>
   filter(direction == "Down") |>
   pivot_wider(names_from = region, values_from = count, id_cols = cell_type) |>
   column_to_rownames("cell_type") |>
   as.matrix()
+mat_down <- mat_down[sort(rownames(mat_down)), ]
 
 # shared color ceiling
 max_val <- max(c(mat_up, mat_down), na.rm = TRUE)
@@ -197,9 +206,11 @@ gridExtra::grid.arrange(p_up$gtable, p_down$gtable, ncol = 2)
 For each brain region, identify DEGs shared across multiple cell types. Genes appearing in
 more than one cell type within the same region may indicate conserved responses to treatment.
 
-```{r gene-overlap}
+```{r}
+#| label: gene-overlap
 #| fig.width: 12
 #| fig.height: 8
+#| column: page
 
 # parse gene lists into a tidy data frame
 gene_df <- deg_long |>
@@ -232,7 +243,8 @@ if (nrow(shared_genes) > 0) {
 }
 ```
 
-```{r upset-plot}
+```{r}
+#| label: upset-plot
 #| fig.width: 10
 #| fig.height: 10
 #| column: page
