@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-03-18">
+<meta name="dcterms.date" content="2026-04-16">
 
 <title>Astrocyte subpopulations after cleaning – ARIA Xenium Analysis</title>
 <style>
@@ -320,7 +320,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">March 18, 2026</p>
+      <p class="date">April 16, 2026</p>
     </div>
   </div>
   
@@ -345,7 +345,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <section id="excluded-genes" class="level2">
 <h2 class="anchored" data-anchor-id="excluded-genes">Excluded genes</h2>
-<p>::: {.cell}</p>
+<div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># genes to remove #########################################################</span></span>
@@ -356,32 +356,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># One row per gene with cell_type label</span></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>markers <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(<span class="fu">names</span>(cell_specific), <span class="cf">function</span>(ct) {</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a> <span class="fu">tibble</span>(<span class="at">cell_type =</span> ct, <span class="at">gene =</span> <span class="fu">unlist</span>(cell_specific[[ct]]))</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">cell_type =</span> ct, <span class="at">gene =</span> <span class="fu">unlist</span>(cell_specific[[ct]]))</span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>}) <span class="sc">|&gt;</span> </span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a> <span class="fu">pull</span>(gene)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(gene)</span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="do">### genes manually selected by Akhil </span><span class="al">###</span></span>
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>akhil <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a> <span class="st">"Tmem119"</span>, <span class="st">"Aif1"</span>, <span class="st">"Trem2"</span>, <span class="st">"P2ry12"</span>, <span class="st">"Ermn"</span>, <span class="st">"Cldn11"</span>, <span class="st">"Mog"</span>,</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a> <span class="st">"Ccdc153"</span>, <span class="st">"Dnah11"</span>, <span class="st">"Tmem212"</span>, <span class="st">"Pdgfra"</span>, <span class="st">"Tnr"</span>, <span class="st">"Mgp"</span>, <span class="st">"Bgn"</span>,</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a> <span class="st">"Slc47a1"</span>, <span class="st">"Acta2"</span>, <span class="st">"Tagln"</span>, <span class="st">"Vtn"</span>, <span class="st">"Kcnj8"</span>, <span class="st">"Atp13a5"</span>, <span class="st">"Flt1"</span>,</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a> <span class="st">"Emcn"</span>, <span class="st">"Cldn5"</span>, <span class="st">"Car12"</span>, <span class="st">"Ttr"</span>, <span class="st">"Col1a2"</span>, <span class="st">"Lum"</span>, <span class="st">"Dcx"</span>, <span class="st">"Pax6"</span>,</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a> <span class="st">"Mgl2"</span>, <span class="st">"Mrc1"</span>, <span class="st">"Cd3d"</span>, <span class="st">"Gzmb"</span>, <span class="st">"Pdcd1"</span>, <span class="st">"Klrb1c"</span>, <span class="st">"Tpsab1"</span>,</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a> <span class="st">"Tpsb2"</span>, <span class="st">"Fcer1a"</span>, <span class="st">"Plac8"</span>, <span class="st">"Msr1"</span>, <span class="st">"Ly6g"</span>, <span class="st">"Camp"</span>, <span class="st">"Cd209a"</span>,</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a> <span class="st">"Clec10a"</span>, <span class="st">"Cd247"</span>, <span class="st">"Snap25"</span>, <span class="st">"Grin2a"</span>, <span class="st">"Grin2b"</span>, <span class="st">"Cux2"</span>, <span class="st">"Otof"</span>,</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a> <span class="st">"Stard8"</span>, <span class="st">"Lypd1"</span>, <span class="st">"Lrg1"</span>, <span class="st">"Adamts2"</span>, <span class="st">"Macc1"</span>, <span class="st">"Rapgef3"</span>, <span class="st">"Rorb"</span>,</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a> <span class="st">"Tcap"</span>, <span class="st">"Hsd11b1"</span>, <span class="st">"Rspo1"</span>, <span class="st">"Whrn"</span>, <span class="st">"Tunar"</span>, <span class="st">"Osr1"</span>, <span class="st">"Oprk1"</span>,</span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a> <span class="st">"Pou3f1"</span>, <span class="st">"Tshz2"</span>, <span class="st">"Tox2"</span>, <span class="st">"Syt6"</span>, <span class="st">"Trh"</span>, <span class="st">"Vip"</span>, <span class="st">"Calb2"</span>, <span class="st">"Pthlh"</span>,</span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a> <span class="st">"Crh"</span>, <span class="st">"Gad1"</span>, <span class="st">"Serpinf1"</span>, <span class="st">"Cnr1"</span>, <span class="st">"Lhx6"</span>, <span class="st">"Slc32a1"</span>, <span class="st">"Slc17a7"</span>,</span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a> <span class="st">"Fezf2"</span>, <span class="st">"Htr2c"</span>, <span class="st">"Dpp4"</span>, <span class="st">"Slc17a6"</span>, <span class="st">"Siglech"</span>, <span class="st">"Clec7a"</span>, <span class="st">"Lyz2"</span>,</span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a> <span class="st">"Cd14"</span>, <span class="st">"Cst7"</span>, <span class="st">"Pf4"</span>, <span class="st">"Nkg7"</span>, <span class="st">"Cx3cr1"</span>, <span class="st">"Itgax"</span>, <span class="st">"Cd68"</span>, <span class="st">"Mbp"</span>,</span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a> <span class="st">"Mag"</span>, <span class="st">"Pllp"</span>, <span class="st">"Lamp5"</span>, <span class="st">"Nts"</span>, <span class="st">"Tac1"</span>, <span class="st">"Sncg"</span>, <span class="st">"Sst"</span>, <span class="st">"Calb1"</span>,</span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a> <span class="st">"Ndnf"</span>)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Tmem119"</span>, <span class="st">"Aif1"</span>, <span class="st">"Trem2"</span>, <span class="st">"P2ry12"</span>, <span class="st">"Ermn"</span>, <span class="st">"Cldn11"</span>, <span class="st">"Mog"</span>,</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Ccdc153"</span>, <span class="st">"Dnah11"</span>, <span class="st">"Tmem212"</span>, <span class="st">"Pdgfra"</span>, <span class="st">"Tnr"</span>, <span class="st">"Mgp"</span>, <span class="st">"Bgn"</span>,</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Slc47a1"</span>, <span class="st">"Acta2"</span>, <span class="st">"Tagln"</span>, <span class="st">"Vtn"</span>, <span class="st">"Kcnj8"</span>, <span class="st">"Atp13a5"</span>, <span class="st">"Flt1"</span>,</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Emcn"</span>, <span class="st">"Cldn5"</span>, <span class="st">"Car12"</span>, <span class="st">"Ttr"</span>, <span class="st">"Col1a2"</span>, <span class="st">"Lum"</span>, <span class="st">"Dcx"</span>, <span class="st">"Pax6"</span>,</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Mgl2"</span>, <span class="st">"Mrc1"</span>, <span class="st">"Cd3d"</span>, <span class="st">"Gzmb"</span>, <span class="st">"Pdcd1"</span>, <span class="st">"Klrb1c"</span>, <span class="st">"Tpsab1"</span>,</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Tpsb2"</span>, <span class="st">"Fcer1a"</span>, <span class="st">"Plac8"</span>, <span class="st">"Msr1"</span>, <span class="st">"Ly6g"</span>, <span class="st">"Camp"</span>, <span class="st">"Cd209a"</span>,</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Clec10a"</span>, <span class="st">"Cd247"</span>, <span class="st">"Snap25"</span>, <span class="st">"Grin2a"</span>, <span class="st">"Grin2b"</span>, <span class="st">"Cux2"</span>, <span class="st">"Otof"</span>,</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Stard8"</span>, <span class="st">"Lypd1"</span>, <span class="st">"Lrg1"</span>, <span class="st">"Adamts2"</span>, <span class="st">"Macc1"</span>, <span class="st">"Rapgef3"</span>, <span class="st">"Rorb"</span>,</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Tcap"</span>, <span class="st">"Hsd11b1"</span>, <span class="st">"Rspo1"</span>, <span class="st">"Whrn"</span>, <span class="st">"Tunar"</span>, <span class="st">"Osr1"</span>, <span class="st">"Oprk1"</span>,</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Pou3f1"</span>, <span class="st">"Tshz2"</span>, <span class="st">"Tox2"</span>, <span class="st">"Syt6"</span>, <span class="st">"Trh"</span>, <span class="st">"Vip"</span>, <span class="st">"Calb2"</span>, <span class="st">"Pthlh"</span>,</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Crh"</span>, <span class="st">"Gad1"</span>, <span class="st">"Serpinf1"</span>, <span class="st">"Cnr1"</span>, <span class="st">"Lhx6"</span>, <span class="st">"Slc32a1"</span>, <span class="st">"Slc17a7"</span>,</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Fezf2"</span>, <span class="st">"Htr2c"</span>, <span class="st">"Dpp4"</span>, <span class="st">"Slc17a6"</span>, <span class="st">"Siglech"</span>, <span class="st">"Clec7a"</span>, <span class="st">"Lyz2"</span>,</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Cd14"</span>, <span class="st">"Cst7"</span>, <span class="st">"Pf4"</span>, <span class="st">"Nkg7"</span>, <span class="st">"Cx3cr1"</span>, <span class="st">"Itgax"</span>, <span class="st">"Cd68"</span>, <span class="st">"Mbp"</span>,</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Mag"</span>, <span class="st">"Pllp"</span>, <span class="st">"Lamp5"</span>, <span class="st">"Nts"</span>, <span class="st">"Tac1"</span>, <span class="st">"Sncg"</span>, <span class="st">"Sst"</span>, <span class="st">"Calb1"</span>,</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Ndnf"</span>)</span>
 <span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="co"># setdiff(akhil, markers)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a> <span class="co"># setdiff(akhil, markers)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
-<p>:::</p>
+</div>
 <p><strong>Removed cell markers</strong> Tmem119, Aif1, Trem2, P2ry12, Ermn, Cldn11, Mog, Ccdc153, Dnah11, Tmem212, Pdgfra, Tnr, Mgp, Bgn, Slc47a1, Acta2, Tagln, Vtn, Kcnj8, Atp13a5, Flt1, Emcn, Cldn5, Car12, Ttr, Col1a2, Lum, Dcx, Pax6, Mgl2, Mrc1, Cd3d, Gzmb, Pdcd1, Klrb1c, Tpsab1, Tpsb2, Fcer1a, Plac8, Msr1, Ly6g, Camp, Cd209a, Clec10a, Cd247, Snap25, Grin2a, Grin2b, Cux2, Otof, Stard8, Lypd1, Lrg1, Adamts2, Macc1, Rapgef3, Rorb, Tcap, Hsd11b1, Rspo1, Whrn, Tunar, Osr1, Oprk1, Pou3f1, Tshz2, Tox2, Syt6, Trh, Vip, Calb2, Pthlh, Crh, Gad1, Serpinf1, Cnr1, Lhx6, Slc32a1, Slc17a7, Fezf2, Htr2c, Dpp4, Slc17a6 and <strong>Akhil´s hand-picked genes</strong> Siglech, Clec7a, Lyz2, Cd14, Cst7, Pf4, Nkg7, Cx3cr1, Itgax, Cd68, Mbp, Mag, Pllp, Lamp5, Nts, Tac1, Sncg, Sst, Calb1, Ndnf</p>
 <div class="cell">
 <details class="code-fold">
@@ -479,11 +479,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="do">## load cleaned object</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>astro <span class="ot">&lt;-</span> <span class="fu">qs_read</span>(<span class="st">"seurat_objects/20260318-astro_cleaned2_0.3.qs2"</span>)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># swap to log-normalised version when ready:</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># astro &lt;- qs_read("seurat_objects/20260318-astro_lognorm_0.3.qs2")</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>astro <span class="ot">&lt;-</span> <span class="fu">qs_read</span>(<span class="st">"seurat_objects/20260318-astro_cleaned2_0.3.qs2"</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># swap to log-normalised version when ready:</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># astro &lt;- qs_read("seurat_objects/20260318-astro_lognorm_0.3.qs2")</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Relabel seurat_clusters with biological names</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>astro<span class="sc">$</span>seurat_clusters <span class="ot">&lt;-</span> <span class="fu">fct_recode</span>( astro<span class="sc">$</span>seurat_clusters,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>   <span class="st">" Lipid Biosynthesis"</span> <span class="ot">=</span> <span class="st">"0"</span>,</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>   <span class="st">"Metabolic"</span> <span class="ot">=</span> <span class="st">"1"</span>, </span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>   <span class="st">"DAA"</span> <span class="ot">=</span> <span class="st">"2"</span>,</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>   <span class="st">"LARA"</span> <span class="ot">=</span> <span class="st">"3"</span>,</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>   <span class="st">"DAM Associated"</span> <span class="ot">=</span> <span class="st">"4"</span>,</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Metabolic Reactive Astrocyte"</span> <span class="ot">=</span> <span class="st">"5"</span>,</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>   <span class="st">"IRRAs"</span> <span class="ot">=</span> <span class="st">"6"</span>,</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="st">"BBB/Vascular Astrocytes"</span> <span class="ot">=</span> <span class="st">"7"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div class="cell">
@@ -542,19 +552,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<div class="cell">
+<div class="cell page-columns page-full">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#|fig-width: 5</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">#|fig-height: 5</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: plot UMAPs 1</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">DimPlot</span>(astro, <span class="at">label =</span>T, <span class="at">label.size =</span> <span class="dv">6</span>, <span class="at">pt.size =</span><span class="fl">0.9</span>)<span class="sc">+</span> <span class="fu">NoLegend</span>() <span class="sc">+</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#|fig-height: 5</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: plot UMAPs 1</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">Idents</span>(astro) <span class="ot">&lt;-</span> astro<span class="sc">$</span>seurat_clusters</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">DimPlot</span>(astro, <span class="at">label =</span>F, <span class="at">label.size =</span> <span class="dv">6</span>, <span class="at">pt.size =</span><span class="fl">0.9</span>)<span class="sc">+</span></span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Removed cluster 6 and 103 marker genes"</span>) </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="20260309-astrocytes_reclustered_cleaned_files/figure-html/unnamed-chunk-4-1.svg" class="img-fluid figure-img" width="672"></p>
+<div class="cell-output-display page-columns page-full">
+<div class="page-columns page-full">
+<figure class="figure page-columns page-full">
+<p class="page-columns page-full"><img src="20260309-astrocytes_reclustered_cleaned_files/figure-html/unnamed-chunk-3-1.svg" class="img-fluid figure-img column-page" width="768"></p>
 </figure>
 </div>
 </div>
@@ -579,19 +589,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Idents</span>(astro) <span class="ot">&lt;-</span> astro<span class="sc">$</span>seurat_clusters</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">DefaultAssay</span>(astro) <span class="ot">&lt;-</span> <span class="st">"SCT"</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>all_markers <span class="ot">&lt;-</span> <span class="fu">FindAllMarkers</span>(astro, <span class="at">only.pos =</span> <span class="cn">TRUE</span>, <span class="at">densify =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co"># write_csv (only marker genes removed)</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co"># write_csv(all_markers, file = "results/20260309-astrocyte_cleaned_all_markers_0.3.csv")</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="do">#################################################################</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co"># write_csv (cluster 6 from the original object &amp;  marker genes removed)</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co"># write_csv(all_markers, file = "results/20260312-astrocyte_cleaned_all_markers_0.3.csv")</span></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="do">#################################################################</span></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co"># write_csv (cluster 6 from the original object &amp;  marker genes + Akhil genes removed)</span></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co"># write_csv(all_markers, file = "results/20260318-astrocyte_cleaned_all_markers_0.3.csv")</span></span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(all_markers, <span class="at">file =</span> <span class="st">"results/20260318-astrocyte_cleaned_all_markers_0.3_logtrans.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">DefaultAssay</span>(astro) <span class="ot">&lt;-</span> <span class="st">"SCT"</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>all_markers <span class="ot">&lt;-</span> <span class="fu">FindAllMarkers</span>(astro, <span class="at">only.pos =</span> <span class="cn">TRUE</span>, <span class="at">densify =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># write_csv (only marker genes removed)</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co"># write_csv(all_markers, file = "results/20260309-astrocyte_cleaned_all_markers_0.3.csv")</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="do">#################################################################</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co"># write_csv (cluster 6 from the original object &amp;  marker genes removed)</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co"># write_csv(all_markers, file = "results/20260312-astrocyte_cleaned_all_markers_0.3.csv")</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="do">#################################################################</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co"># write_csv (cluster 6 from the original object &amp;  marker genes + Akhil genes removed)</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co"># write_csv(all_markers, file = "results/20260318-astrocyte_cleaned_all_markers_0.3.csv")</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(all_markers, <span class="at">file =</span> <span class="st">"results/20260318-astrocyte_cleaned_all_markers_0.3_logtrans.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div class="cell page-columns page-full">
