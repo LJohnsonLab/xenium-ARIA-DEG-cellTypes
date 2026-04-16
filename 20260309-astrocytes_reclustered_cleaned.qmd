@@ -22,7 +22,7 @@ library(jsonlite)
 
 ## Excluded genes
  
- ```{r}
+```{r}
  
 # genes to remove #########################################################
 # Load gene list and extract CELL SPECIFIC markers (excluding ASTROCYTE)
@@ -56,7 +56,7 @@ akhil <- c(
   "Ndnf")
 
  # setdiff(akhil, markers)
- ```
+```
 
 **Removed cell markers** `r paste(markers, collapse = ", ")` and **Akhil´s hand-picked genes** `r paste(setdiff(akhil, markers), collapse = ", ")`
 
@@ -159,11 +159,24 @@ astro <- RunUMAP(astro, reduction = "pca", dims = 1:30, verbose = FALSE)
 
 
 ```{r}
-## load cleaned object
+#| label: load-cleaned-object
 astro <- qs_read("seurat_objects/20260318-astro_cleaned2_0.3.qs2")
 
 # swap to log-normalised version when ready:
 # astro <- qs_read("seurat_objects/20260318-astro_lognorm_0.3.qs2")
+
+# Relabel seurat_clusters with biological names
+astro$seurat_clusters <- fct_recode( astro$seurat_clusters,
+   " Lipid Biosynthesis" = "0",
+   "Metabolic" = "1", 
+   "DAA" = "2",
+   "LARA" = "3",
+   "DAM Associated" = "4",
+  "Metabolic Reactive Astrocyte" = "5",
+   "IRRAs" = "6",
+  "BBB/Vascular Astrocytes" = "7")
+
+
 ```
 
 ```{r}
@@ -201,10 +214,12 @@ resolution = 0.3
 :::
 
 ```{r}
-#|fig-width: 5
+#| fig-width: 8
+#| column: page
 #|fig-height: 5
 #| label: plot UMAPs 1
-DimPlot(astro, label =T, label.size = 6, pt.size =0.9)+ NoLegend() +
+Idents(astro) <- astro$seurat_clusters
+DimPlot(astro, label =F, label.size = 6, pt.size =0.9)+
   ggtitle("Removed cluster 6 and 103 marker genes") 
 ```
 
@@ -222,7 +237,7 @@ DimPlot(astro, split.by = "Treatment.Group", label.size = 6, pt.size =0.9)+ NoLe
 ```{r}
 #| eval: false
 #| label: find markers
-Idents(astro) <- astro$seurat_clusters
+
 DefaultAssay(astro) <- "SCT"
 all_markers <- FindAllMarkers(astro, only.pos = TRUE, densify = TRUE)
 
@@ -280,7 +295,7 @@ FeaturePlot(astro,features = c("Aldh1l1",	"Aldoc",	"Gfap",	"Slc7a10",	"Aqp4"), n
 ```{r}
 #| label: astrocyte-markers-violin
 #| column: page
-#| fig-height: 12
+#| fig-height: 16
 #| fig-width: 10
 
 VlnPlot(astro,features = c("Aldh1l1",	"Aldoc",	"Gfap",	"Slc7a10",	"Aqp4"),alpha = 0, ncol=2)
