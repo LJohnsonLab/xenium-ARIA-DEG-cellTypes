@@ -251,6 +251,11 @@ fc_range <- range(de_results$avg_log2FC, na.rm = TRUE)
 xlim_lower <- floor(fc_range[1])
 xlim_upper <- ceiling(fc_range[2])
 
+# Tight y-axis: top out just above the most significant point so empty whitespace
+# above the data cloud is removed (EnhancedVolcano otherwise pads y by +5)
+y_max       <- max(-log10(de_results$p_val), na.rm = TRUE)
+ylim_upper  <- max(ceiling(y_max * 1.05), 1)
+
 cell_type  <- gsub("_.*", "", ident1)
 condition1 <- gsub(".*_", "", ident1)
 condition2 <- gsub(".*_", "", ident2)
@@ -272,7 +277,8 @@ volcano_plot <- EnhancedVolcano(de_results,
                      drawConnectors = TRUE,
                      directionConnectors = "both",
                      max.overlaps = Inf,
-                     xlim = c(xlim_lower, xlim_upper))
+                     xlim = c(xlim_lower, xlim_upper),
+                     ylim = c(0, ylim_upper))
 
 if (length(sig_genes) > 0) {
 raw_boundary <- max(de_results[sig_genes, "p_val"])
