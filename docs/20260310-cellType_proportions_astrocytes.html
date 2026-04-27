@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-03-18">
+<meta name="dcterms.date" content="2026-04-27">
 
 <title>Astrocyte subcluster proportions – ARIA Xenium Analysis</title>
 <style>
@@ -348,7 +348,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">March 18, 2026</p>
+      <p class="date">April 27, 2026</p>
     </div>
   </div>
   
@@ -370,11 +370,34 @@ window.Quarto = {
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>astro <span class="ot">&lt;-</span> <span class="fu">UpdateSeuratObject</span>(<span class="fu">qs_read</span>(<span class="st">"seurat_objects/20260318-astro_cleaned2_0.3.qs2"</span>))</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">Idents</span>(astro) <span class="ot">&lt;-</span> <span class="st">"seurat_clusters"</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Order samples by Treatment.Group so groups are adjacent</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>astro<span class="sc">$</span>sample_ID <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  astro<span class="sc">$</span>sample_ID,</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"KK4_465"</span>, <span class="st">"KK4_504"</span>, <span class="st">"KK4_496"</span>, <span class="st">"KK4_492"</span>, <span class="st">"KK4_502"</span>, <span class="st">"KK4_464"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Relabel numeric seurat_clusters with biological names (mirrors 20260309 qmd)</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>astro<span class="sc">$</span>seurat_clusters <span class="ot">&lt;-</span> <span class="fu">fct_recode</span>(astro<span class="sc">$</span>seurat_clusters,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">" Lipid Biosynthesis"</span>          <span class="ot">=</span> <span class="st">"0"</span>,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Metabolic"</span>                    <span class="ot">=</span> <span class="st">"1"</span>,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">"DAA"</span>                          <span class="ot">=</span> <span class="st">"2"</span>,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="st">"LARA"</span>                         <span class="ot">=</span> <span class="st">"3"</span>,</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="st">"DAM Associated"</span>               <span class="ot">=</span> <span class="st">"4"</span>,</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Metabolic Reactive Astrocyte"</span> <span class="ot">=</span> <span class="st">"5"</span>,</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="st">"IRRAs"</span>                        <span class="ot">=</span> <span class="st">"6"</span>,</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="st">"BBB/Vascular Astrocytes"</span>      <span class="ot">=</span> <span class="st">"7"</span>)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="fu">Idents</span>(astro) <span class="ot">&lt;-</span> astro<span class="sc">$</span>seurat_clusters</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Order samples by Treatment.Group so groups are adjacent</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>astro<span class="sc">$</span>sample_ID <span class="ot">&lt;-</span> <span class="fu">factor</span>(</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  astro<span class="sc">$</span>sample_ID,</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"KK4_465"</span>, <span class="st">"KK4_504"</span>, <span class="st">"KK4_496"</span>, <span class="st">"KK4_492"</span>, <span class="st">"KK4_502"</span>, <span class="st">"KK4_464"</span>))</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Cluster palette mirrored from 20260309 so this report matches the UMAP figure.</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>astro_cluster_palette <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  <span class="st">" Lipid Biosynthesis"</span>          <span class="ot">=</span> <span class="st">"#A6CEE3"</span>,</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Metabolic"</span>                    <span class="ot">=</span> <span class="st">"#1F78B4"</span>,</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  <span class="st">"DAA"</span>                          <span class="ot">=</span> <span class="st">"#FDBF6F"</span>,</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  <span class="st">"LARA"</span>                         <span class="ot">=</span> <span class="st">"#FF7F00"</span>,</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  <span class="st">"DAM Associated"</span>               <span class="ot">=</span> <span class="st">"#33A02C"</span>,</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Metabolic Reactive Astrocyte"</span> <span class="ot">=</span> <span class="st">"#FB9A99"</span>,</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>  <span class="st">"IRRAs"</span>                        <span class="ot">=</span> <span class="st">"#E31A1C"</span>,</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>  <span class="st">"BBB/Vascular Astrocytes"</span>      <span class="ot">=</span> <span class="st">"#6A3D9A"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <table class="caption-top table">
@@ -421,11 +444,12 @@ window.Quarto = {
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Enforce sample_ID factor order on x-axis</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>sample_order <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"KK4_465"</span>, <span class="st">"KK4_504"</span>, <span class="st">"KK4_496"</span>, <span class="st">"KK4_492"</span>, <span class="st">"KK4_502"</span>, <span class="st">"KK4_464"</span>)</span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>p <span class="sc">+</span> <span class="fu">scale_x_discrete</span>(<span class="at">limits =</span> sample_order) <span class="sc">+</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>),</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">13</span>, <span class="at">angle =</span> <span class="dv">30</span>, <span class="at">hjust =</span> <span class="dv">1</span>),</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.y =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">13</span>),</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> astro_cluster_palette) <span class="sc">+</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.title =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>),</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">13</span>, <span class="at">angle =</span> <span class="dv">30</span>, <span class="at">hjust =</span> <span class="dv">1</span>),</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.y =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">13</span>),</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.text =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">14</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -472,9 +496,12 @@ window.Quarto = {
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">robust =</span> <span class="cn">TRUE</span>,</span>
 <span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">transform =</span> <span class="st">"logit"</span>)</span>
 <span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>prop <span class="sc">|&gt;</span> <span class="fu">as_tibble</span> () <span class="sc">|&gt;</span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>(<span class="at">digits =</span> <span class="dv">3</span>) <span class="sc">|&gt;</span></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="st">"striped"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>prop_tbl <span class="ot">&lt;-</span> prop <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>()</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>prop_tbl <span class="sc">|&gt;</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kbl</span>(<span class="at">digits =</span> <span class="dv">3</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="st">"striped"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">column_spec</span>(<span class="dv">1</span>, <span class="at">color =</span> astro_cluster_palette[prop_tbl<span class="sc">$</span>BaselineProp.clusters],</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>              <span class="at">bold =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <table class="table table-striped caption-top table-sm small">
@@ -492,7 +519,7 @@ window.Quarto = {
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">6</td>
+<td style="text-align: left; font-weight: bold; color: rgba(227, 26, 28, 255) !important;">IRRAs</td>
 <td style="text-align: right;">0.023</td>
 <td style="text-align: right;">0.027</td>
 <td style="text-align: right;">0.019</td>
@@ -502,7 +529,7 @@ window.Quarto = {
 <td style="text-align: right;">0.451</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">5</td>
+<td style="text-align: left; font-weight: bold; color: rgba(251, 154, 153, 255) !important;">Metabolic Reactive Astrocyte</td>
 <td style="text-align: right;">0.061</td>
 <td style="text-align: right;">0.054</td>
 <td style="text-align: right;">0.068</td>
@@ -512,7 +539,7 @@ window.Quarto = {
 <td style="text-align: right;">0.451</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">7</td>
+<td style="text-align: left; font-weight: bold; color: rgba(106, 61, 154, 255) !important;">BBB/Vascular Astrocytes</td>
 <td style="text-align: right;">0.020</td>
 <td style="text-align: right;">0.017</td>
 <td style="text-align: right;">0.023</td>
@@ -522,7 +549,7 @@ window.Quarto = {
 <td style="text-align: right;">0.451</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">2</td>
+<td style="text-align: left; font-weight: bold; color: rgba(253, 191, 111, 255) !important;">DAA</td>
 <td style="text-align: right;">0.145</td>
 <td style="text-align: right;">0.157</td>
 <td style="text-align: right;">0.129</td>
@@ -532,7 +559,7 @@ window.Quarto = {
 <td style="text-align: right;">0.451</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">4</td>
+<td style="text-align: left; font-weight: bold; color: rgba(51, 160, 44, 255) !important;">DAM Associated</td>
 <td style="text-align: right;">0.080</td>
 <td style="text-align: right;">0.077</td>
 <td style="text-align: right;">0.083</td>
@@ -542,7 +569,7 @@ window.Quarto = {
 <td style="text-align: right;">0.956</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">3</td>
+<td style="text-align: left; font-weight: bold; color: rgba(255, 127, 0, 255) !important;">LARA</td>
 <td style="text-align: right;">0.137</td>
 <td style="text-align: right;">0.137</td>
 <td style="text-align: right;">0.139</td>
@@ -552,7 +579,7 @@ window.Quarto = {
 <td style="text-align: right;">0.956</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">1</td>
+<td style="text-align: left; font-weight: bold; color: rgba(31, 120, 180, 255) !important;">Metabolic</td>
 <td style="text-align: right;">0.252</td>
 <td style="text-align: right;">0.249</td>
 <td style="text-align: right;">0.258</td>
@@ -562,7 +589,7 @@ window.Quarto = {
 <td style="text-align: right;">0.956</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">0</td>
+<td style="text-align: left; font-weight: bold; color: rgba(166, 206, 227, 255) !important;">Lipid Biosynthesis</td>
 <td style="text-align: right;">0.281</td>
 <td style="text-align: right;">0.282</td>
 <td style="text-align: right;">0.280</td>
@@ -632,19 +659,23 @@ window.Quarto = {
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>md <span class="ot">&lt;-</span> astro<span class="sc">@</span>meta.data <span class="sc">|&gt;</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(<span class="fu">Idents</span>(astro),Region) <span class="sc">|&gt;</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n.cells =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> Region, <span class="at">values_from =</span> n.cells)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">kbl</span>(md, <span class="at">caption =</span> <span class="st">"number of cells per cluster per region"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="st">"striped"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Cluster =</span> <span class="fu">Idents</span>(astro)) <span class="sc">|&gt;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Cluster, Region) <span class="sc">|&gt;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n.cells =</span> <span class="fu">n</span>(), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> Region, <span class="at">values_from =</span> n.cells)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">kbl</span>(md, <span class="at">caption =</span> <span class="st">"number of cells per cluster per region"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="st">"striped"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">column_spec</span>(<span class="dv">1</span>,</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>              <span class="at">color =</span> astro_cluster_palette[<span class="fu">as.character</span>(md<span class="sc">$</span>Cluster)],</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>              <span class="at">bold  =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <table class="table table-striped caption-top table-sm small">
 <caption>number of cells per cluster per region</caption>
 <thead>
 <tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">Idents(astro)</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Cluster</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">Cortex</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">Hippocampus</th>
 <th style="text-align: right;" data-quarto-table-cell-role="th">Hypothalamus</th>
@@ -655,7 +686,7 @@ window.Quarto = {
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">0</td>
+<td style="text-align: left; font-weight: bold; color: rgba(166, 206, 227, 255) !important;">Lipid Biosynthesis</td>
 <td style="text-align: right;">6045</td>
 <td style="text-align: right;">2087</td>
 <td style="text-align: right;">213</td>
@@ -664,7 +695,7 @@ window.Quarto = {
 <td style="text-align: right;">4025</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">1</td>
+<td style="text-align: left; font-weight: bold; color: rgba(31, 120, 180, 255) !important;">Metabolic</td>
 <td style="text-align: right;">54</td>
 <td style="text-align: right;">100</td>
 <td style="text-align: right;">3834</td>
@@ -673,7 +704,7 @@ window.Quarto = {
 <td style="text-align: right;">1684</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">2</td>
+<td style="text-align: left; font-weight: bold; color: rgba(253, 191, 111, 255) !important;">DAA</td>
 <td style="text-align: right;">1051</td>
 <td style="text-align: right;">1441</td>
 <td style="text-align: right;">472</td>
@@ -682,7 +713,7 @@ window.Quarto = {
 <td style="text-align: right;">1432</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">3</td>
+<td style="text-align: left; font-weight: bold; color: rgba(255, 127, 0, 255) !important;">LARA</td>
 <td style="text-align: right;">1055</td>
 <td style="text-align: right;">892</td>
 <td style="text-align: right;">1002</td>
@@ -691,7 +722,7 @@ window.Quarto = {
 <td style="text-align: right;">1669</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">4</td>
+<td style="text-align: left; font-weight: bold; color: rgba(51, 160, 44, 255) !important;">DAM Associated</td>
 <td style="text-align: right;">696</td>
 <td style="text-align: right;">441</td>
 <td style="text-align: right;">314</td>
@@ -700,7 +731,7 @@ window.Quarto = {
 <td style="text-align: right;">623</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">5</td>
+<td style="text-align: left; font-weight: bold; color: rgba(251, 154, 153, 255) !important;">Metabolic Reactive Astrocyte</td>
 <td style="text-align: right;">1703</td>
 <td style="text-align: right;">415</td>
 <td style="text-align: right;">33</td>
@@ -709,7 +740,7 @@ window.Quarto = {
 <td style="text-align: right;">471</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">6</td>
+<td style="text-align: left; font-weight: bold; color: rgba(227, 26, 28, 255) !important;">IRRAs</td>
 <td style="text-align: right;">184</td>
 <td style="text-align: right;">155</td>
 <td style="text-align: right;">167</td>
@@ -718,7 +749,7 @@ window.Quarto = {
 <td style="text-align: right;">228</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">7</td>
+<td style="text-align: left; font-weight: bold; color: rgba(106, 61, 154, 255) !important;">BBB/Vascular Astrocytes</td>
 <td style="text-align: right;">238</td>
 <td style="text-align: right;">65</td>
 <td style="text-align: right;">81</td>
@@ -834,12 +865,14 @@ window.Quarto = {
 <span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">13</span>) <span class="sc">+</span></span>
 <span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
 <span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.x     =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">40</span>, <span class="at">hjust =</span> <span class="dv">1</span>, <span class="at">size =</span> <span class="dv">18</span>),</span>
-<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.y     =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">18</span>),</span>
-<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid      =</span> <span class="fu">element_blank</span>(),</span>
-<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"right"</span>,</span>
-<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title      =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">18</span>),</span>
-<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.subtitle   =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">16</span>, <span class="at">colour =</span> <span class="st">"grey40"</span>)</span>
-<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.y     =</span> <span class="fu">element_text</span>(</span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>      <span class="at">size  =</span> <span class="dv">18</span>,</span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a>      <span class="at">color =</span> astro_cluster_palette[<span class="fu">levels</span>(prop_heatmap<span class="sc">$</span>CellType)]),</span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>    <span class="at">panel.grid      =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.position =</span> <span class="st">"right"</span>,</span>
+<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.title      =</span> <span class="fu">element_text</span>(<span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">18</span>),</span>
+<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a>    <span class="at">plot.subtitle   =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">16</span>, <span class="at">colour =</span> <span class="st">"grey40"</span>)</span>
+<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -853,14 +886,18 @@ window.Quarto = {
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">iwalk</span>(prop_by_region, \(tbl, reg) {</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n\n</span><span class="st">&lt;details&gt;&lt;summary&gt;**"</span>, reg, <span class="st">"**&lt;/summary&gt;</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  tbl <span class="sc">|&gt;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  region_tbl <span class="ot">&lt;-</span> tbl <span class="sc">|&gt;</span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(FDR) <span class="sc">|&gt;</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kbl</span>(<span class="at">digits =</span> <span class="dv">3</span>, <span class="at">caption =</span> <span class="fu">paste</span>(<span class="st">"Region:"</span>, reg)) <span class="sc">|&gt;</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable_styling</span>(<span class="st">"striped"</span>, <span class="at">full_width =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>()</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n\n</span><span class="st">&lt;/details&gt;</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(FDR)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  region_tbl <span class="sc">|&gt;</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kbl</span>(<span class="at">digits =</span> <span class="dv">3</span>, <span class="at">caption =</span> <span class="fu">paste</span>(<span class="st">"Region:"</span>, reg)) <span class="sc">|&gt;</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable_styling</span>(<span class="st">"striped"</span>, <span class="at">full_width =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">column_spec</span>(<span class="dv">1</span>,</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>                <span class="at">color =</span> astro_cluster_palette[region_tbl<span class="sc">$</span>BaselineProp.clusters],</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>                <span class="at">bold  =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>()</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n\n</span><span class="st">&lt;/details&gt;</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <details>
 <summary>
@@ -900,8 +937,8 @@ FDR
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
-5
+<td style="text-align:left;font-weight: bold;color: rgba(251, 154, 153, 255) !important;">
+Metabolic Reactive Astrocyte
 </td>
 <td style="text-align:right;">
 0.009
@@ -926,8 +963,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-0
+<td style="text-align:left;font-weight: bold;color: rgba(166, 206, 227, 255) !important;">
+Lipid Biosynthesis
 </td>
 <td style="text-align:right;">
 0.004
@@ -952,8 +989,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-6
+<td style="text-align:left;font-weight: bold;color: rgba(227, 26, 28, 255) !important;">
+IRRAs
 </td>
 <td style="text-align:right;">
 0.025
@@ -978,8 +1015,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-3
+<td style="text-align:left;font-weight: bold;color: rgba(255, 127, 0, 255) !important;">
+LARA
 </td>
 <td style="text-align:right;">
 0.125
@@ -1004,8 +1041,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-7
+<td style="text-align:left;font-weight: bold;color: rgba(106, 61, 154, 255) !important;">
+BBB/Vascular Astrocytes
 </td>
 <td style="text-align:right;">
 0.036
@@ -1030,8 +1067,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-2
+<td style="text-align:left;font-weight: bold;color: rgba(253, 191, 111, 255) !important;">
+DAA
 </td>
 <td style="text-align:right;">
 0.081
@@ -1056,8 +1093,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-1
+<td style="text-align:left;font-weight: bold;color: rgba(31, 120, 180, 255) !important;">
+Metabolic
 </td>
 <td style="text-align:right;">
 0.582
@@ -1082,8 +1119,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-4
+<td style="text-align:left;font-weight: bold;color: rgba(51, 160, 44, 255) !important;">
+DAM Associated
 </td>
 <td style="text-align:right;">
 0.139
@@ -1148,8 +1185,8 @@ FDR
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
-3
+<td style="text-align:left;font-weight: bold;color: rgba(255, 127, 0, 255) !important;">
+LARA
 </td>
 <td style="text-align:right;">
 0.164
@@ -1174,8 +1211,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-5
+<td style="text-align:left;font-weight: bold;color: rgba(251, 154, 153, 255) !important;">
+Metabolic Reactive Astrocyte
 </td>
 <td style="text-align:right;">
 0.005
@@ -1200,8 +1237,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-6
+<td style="text-align:left;font-weight: bold;color: rgba(227, 26, 28, 255) !important;">
+IRRAs
 </td>
 <td style="text-align:right;">
 0.027
@@ -1226,8 +1263,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-0
+<td style="text-align:left;font-weight: bold;color: rgba(166, 206, 227, 255) !important;">
+Lipid Biosynthesis
 </td>
 <td style="text-align:right;">
 0.035
@@ -1252,8 +1289,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-1
+<td style="text-align:left;font-weight: bold;color: rgba(31, 120, 180, 255) !important;">
+Metabolic
 </td>
 <td style="text-align:right;">
 0.627
@@ -1278,8 +1315,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-2
+<td style="text-align:left;font-weight: bold;color: rgba(253, 191, 111, 255) !important;">
+DAA
 </td>
 <td style="text-align:right;">
 0.077
@@ -1304,8 +1341,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-4
+<td style="text-align:left;font-weight: bold;color: rgba(51, 160, 44, 255) !important;">
+DAM Associated
 </td>
 <td style="text-align:right;">
 0.051
@@ -1330,8 +1367,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-7
+<td style="text-align:left;font-weight: bold;color: rgba(106, 61, 154, 255) !important;">
+BBB/Vascular Astrocytes
 </td>
 <td style="text-align:right;">
 0.013
@@ -1396,8 +1433,8 @@ FDR
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
-6
+<td style="text-align:left;font-weight: bold;color: rgba(227, 26, 28, 255) !important;">
+IRRAs
 </td>
 <td style="text-align:right;">
 0.028
@@ -1422,8 +1459,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-1
+<td style="text-align:left;font-weight: bold;color: rgba(31, 120, 180, 255) !important;">
+Metabolic
 </td>
 <td style="text-align:right;">
 0.018
@@ -1448,8 +1485,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-0
+<td style="text-align:left;font-weight: bold;color: rgba(166, 206, 227, 255) !important;">
+Lipid Biosynthesis
 </td>
 <td style="text-align:right;">
 0.373
@@ -1474,8 +1511,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-2
+<td style="text-align:left;font-weight: bold;color: rgba(253, 191, 111, 255) !important;">
+DAA
 </td>
 <td style="text-align:right;">
 0.258
@@ -1500,8 +1537,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-5
+<td style="text-align:left;font-weight: bold;color: rgba(251, 154, 153, 255) !important;">
+Metabolic Reactive Astrocyte
 </td>
 <td style="text-align:right;">
 0.074
@@ -1526,8 +1563,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-3
+<td style="text-align:left;font-weight: bold;color: rgba(255, 127, 0, 255) !important;">
+LARA
 </td>
 <td style="text-align:right;">
 0.159
@@ -1552,8 +1589,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-4
+<td style="text-align:left;font-weight: bold;color: rgba(51, 160, 44, 255) !important;">
+DAM Associated
 </td>
 <td style="text-align:right;">
 0.079
@@ -1578,8 +1615,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-7
+<td style="text-align:left;font-weight: bold;color: rgba(106, 61, 154, 255) !important;">
+BBB/Vascular Astrocytes
 </td>
 <td style="text-align:right;">
 0.012
@@ -1644,8 +1681,8 @@ FDR
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
-6
+<td style="text-align:left;font-weight: bold;color: rgba(227, 26, 28, 255) !important;">
+IRRAs
 </td>
 <td style="text-align:right;">
 0.017
@@ -1670,8 +1707,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-1
+<td style="text-align:left;font-weight: bold;color: rgba(31, 120, 180, 255) !important;">
+Metabolic
 </td>
 <td style="text-align:right;">
 0.005
@@ -1696,8 +1733,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-5
+<td style="text-align:left;font-weight: bold;color: rgba(251, 154, 153, 255) !important;">
+Metabolic Reactive Astrocyte
 </td>
 <td style="text-align:right;">
 0.154
@@ -1722,8 +1759,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-3
+<td style="text-align:left;font-weight: bold;color: rgba(255, 127, 0, 255) !important;">
+LARA
 </td>
 <td style="text-align:right;">
 0.096
@@ -1748,8 +1785,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-0
+<td style="text-align:left;font-weight: bold;color: rgba(166, 206, 227, 255) !important;">
+Lipid Biosynthesis
 </td>
 <td style="text-align:right;">
 0.548
@@ -1774,8 +1811,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-7
+<td style="text-align:left;font-weight: bold;color: rgba(106, 61, 154, 255) !important;">
+BBB/Vascular Astrocytes
 </td>
 <td style="text-align:right;">
 0.022
@@ -1800,8 +1837,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-2
+<td style="text-align:left;font-weight: bold;color: rgba(253, 191, 111, 255) !important;">
+DAA
 </td>
 <td style="text-align:right;">
 0.095
@@ -1826,8 +1863,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-4
+<td style="text-align:left;font-weight: bold;color: rgba(51, 160, 44, 255) !important;">
+DAM Associated
 </td>
 <td style="text-align:right;">
 0.063
@@ -1892,8 +1929,8 @@ FDR
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
-1
+<td style="text-align:left;font-weight: bold;color: rgba(31, 120, 180, 255) !important;">
+Metabolic
 </td>
 <td style="text-align:right;">
 0.007
@@ -1918,8 +1955,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-0
+<td style="text-align:left;font-weight: bold;color: rgba(166, 206, 227, 255) !important;">
+Lipid Biosynthesis
 </td>
 <td style="text-align:right;">
 0.157
@@ -1944,8 +1981,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-2
+<td style="text-align:left;font-weight: bold;color: rgba(253, 191, 111, 255) !important;">
+DAA
 </td>
 <td style="text-align:right;">
 0.557
@@ -1970,8 +2007,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-4
+<td style="text-align:left;font-weight: bold;color: rgba(51, 160, 44, 255) !important;">
+DAM Associated
 </td>
 <td style="text-align:right;">
 0.069
@@ -1996,8 +2033,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-5
+<td style="text-align:left;font-weight: bold;color: rgba(251, 154, 153, 255) !important;">
+Metabolic Reactive Astrocyte
 </td>
 <td style="text-align:right;">
 0.024
@@ -2022,8 +2059,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-7
+<td style="text-align:left;font-weight: bold;color: rgba(106, 61, 154, 255) !important;">
+BBB/Vascular Astrocytes
 </td>
 <td style="text-align:right;">
 0.015
@@ -2048,8 +2085,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-3
+<td style="text-align:left;font-weight: bold;color: rgba(255, 127, 0, 255) !important;">
+LARA
 </td>
 <td style="text-align:right;">
 0.147
@@ -2074,8 +2111,8 @@ FDR
 </td>
 </tr>
 <tr>
-<td style="text-align:left;">
-6
+<td style="text-align:left;font-weight: bold;color: rgba(227, 26, 28, 255) !important;">
+IRRAs
 </td>
 <td style="text-align:right;">
 0.023
