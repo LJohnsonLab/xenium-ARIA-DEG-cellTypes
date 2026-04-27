@@ -42,6 +42,8 @@ astro_cluster_palette <- c(
   "BBB/Vascular Astrocytes"      = "#6A3D9A")
 ```
 
+## Proportions
+
 | Sample ID | Treatment Group |
 |-----------|-----------------|
 | KK4_465   | IgG             |
@@ -51,6 +53,7 @@ astro_cluster_palette <- c(
 | KK4_502   | Adu             |
 | KK4_464   | Adu             |
 
+### Proportions per sample
 ```{r}
 
 p <- plotCellTypeProps(astro,
@@ -67,6 +70,24 @@ p + scale_x_discrete(limits = sample_order) +
         axis.text.y = element_text(size = 13),
         legend.text = element_text(size = 14))
 
+```
+
+### Proportions per treatment group
+
+```{r}
+#| label: proportions-by-treatment
+
+p_treat <- plotCellTypeProps(astro,
+                             clusters = Idents(astro),
+                             sample = astro$Treatment.Group)
+
+p_treat + scale_x_discrete(limits = c("IgG", "Adu")) +
+  scale_fill_manual(values = astro_cluster_palette) +
+  theme_minimal() +
+  theme(axis.title = element_text(size = 14),
+        axis.text.x = element_text(size = 13, angle = 30, hjust = 1),
+        axis.text.y = element_text(size = 13),
+        legend.text = element_text(size = 14))
 ```
 
 
