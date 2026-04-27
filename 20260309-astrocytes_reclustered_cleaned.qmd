@@ -168,7 +168,7 @@ astro <- qs_read("seurat_objects/20260318-astro_cleaned2_0.3.qs2")
 # Relabel seurat_clusters with biological names
 astro$seurat_clusters <- fct_recode( astro$seurat_clusters,
    " Lipid Biosynthesis" = "0",
-   "Metabolic" = "1", 
+   "Metabolic" = "1",
    "DAA" = "2",
    "LARA" = "3",
    "DAM Associated" = "4",
@@ -177,6 +177,21 @@ astro$seurat_clusters <- fct_recode( astro$seurat_clusters,
   "BBB/Vascular Astrocytes" = "7")
 
 
+```
+
+```{r}
+#| label: astro-cluster-palette
+# Cluster palette borrowed from Chloe's microglia colour scheme so the two
+# reports read as a coherent pair. IRRAs is anchored to the IRM hex.
+astro_cluster_palette <- c(
+  " Lipid Biosynthesis"          = "#A6CEE3",
+  "Metabolic"                    = "#1F78B4",
+  "DAA"                          = "#FDBF6F",
+  "LARA"                         = "#FF7F00",
+  "DAM Associated"               = "#33A02C",
+  "Metabolic Reactive Astrocyte" = "#FB9A99",
+  "IRRAs"                        = "#E31A1C",
+  "BBB/Vascular Astrocytes"      = "#6A3D9A")
 ```
 
 ```{r}
@@ -219,8 +234,9 @@ resolution = 0.3
 #|fig-height: 5
 #| label: plot UMAPs 1
 Idents(astro) <- astro$seurat_clusters
-DimPlot(astro, label =F, label.size = 6, pt.size =0.9)+
-  ggtitle("Removed cluster 6 and 103 marker genes") 
+DimPlot(astro, label = FALSE, label.size = 6, pt.size = 0.6,
+        cols = astro_cluster_palette) +
+  ggtitle("Removed cluster 6 and 103 marker genes")
 ```
 
 ```{r}
@@ -228,7 +244,9 @@ DimPlot(astro, label =F, label.size = 6, pt.size =0.9)+
 #| column: page
 #| fig-height: 5
 #| label: plot UMAPs 2
-DimPlot(astro, split.by = "Treatment.Group", label.size = 6, pt.size =0.9)+ NoLegend()
+DimPlot(astro, split.by = "Treatment.Group", label.size = 6,
+        pt.size = 0.6, cols = astro_cluster_palette) +
+  NoLegend()
 ```
 
 ## Top marker genes per cluster
