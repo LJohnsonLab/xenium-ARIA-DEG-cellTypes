@@ -68,8 +68,8 @@ akhil <- c(
 #| label: clean-seurat
 
 # Load seurat with subsetted astrocytes object 
-full    <- qs_read("seurat_objects/20260217_Part2_fullobj.qs2")
-astro_subset  <- subset(full, subset = annotatedclusters == "Astrocyte")
+
+astro_subset <- qs_read("seurat_objects/20260305-astro_0.3.qs2")
 
 
 genes_to_remove <- akhil
@@ -83,8 +83,7 @@ astro_cleaned  <- subset(astro_cleaned, features = keep_genes)
 # Keep only the assay needed for fresh SCTransform
 DefaultAssay(astro_cleaned) <- "Xenium"
 astro0 <- DietSeurat(astro_cleaned, assays = "Xenium", dimreducs = NULL, graphs = NULL)
-# Drop Xenium image/FOV segmentation data; otherwise merge triggers huge future globals
-# astro0@images <- list()
+
 
 ```
 
@@ -147,7 +146,7 @@ astro <- RunUMAP(astro, reduction = "pca", dims = 1:30, verbose = FALSE)
 
 # Relabel seurat_clusters with biological names
 astro$seurat_clusters <- fct_recode( astro$seurat_clusters,
-   " Lipid Biosynthesis" = "0",
+   "Lipid Biosynthesis" = "0",
    "Metabolic" = "1",
    "DAA" = "2",
    "LARA" = "3",
@@ -179,7 +178,7 @@ astro <- qs_read("seurat_objects/20260318-astro_cleaned2_0.3.qs2")
 # Cluster palette borrowed from Chloe's microglia colour scheme so the two
 # reports read as a coherent pair. IRRAs is anchored to the IRM hex.
 astro_cluster_palette <- c(
-  " Lipid Biosynthesis"          = "#A6CEE3",
+  "Lipid Biosynthesis"          = "#A6CEE3",
   "Metabolic"                    = "#1F78B4",
   "DAA"                          = "#FDBF6F",
   "LARA"                         = "#FF7F00",
