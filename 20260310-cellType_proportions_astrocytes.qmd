@@ -13,16 +13,6 @@ library(kableExtra)
 
 astro <- UpdateSeuratObject(qs_read("seurat_objects/20260318-astro_cleaned2_0.3.qs2"))
 
-# Relabel numeric seurat_clusters with biological names (mirrors 20260309 qmd)
-astro$seurat_clusters <- fct_recode(astro$seurat_clusters,
-  " Lipid Biosynthesis"          = "0",
-  "Metabolic"                    = "1",
-  "DAA"                          = "2",
-  "LARA"                         = "3",
-  "DAM Associated"               = "4",
-  "Metabolic Reactive Astrocyte" = "5",
-  "IRRAs"                        = "6",
-  "BBB/Vascular Astrocytes"      = "7")
 Idents(astro) <- astro$seurat_clusters
 
 # Order samples by Treatment.Group so groups are adjacent
@@ -32,7 +22,7 @@ astro$sample_ID <- factor(
 
 # Cluster palette mirrored from 20260309 so this report matches the UMAP figure.
 astro_cluster_palette <- c(
-  " Lipid Biosynthesis"          = "#A6CEE3",
+  "Lipid Biosynthesis"          = "#A6CEE3",
   "Metabolic"                    = "#1F78B4",
   "DAA"                          = "#FDBF6F",
   "LARA"                         = "#FF7F00",
