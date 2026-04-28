@@ -389,8 +389,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load seurat with subsetted astrocytes object </span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>full    <span class="ot">&lt;-</span> <span class="fu">qs_read</span>(<span class="st">"seurat_objects/20260217_Part2_fullobj.qs2"</span>)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>astro_subset  <span class="ot">&lt;-</span> <span class="fu">subset</span>(full, <span class="at">subset =</span> annotatedclusters <span class="sc">==</span> <span class="st">"Astrocyte"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>astro_subset <span class="ot">&lt;-</span> <span class="fu">qs_read</span>(<span class="st">"seurat_objects/20260305-astro_0.3.qs2"</span>)</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>genes_to_remove <span class="ot">&lt;-</span> akhil</span>
@@ -403,9 +403,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>astro_cleaned  <span class="ot">&lt;-</span> <span class="fu">subset</span>(astro_cleaned, <span class="at">features =</span> keep_genes)</span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Keep only the assay needed for fresh SCTransform</span></span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="fu">DefaultAssay</span>(astro_cleaned) <span class="ot">&lt;-</span> <span class="st">"Xenium"</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>astro0 <span class="ot">&lt;-</span> <span class="fu">DietSeurat</span>(astro_cleaned, <span class="at">assays =</span> <span class="st">"Xenium"</span>, <span class="at">dimreducs =</span> <span class="cn">NULL</span>, <span class="at">graphs =</span> <span class="cn">NULL</span>)</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Drop Xenium image/FOV segmentation data; otherwise merge triggers huge future globals</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co"># astro0@images &lt;- list()</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>astro0 <span class="ot">&lt;-</span> <span class="fu">DietSeurat</span>(astro_cleaned, <span class="at">assays =</span> <span class="st">"Xenium"</span>, <span class="at">dimreducs =</span> <span class="cn">NULL</span>, <span class="at">graphs =</span> <span class="cn">NULL</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div class="cell">
@@ -468,7 +466,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Relabel seurat_clusters with biological names</span></span>
 <span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>astro<span class="sc">$</span>seurat_clusters <span class="ot">&lt;-</span> <span class="fu">fct_recode</span>( astro<span class="sc">$</span>seurat_clusters,</span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>   <span class="st">" Lipid Biosynthesis"</span> <span class="ot">=</span> <span class="st">"0"</span>,</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>   <span class="st">"Lipid Biosynthesis"</span> <span class="ot">=</span> <span class="st">"0"</span>,</span>
 <span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>   <span class="st">"Metabolic"</span> <span class="ot">=</span> <span class="st">"1"</span>,</span>
 <span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>   <span class="st">"DAA"</span> <span class="ot">=</span> <span class="st">"2"</span>,</span>
 <span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>   <span class="st">"LARA"</span> <span class="ot">=</span> <span class="st">"3"</span>,</span>
@@ -496,7 +494,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Cluster palette borrowed from Chloe's microglia colour scheme so the two</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># reports read as a coherent pair. IRRAs is anchored to the IRM hex.</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>astro_cluster_palette <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">" Lipid Biosynthesis"</span>          <span class="ot">=</span> <span class="st">"#A6CEE3"</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Lipid Biosynthesis"</span>          <span class="ot">=</span> <span class="st">"#A6CEE3"</span>,</span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Metabolic"</span>                    <span class="ot">=</span> <span class="st">"#1F78B4"</span>,</span>
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"DAA"</span>                          <span class="ot">=</span> <span class="st">"#FDBF6F"</span>,</span>
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"LARA"</span>                         <span class="ot">=</span> <span class="st">"#FF7F00"</span>,</span>
