@@ -33,7 +33,7 @@ astro0  <- subset(full, subset = annotatedclusters == "Astrocyte")
 DefaultAssay(astro0) <- "Xenium"
 astro0 <- DietSeurat(astro0, assays = "Xenium", dimreducs = NULL, graphs = NULL)
 # Drop Xenium image/FOV segmentation data; otherwise merge triggers huge future globals
-astro0@images <- list()
+# astro0@images <- list() # not needed
 
 # SCTransform on all astrocytes together (no split/merge, no integration)
 astro <- astro0
