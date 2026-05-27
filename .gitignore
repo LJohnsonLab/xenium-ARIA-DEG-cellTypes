@@ -14,7 +14,6 @@ docs/CLAUDE.html
 
 # Seurat objects directory
 seurat_objects/*
-!seurat_objects/.gitkeep
 !seurat_objects/README.md
 
 
