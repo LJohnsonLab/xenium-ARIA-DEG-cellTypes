@@ -117,9 +117,7 @@ astro_log <- FindClusters(astro_log, resolution = 0.3)
 astro_log <- RunUMAP(astro_log, reduction = "pca", dims = 1:15, verbose = FALSE)
 
 DimPlot(astro_log, label =T, label.size = 6, pt.size =0.9)+ NoLegend() +
-  ggtitle("Removed cluster 6 and 103 marker genes\nLog-normalized") 
-
-# qs_save(astro_log, "seurat_objects/20260318-astro_lognorm_0.3.qs2")
+  ggtitle("Removed cluster 6 and 103 marker genes\nLog-normalized")
 ```
 
 
@@ -164,9 +162,6 @@ astro$seurat_clusters <- fct_recode( astro$seurat_clusters,
 ```{r}
 #| label: load-cleaned-object
 astro <- qs_read("seurat_objects/20260318-astro_cleaned2_0.3.qs2")
-
-# swap to log-normalised version when ready:
-# astro <- qs_read("seurat_objects/20260318-astro_lognorm_0.3.qs2")
 
 
 
